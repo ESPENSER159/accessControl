@@ -24,8 +24,9 @@ export async function POST(request: Request) {
 }
 
 const verifyToken = (token: any) => {
+  const JWT_SECRET: any = process.env.NEXTAUTH_SECRET
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET);
     return decoded;
   } catch (error) {
     return null;

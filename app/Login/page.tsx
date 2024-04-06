@@ -1,10 +1,11 @@
 "use client"
-import './Login.css'
+import './login.css'
 import { Select } from "flowbite-react"
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useState } from 'react'
 import { Alert } from "flowbite-react"
-import Router from 'next/router'
 import { Spinner } from "flowbite-react"
+import { signIn } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
 export default function Login() {
     const [username, setUsername] = useState('')
@@ -12,72 +13,28 @@ export default function Login() {
     const [error, setError] = useState<any>(null)
     const [IsLoading, setIsLoading] = useState(false)
 
-    useEffect(() => {
-        // Verificar si ya existe un token en el almacenamiento local al cargar la página
-        const token = localStorage.getItem('token');
-        if (token) {
-
-            validateToken(token)
-
-            // Router.push('/dashboard'); // Redirige si ya hay un token almacenado
-        }
-    }, []);
-
-    const validateToken = async (token: any) => {
-        try {
-            const response = await fetch('/api/auth', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-            })
-
-            const data = await response.json()
-            console.log(data)
-        } catch (error) {
-            console.log(error)
-        }
-    }
+    const router = useRouter()
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
         setIsLoading(true)
 
-        try {
-            const response = await fetch('/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    "user": username,
-                    "pass": password
-                }),
-            })
+        const res = await signIn('credentials', {
+            email: username,
+            password: password,
+            redirect: false
+        })
 
-            console.log(response)
-            const data = await response.json()
-            console.log(data)
-
-            if (response.ok) {
-                if (data.status === 200) {
-                    localStorage.setItem('token', data.token)
-                    // Router.push('/dashboard') // Redirigir a página
-                } else {
-                    setError(data.message)
-                }
-            } else {
-                setError(data.text())
-            }
-
-            setIsLoading(false)
-        } catch (error) {
-            setIsLoading(false)
-            console.error('Failed to login:', error)
-            setError('Failed to login. Verify your credentials.')
+        if (res?.error) {
+            setError(res?.error)
+        } else {
+            router.push('/home')
         }
+        
+        setIsLoading(false)
     }
+
+    router.refresh()
 
     return (
         <section>
@@ -94,10 +51,8 @@ export default function Login() {
                                 <label htmlFor="user" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">condominium</label>
                                 <Select id="countries" required>
                                     <option value=''>Select...</option>
-                                    <option>United States</option>
-                                    <option>Canada</option>
-                                    <option>France</option>
-                                    <option>Germany</option>
+                                    <option>Condominium 1</option>
+                                    <option>Condominium 2</option>
                                 </Select>
                             </div>
                             <div>

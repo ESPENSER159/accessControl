@@ -23,6 +23,7 @@ export async function HEAD(request: Request) { }
 
 export async function POST(request: Request) {
   const { user, pass } = await request.json()
+  const JWT_SECRET: any = process.env.NEXTAUTH_SECRET
 
   // Validar los campos de entrada
   if (!user || !pass) {
@@ -34,8 +35,8 @@ export async function POST(request: Request) {
     const connection = await mysql.createConnection(dbConfig);
 
     // Consultar el usuario por email
-    const [rows] = await connection.execute('SELECT id, user, password FROM users WHERE user = ?', [user])
-    const getUser: any = rows[0]
+    const [rows]: any = await connection.execute('SELECT id, user, password FROM users WHERE user = ?', [user])
+    const getUser = rows[0]
 
     console.log(getUser)
 
@@ -57,7 +58,7 @@ export async function POST(request: Request) {
     }
 
     // Generar un token JWT
-    const token = jwt.sign({ id: getUser.id, user: getUser.user }, process.env.JWT_SECRET, { expiresIn: '24h' })
+    const token = jwt.sign({ id: getUser.id, user: getUser.user }, JWT_SECRET, { expiresIn: '24h' })
 
     return NextResponse.json({ status: 200, token })
   } catch (error: any) {
