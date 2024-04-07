@@ -1,11 +1,12 @@
 "use client"
 import './login.css'
-import { Select } from "flowbite-react"
+import { Select, SelectItem, Input } from "@nextui-org/react"
 import { FormEvent, useEffect, useState } from 'react'
-import { Alert } from "flowbite-react"
-import { Spinner } from "flowbite-react"
+import { Spinner } from "@nextui-org/react";
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 
 export default function Login() {
     const [username, setUsername] = useState('')
@@ -13,6 +14,9 @@ export default function Login() {
     const [condominium, setCondominium] = useState('')
     const [error, setError] = useState<any>(null)
     const [IsLoading, setIsLoading] = useState(false)
+    const [isVisible, setIsVisible] = useState(false);
+
+    const toggleVisibility = () => setIsVisible(!isVisible);
 
     const router = useRouter()
 
@@ -52,46 +56,80 @@ export default function Login() {
                         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center">
                             Login
                         </h1>
-                        <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
+                        <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit} autoComplete="off" >
                             <div>
-                                <label htmlFor="user" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">condominium</label>
-                                <Select id="countries" onChange={(e) => {
-                                    setCondominium(e.target.value)
-                                    setError(null)
-                                }} required>
-                                    <option value=''>Select...</option>
-                                    <option value='condominium_1'>Condominium 1</option>
-                                    <option value='condominium_2'>Condominium 2</option>
+                                <label htmlFor="condominium" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Condominium</label>
+
+                                <Select
+                                    isRequired
+                                    id='condominium'
+                                    aria-label='condominium'
+                                    placeholder="Select an condominium"
+                                    variant='faded'
+                                    className='focus:ring-primary-600 focus:border-primary-600'
+                                    onChange={(e) => {
+                                        setCondominium(e.target.value)
+                                        setError(null)
+                                    }}
+                                >
+                                    <SelectItem key='condominium_1' value='condominium_1'>
+                                        Condominium 1
+                                    </SelectItem>
+                                    <SelectItem key='condominium_2' value='condominium_2'>
+                                        Condominium 2
+                                    </SelectItem>
                                 </Select>
                             </div>
                             <div>
                                 <label htmlFor="user" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User</label>
-                                <input type="text" name="user" id="user" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value={username} onChange={(e) => {
-                                    setUsername(e.target.value)
-                                    setError(null)
-                                }} required />
+
+                                <Input
+                                    type="text"
+                                    autoComplete="off"
+                                    id='user'
+                                    placeholder='User'
+                                    value={username}
+                                    onValueChange={setUsername}
+                                    onClear={() => console.log("input cleared")}
+                                    isRequired
+                                />
                             </div>
                             <div>
                                 <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                                <input type="password" name="password" id="password" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value={password} onChange={(e) => {
-                                    setPassword(e.target.value)
-                                    setError(null)
-                                }
-                                } required />
+
+                                <Input
+                                    id='password'
+                                    autoComplete="off"
+                                    placeholder='Password'
+                                    value={password}
+                                    onValueChange={setPassword}
+                                    endContent={
+                                        <button className="focus:outline-none" type="button" onClick={toggleVisibility}>
+                                            {isVisible ? (
+                                                <FontAwesomeIcon icon={faEyeSlash} />
+                                            ) : (
+                                                <FontAwesomeIcon icon={faEye} />
+                                            )}
+                                        </button>
+                                    }
+                                    type={isVisible ? "text" : "password"}
+                                    isRequired
+                                />
                             </div>
 
                             {IsLoading ?
                                 <div className='text-center'>
-                                    <Spinner color="success" aria-label="Success spinner example" size="lg" />
+                                    <Spinner color="success" size="lg" />
                                 </div>
                                 :
                                 <button type="submit" className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Sign in</button>
                             }
 
                             {error &&
-                                <Alert color="failure">
+                                <div className='bg-red-200 w-full rounded p-3 text-red-500'>
                                     {error}
-                                </Alert>}
+                                </div>
+                            }
                         </form>
                     </div>
                 </div>
