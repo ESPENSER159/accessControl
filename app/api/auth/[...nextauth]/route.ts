@@ -29,7 +29,7 @@ export const authOptions = {
                 if (!connection) throw new Error('Error de conexión a la base de datos')
 
                 // Consultar el usuario por email
-                const [rows]: any = await connection.execute('SELECT id, user, password FROM users WHERE user = ?', [credentials.email])
+                const [rows]: any = await connection.execute('SELECT id, user, password, condominium FROM users WHERE user = ? AND condominium = ?', [credentials.email, credentials.condominium])
                 const getUser: any = rows[0]
 
                 if (!getUser) throw new Error('Invalid credentials')
@@ -40,7 +40,8 @@ export const authOptions = {
 
                 return {
                     id: getUser.id,
-                    user: getUser.user
+                    user: getUser.user,
+                    condominium: getUser.condominium
                 }
             }
         })

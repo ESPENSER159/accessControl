@@ -1,7 +1,7 @@
 "use client"
 import './login.css'
 import { Select } from "flowbite-react"
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { Alert } from "flowbite-react"
 import { Spinner } from "flowbite-react"
 import { signIn } from 'next-auth/react'
@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation'
 export default function Login() {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const [condominium, setCondominium] = useState('')
     const [error, setError] = useState<any>(null)
     const [IsLoading, setIsLoading] = useState(false)
 
@@ -22,19 +23,23 @@ export default function Login() {
         const res = await signIn('credentials', {
             email: username,
             password: password,
+            condominium: condominium,
             redirect: false
         })
 
         if (res?.error) {
             setError(res?.error)
         } else {
-            router.push('/home')
+            localStorage.setItem('location', condominium)
+            router.push('/registerAccess')
         }
-        
+
         setIsLoading(false)
     }
 
-    router.refresh()
+    useEffect(() => {
+        router.refresh()
+    }, [IsLoading])
 
     return (
         <section>
@@ -49,10 +54,13 @@ export default function Login() {
                         <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
                             <div>
                                 <label htmlFor="user" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">condominium</label>
-                                <Select id="countries" required>
+                                <Select id="countries" onChange={(e) => {
+                                    setCondominium(e.target.value)
+                                    setError(null)
+                                }} required>
                                     <option value=''>Select...</option>
-                                    <option>Condominium 1</option>
-                                    <option>Condominium 2</option>
+                                    <option value='condominium_1'>Condominium 1</option>
+                                    <option value='condominium_2'>Condominium 2</option>
                                 </Select>
                             </div>
                             <div>
