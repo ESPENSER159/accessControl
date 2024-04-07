@@ -30,6 +30,7 @@ export default function Login() {
         if (res?.error) {
             setError(res?.error)
         } else {
+            localStorage.setItem('user', username)
             localStorage.setItem('location', condominium)
             router.push('/registerAccess')
         }
