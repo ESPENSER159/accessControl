@@ -60,11 +60,6 @@ const config: Config = {
             focus: '#059669',
           },
         },
-        dark: {
-          colors: {
-            focus: '#059669',
-          },
-        },
       },
     })
   ],
