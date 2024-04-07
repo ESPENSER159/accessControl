@@ -52,6 +52,9 @@ export default function NavBar() {
         <Navbar.Toggle />
       </div>
       <Navbar.Collapse>
+        <Navbar.Link as={Link} href="/createUsers">
+          Create Users
+        </Navbar.Link>
         <Navbar.Link as={Link} href="/createAccess">
           Create Access
         </Navbar.Link>
