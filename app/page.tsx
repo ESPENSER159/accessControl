@@ -3,9 +3,9 @@ import { useRouter } from 'next/navigation'
 
 export default function Home() {
   const router = useRouter()
-  router.push('/registerAccess')
+  router.push('/login')
 
   return (
-    <main></main>
+    <main>test</main>
   )
 }
