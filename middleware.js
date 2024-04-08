@@ -3,6 +3,7 @@ export { default } from "next-auth/middleware"
 export const config = {
     matcher: [
         "/createAccess",
-        "/registerAccess"
+        "/registerAccess",
+        "/api/:path*"
     ]
 }

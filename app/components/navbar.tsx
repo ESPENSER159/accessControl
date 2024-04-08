@@ -67,8 +67,6 @@ export default function NavBar() {
               isBordered
               as="button"
               className="transition-transform"
-              color="default"
-              name="Jason Hughes"
               size="md"
               src="./icons/iconAccount.png"
             />

@@ -1,29 +1,26 @@
 "use client"
 import { useState } from 'react'
 import Table from '../components/createTable'
+import { Spinner } from "@nextui-org/react"
 
 export default function CreateUsers() {
     const [isLoading, setIsLoading] = useState(false)
 
+    
+
     return (
         <main className="d-flex justify-center">
-            Create users
+
+            <p className='text-center my-6 text-2xl font-bold'>Create users</p>
 
             {
                 isLoading ?
                     <div className='flex justify-center items-center flex-col'>
-                        {/* <Spinner animation="grow" variant="primary" /> */}
-                        {/* <span className='text-dividerColor'>Loading...</span> */}
+                        <Spinner color="success" size="lg" />
                     </div>
                     :
-                    <div>
-                        <Table
-                            // title={'Users'}
-                            // columns={columns}
-                            // getInfo={info}
-                            // filteredItems={filteredItems}
-                            // expanded={ExpandedComponent}
-                        />
+                    <div className='lg:mx-40 md:mx-20'>
+                        <Table />
                     </div>
             }
         </main>
