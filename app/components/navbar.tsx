@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, Avatar, NavbarMenu, NavbarMenuItem, NavbarMenuToggle } from "@nextui-org/react";
+import Image from "next/image"
 
 export default function NavBar() {
   const [user, setUser] = useState('')
@@ -33,14 +34,26 @@ export default function NavBar() {
 
       <NavbarContent className="sm:hidden pr-3" justify="center">
         <NavbarBrand>
-          <img src="./icons/accessIcon.svg" className="mr-3 h-10 sm:h-12" alt="Flowbite React Logo" />
+          <Image
+            src="/icons/accessIcon.svg"
+            className="mr-3 h-10 sm:h-12"
+            alt="Access Icon"
+            width={100}
+            height={24}
+          />
           <p className="font-bold text-inherit">ACCESS CONTROL</p>
         </NavbarBrand>
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarBrand>
-          <img src="./icons/accessIcon.svg" className="mr-3 h-10 sm:h-12" alt="Flowbite React Logo" />
+          <Image
+            src="/icons/accessIcon.svg"
+            className="mr-3 h-10 sm:h-12"
+            alt="Access Icon"
+            width={100}
+            height={24}
+          />
           <p className="font-bold text-inherit">ACCESS CONTROL</p>
         </NavbarBrand>
         <NavbarItem>
