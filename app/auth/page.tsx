@@ -7,6 +7,7 @@ import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
+import Image from "next/image"
 
 export default function Login() {
     const [username, setUsername] = useState('')
@@ -44,13 +45,19 @@ export default function Login() {
 
     useEffect(() => {
         router.refresh()
-    }, [IsLoading])
+    }, [IsLoading, router])
 
     return (
         <section>
             <div className="backgroundLogin"></div>
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-                <img className="w-44 h-44 mr-2" src="./loginIcon.svg" alt="logo" />
+                <Image
+                    className="w-44 h-44 mr-2"
+                    src="/loginIcon.svg"
+                    alt="Login icon"
+                    width={100}
+                    height={24}
+                />
                 <div className="w-full bg-white rounded-xl shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
                         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center">
