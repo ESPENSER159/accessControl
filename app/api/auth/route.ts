@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server"
 import jwt from 'jsonwebtoken'
-import dotenv from 'dotenv'
 import { headers } from 'next/headers'
-
-dotenv.config()
 
 export async function POST(request: Request) {
   const headersList = headers()
