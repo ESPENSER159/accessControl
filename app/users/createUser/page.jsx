@@ -1,6 +1,6 @@
 "use client"
 import { useState } from 'react'
-import { Spinner, Select, SelectItem, Input, Chip } from "@nextui-org/react"
+import { Spinner, Select, SelectItem, Input, Chip, Button } from "@nextui-org/react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { Switch } from "@nextui-org/react"
@@ -11,7 +11,7 @@ export default function CreateUser() {
     const [password, setPassword] = useState('')
     const [condominium, setCondominium] = useState('')
     const [error, setError] = useState(null)
-    const [IsLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const [isVisible, setIsVisible] = useState(false)
     const [isAdmin, setIsAdmin] = useState(false)
 
@@ -21,6 +21,7 @@ export default function CreateUser() {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        setIsLoading(true)
 
         const myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
@@ -39,7 +40,7 @@ export default function CreateUser() {
             redirect: "follow"
         };
 
-        fetch("/api/users/createUser", requestOptions)
+        await fetch("/api/users/createUser", requestOptions)
             .then((response) => response.text())
             .then((result) => {
                 const res = JSON.parse(result)
@@ -50,7 +51,9 @@ export default function CreateUser() {
                     setError(res.message)
                 }
             })
-            .catch((error) => console.error(error));
+            .catch((error) => console.error(error))
+
+        setIsLoading(false)
     }
 
     return (
@@ -124,13 +127,19 @@ export default function CreateUser() {
                         Admin
                     </Switch>
 
-                    {IsLoading ?
+                    <div>
+                        <Button type="submit" className="w-full text-white bg-primary-500 hover:bg-primary-600 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-500 dark:hover:bg-primary-600 dark:focus:ring-primary-800" isLoading={isLoading}>
+                            Create User
+                        </Button>
+                    </div>
+
+                    {/* {isLoading ?
                         <div className='text-center'>
                             <Spinner color="success" size="lg" />
                         </div>
                         :
                         <button type="submit" className="w-full text-white bg-primary-500 hover:bg-primary-600 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-500 dark:hover:bg-primary-600 dark:focus:ring-primary-800">Create User</button>
-                    }
+                    } */}
 
                     {error &&
                         <Chip color="danger" className='min-w-full py-4 rounded-md' variant="bordered">{error}</Chip>

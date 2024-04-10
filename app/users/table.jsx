@@ -23,8 +23,9 @@ import {
 } from "@nextui-org/react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPen, faTrashCan, faPlus, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import ModalDeleteUser from "./modalDeleteUser"
 
-const CreateTable = ({ columns, users }) => {
+const CreateTable = ({ columns, users, reload }) => {
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [statusFilter, setStatusFilter] = React.useState("all");
@@ -36,21 +37,53 @@ const CreateTable = ({ columns, users }) => {
   });
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [backdrop, setBackdrop] = React.useState('opaque')
-  const [userDelete, setUserDelete] = React.useState([])
+  const [dataUser, setDataUser] = React.useState([])
   const [error, setError] = React.useState(null)
+  const [typeModal, setTypeModal] = React.useState()
 
-  const handleOpen = (backdrop, id, user, condominium) => {
-    setUserDelete([id, user, condominium])
+  const handleOpenModalDelete = (backdrop, id, user, condominium) => {
+    setDataUser({ id: id, user: user, condominium: condominium })
+    setTypeModal('delete')
     setBackdrop(backdrop)
     onOpen()
   }
 
-  const handlerDeleteUser = () => {
+  const handlerDeleteUser = async () => {
     setIsLoading(true)
     console.log(`Delete user`)
 
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
 
-    // onClose()
+    const raw = JSON.stringify({
+      "id": dataUser.id,
+      "user": dataUser.user,
+      "condominium": dataUser.condominium
+    });
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow"
+    };
+
+    await fetch("/api/users/deleteUser", requestOptions)
+      .then((response) => response.text())
+      .then((result) => {
+        const res = JSON.parse(result)
+
+        if (res.status === 200) {
+          onClose()
+          reload(true)
+        } else {
+          setError(res.message)
+        }
+      })
+      .catch((error) => console.error(error));
+
+
+    setIsLoading(false)
   }
 
   const [page, setPage] = React.useState(1);
@@ -111,6 +144,12 @@ const CreateTable = ({ columns, users }) => {
             <p className="text-bold text-small capitalize">{cellValue}</p>
           </div>
         );
+      case "type":
+        return (
+          <Chip className="capitalize" color={cellValue === 'admin' ? "warning" : "primary"} size="sm" variant="flat">
+            {cellValue}
+          </Chip>
+        )
       case "actions":
         return (
           <div className="relative flex items-center gap-5">
@@ -123,7 +162,7 @@ const CreateTable = ({ columns, users }) => {
             </Tooltip>
             <Tooltip color="danger" content="Delete user">
               <span className="text-lg text-danger cursor-pointer active:opacity-50"
-                onClick={() => handleOpen('blur', user.id, user.user, user.condominium)}
+                onClick={() => handleOpenModalDelete('blur', user.id, user.user, user.condominium)}
               >
                 <FontAwesomeIcon icon={faTrashCan} size="sm" />
               </span>
@@ -276,49 +315,7 @@ const CreateTable = ({ columns, users }) => {
       <Modal backdrop={backdrop} isOpen={isOpen} onClose={onClose} hideCloseButton={true} isDismissable={false}>
         <ModalContent>
           {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">Delete User</ModalHeader>
-              <ModalBody>
-                <p>
-                  Are you sure to delete the user?
-                </p>
-                <div className="text-center">
-                  <div>
-                    <p className="font-bold">
-                      ID:
-                    </p>
-                    {userDelete[0]}
-                  </div>
-                  <br />
-                  <div>
-                    <p className="font-bold">
-                      USER:
-                    </p>
-                    {userDelete[1]}
-                  </div>
-                  <br />
-                  <div>
-                    <p className="font-bold">
-                      CONDOMINIUM:
-                    </p>
-                    {userDelete[2]}
-                  </div>
-                </div>
-
-                {error &&
-                  <Chip color="danger" className='min-w-full py-4 rounded-md' variant="bordered">{error}</Chip>
-                }
-
-              </ModalBody>
-              <ModalFooter className="text-center flex justify-between">
-                <Button isDisabled={isLoading} color="default" onPress={onClose}>
-                  Cancel
-                </Button>
-                <Button color="danger" variant="ghost" isLoading={isLoading} onPress={handlerDeleteUser}>
-                  Delete
-                </Button>
-              </ModalFooter>
-            </>
+            typeModal === 'delete' && <ModalDeleteUser id={dataUser.id} user={dataUser.user} condominium={dataUser.condominium} isLoading={isLoading} error={error} onClose={onClose} handlerDeleteUser={handlerDeleteUser} />
           )}
         </ModalContent>
       </Modal>

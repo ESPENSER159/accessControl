@@ -17,6 +17,7 @@ const columns = [
 export default function Users() {
     const [isLoading, setIsLoading] = useState(true)
     const [users, setUsers] = useState([])
+    const [reload, setReload] = useState(false)
 
     const router = useRouter()
 
@@ -41,12 +42,13 @@ export default function Users() {
 
 
         setIsLoading(false)
+        setReload(false)
     }
 
     useEffect(() => {
         setIsLoading(true)
         getUsers()
-    }, [])
+    }, [reload])
 
     return (
         <main className="d-flex justify-center">
@@ -72,6 +74,7 @@ export default function Users() {
                         <Table
                             columns={columns}
                             users={users}
+                            reload={setReload}
                         />
                     </div>
             }

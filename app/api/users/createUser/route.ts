@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server"
 import { conn } from '../../../libs/mysql'
+import bcrypt from 'bcryptjs'
+const saltRounds = 10
 
 export async function POST(request: Request) {
     const { user, pass, condominium, type } = await request.json()
@@ -17,8 +19,12 @@ export async function POST(request: Request) {
         let typeUser = type
         type ? typeUser = 'admin' : typeUser = 'user'
 
+        const encryptPassword = bcrypt.hashSync(pass, saltRounds)
+
+        const creationDate = formatedTimestamp()
+
         // Create user
-        const create: any = await conn.query('INSERT INTO users (user, password, condominium, type) VALUES (?, ?, ?, ?)', [user, pass, condominium, typeUser])
+        const create: any = await conn.query('INSERT INTO users (user, password, condominium, type, creation_date) VALUES (?, ?, ?, ?, ?)', [user, encryptPassword, condominium, typeUser, creationDate])
         const ifCreate = create[0]
 
         if (ifCreate) return NextResponse.json({ status: 400, message: 'Error to create user' })
@@ -26,6 +32,13 @@ export async function POST(request: Request) {
         return NextResponse.json({ status: 200 })
     } catch (error) {
         console.error('Error DB:', error);
-        return NextResponse.json({ status: 400, message: 'Error DB.' });
+        return NextResponse.json({ status: 400, message: 'Error DB' });
     }
+}
+
+const formatedTimestamp = () => {
+    const d = new Date()
+    const date = d.toISOString().split('T')[0]
+    const time = d.toTimeString().split(' ')[0]
+    return `${date} ${time}`
 }
