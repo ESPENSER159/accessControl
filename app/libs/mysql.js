@@ -3,6 +3,8 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
+console.log(process.env.DB_HOST)
+
 export const conn = mysql({
     config: {
         host: process.env.DB_HOST,

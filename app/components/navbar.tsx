@@ -67,8 +67,8 @@ export default function NavBar() {
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" href="/createUsers">
-            Create Users
+          <Link color="foreground" href="/users">
+            Users
           </Link>
         </NavbarItem>
       </NavbarContent>
@@ -80,7 +80,7 @@ export default function NavBar() {
               isBordered
               as="button"
               className="transition-transform"
-              size="md"
+              size="sm"
               src="./icons/iconAccount.png"
             />
           </DropdownTrigger>
@@ -125,10 +125,10 @@ export default function NavBar() {
         <NavbarMenuItem>
           <Link
             className="w-full"
-            href="/createUsers"
+            href="/users"
             size="lg"
           >
-            Create Users
+            Users
           </Link>
         </NavbarMenuItem>
       </NavbarMenu>
