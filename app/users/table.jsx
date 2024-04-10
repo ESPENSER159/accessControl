@@ -18,7 +18,8 @@ import {
   Tooltip,
   Selection,
   ChipProps,
-  SortDescriptor
+  SortDescriptor,
+  Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure
 } from "@nextui-org/react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPen, faTrashCan, faPlus, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
@@ -28,10 +29,29 @@ const CreateTable = ({ columns, users }) => {
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [statusFilter, setStatusFilter] = React.useState("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [isLoading, setIsLoading] = React.useState(false)
   const [sortDescriptor, setSortDescriptor] = React.useState({
     column: "age",
     direction: "ascending",
   });
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [backdrop, setBackdrop] = React.useState('opaque')
+  const [userDelete, setUserDelete] = React.useState([])
+  const [error, setError] = React.useState(null)
+
+  const handleOpen = (backdrop, id, user, condominium) => {
+    setUserDelete([id, user, condominium])
+    setBackdrop(backdrop)
+    onOpen()
+  }
+
+  const handlerDeleteUser = () => {
+    setIsLoading(true)
+    console.log(`Delete user`)
+
+
+    // onClose()
+  }
 
   const [page, setPage] = React.useState(1);
 
@@ -95,16 +115,20 @@ const CreateTable = ({ columns, users }) => {
         return (
           <div className="relative flex items-center gap-5">
             <Tooltip content="Edit user">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+              <span className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                onClick={() => console.log(`Value: ${user.id}`)}
+              >
                 <FontAwesomeIcon icon={faPen} size="sm" />
               </span>
             </Tooltip>
             <Tooltip color="danger" content="Delete user">
-              <span className="text-lg text-danger cursor-pointer active:opacity-50">
+              <span className="text-lg text-danger cursor-pointer active:opacity-50"
+                onClick={() => handleOpen('blur', user.id, user.user, user.condominium)}
+              >
                 <FontAwesomeIcon icon={faTrashCan} size="sm" />
               </span>
             </Tooltip>
-          </div>
+          </div >
         );
       default:
         return cellValue;
@@ -194,7 +218,7 @@ const CreateTable = ({ columns, users }) => {
           showControls
           showShadow
           className="m-0"
-          color="success"
+          color="primary"
           page={page}
           total={pages}
           onChange={setPage}
@@ -212,41 +236,93 @@ const CreateTable = ({ columns, users }) => {
   }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
 
   return (
-    <Table
-      aria-label="Example table with custom cells, pagination and sorting"
-      isHeaderSticky
-      bottomContent={bottomContent}
-      bottomContentPlacement="outside"
-      classNames={{
-        wrapper: "max-h-[382px]",
-      }}
-      selectedKeys={selectedKeys}
-      selectionMode="none"
-      sortDescriptor={sortDescriptor}
-      topContent={topContent}
-      topContentPlacement="outside"
-      onSelectionChange={setSelectedKeys}
-      onSortChange={setSortDescriptor}
-    >
-      <TableHeader columns={columns}>
-        {(column) => (
-          <TableColumn
-            key={column.uid}
-            align={column.uid === "actions" ? "center" : "start"}
-            allowsSorting={column.sortable}
-          >
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody emptyContent={"No users found"} items={sortedItems}>
-        {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+    <>
+      <Table
+        aria-label="Example table with custom cells, pagination and sorting"
+        isHeaderSticky
+        bottomContent={bottomContent}
+        bottomContentPlacement="outside"
+        classNames={{
+          wrapper: "max-h-[382px]",
+        }}
+        selectedKeys={selectedKeys}
+        selectionMode="none"
+        sortDescriptor={sortDescriptor}
+        topContent={topContent}
+        topContentPlacement="outside"
+        onSelectionChange={setSelectedKeys}
+        onSortChange={setSortDescriptor}
+      >
+        <TableHeader columns={columns}>
+          {(column) => (
+            <TableColumn
+              key={column.uid}
+              align={column.uid === "actions" ? "center" : "start"}
+              allowsSorting={column.sortable}
+            >
+              {column.name}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody emptyContent={"No users found"} items={sortedItems}>
+          {(item) => (
+            <TableRow key={item.id}>
+              {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+
+      <Modal backdrop={backdrop} isOpen={isOpen} onClose={onClose} hideCloseButton={true} isDismissable={false}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">Delete User</ModalHeader>
+              <ModalBody>
+                <p>
+                  Are you sure to delete the user?
+                </p>
+                <div className="text-center">
+                  <div>
+                    <p className="font-bold">
+                      ID:
+                    </p>
+                    {userDelete[0]}
+                  </div>
+                  <br />
+                  <div>
+                    <p className="font-bold">
+                      USER:
+                    </p>
+                    {userDelete[1]}
+                  </div>
+                  <br />
+                  <div>
+                    <p className="font-bold">
+                      CONDOMINIUM:
+                    </p>
+                    {userDelete[2]}
+                  </div>
+                </div>
+
+                {error &&
+                  <Chip color="danger" className='min-w-full py-4 rounded-md' variant="bordered">{error}</Chip>
+                }
+
+              </ModalBody>
+              <ModalFooter className="text-center flex justify-between">
+                <Button isDisabled={isLoading} color="default" onPress={onClose}>
+                  Cancel
+                </Button>
+                <Button color="danger" variant="ghost" isLoading={isLoading} onPress={handlerDeleteUser}>
+                  Delete
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+    </>
   );
 }
 

@@ -4,7 +4,7 @@ import { conn } from '../../libs/mysql'
 export async function GET() {
     try {
         // Get all users
-        const rows: any = await conn.query('SELECT id, user, condominium FROM users')
+        const rows: any = await conn.query('SELECT id, user, condominium, type FROM users')
         const getUsers = rows
 
         if (!getUsers) throw new Error('No users')

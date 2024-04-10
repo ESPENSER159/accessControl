@@ -1,9 +1,10 @@
 "use client"
 import { useState } from 'react'
-import { Spinner, Select, SelectItem, Input } from "@nextui-org/react"
+import { Spinner, Select, SelectItem, Input, Chip } from "@nextui-org/react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { Switch } from "@nextui-org/react"
+import { useRouter } from 'next/navigation'
 
 export default function CreateUser() {
     const [username, setUsername] = useState('')
@@ -13,6 +14,8 @@ export default function CreateUser() {
     const [IsLoading, setIsLoading] = useState(false)
     const [isVisible, setIsVisible] = useState(false)
     const [isAdmin, setIsAdmin] = useState(false)
+
+    const router = useRouter()
 
     const toggleVisibility = () => setIsVisible(!isVisible)
 
@@ -39,7 +42,13 @@ export default function CreateUser() {
         fetch("/api/users/createUser", requestOptions)
             .then((response) => response.text())
             .then((result) => {
-                console.log(result)
+                const res = JSON.parse(result)
+
+                if (res.status === 200) {
+                    router.push('/users')
+                } else {
+                    setError(res.message)
+                }
             })
             .catch((error) => console.error(error));
     }
@@ -120,13 +129,11 @@ export default function CreateUser() {
                             <Spinner color="success" size="lg" />
                         </div>
                         :
-                        <button type="submit" className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Sign in</button>
+                        <button type="submit" className="w-full text-white bg-primary-500 hover:bg-primary-600 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-500 dark:hover:bg-primary-600 dark:focus:ring-primary-800">Create User</button>
                     }
 
                     {error &&
-                        <div className='bg-red-200 w-full rounded p-3 text-red-500'>
-                            {error}
-                        </div>
+                        <Chip color="danger" className='min-w-full py-4 rounded-md' variant="bordered">{error}</Chip>
                     }
                 </form>
             </div>
