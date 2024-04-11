@@ -3,7 +3,7 @@ import { signOut } from "next-auth/react"
 import { useEffect, useState } from "react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, Avatar, NavbarMenu, NavbarMenuItem, NavbarMenuToggle, Image } from "@nextui-org/react";
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, Avatar, NavbarMenu, NavbarMenuItem, NavbarMenuToggle, Image, Button } from "@nextui-org/react";
 
 export default function NavBar() {
   const [user, setUser] = useState('')
@@ -76,20 +76,16 @@ export default function NavBar() {
       <NavbarContent as="div" justify="end">
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
-            {/* <Avatar
+            <Avatar
               isBordered
               as="button"
               className="transition-transform"
               size="sm"
               src="./icons/iconAccount.png"
-            /> */}
-            <></>
+            />
           </DropdownTrigger>
           <DropdownMenu aria-label="Profile Actions" variant="flat">
-            <DropdownItem textValue="user" className="h-14 gap-2">
-
-            </DropdownItem>
-            {/* <DropdownItem textValue="user" key="user" className="h-14 gap-2">
+            <DropdownItem textValue="user" key="user" className="h-14 gap-2">
               <p className="font-semibold">Signed in as:</p>
               <p>{user}</p>
             </DropdownItem>
@@ -102,7 +98,7 @@ export default function NavBar() {
               signOut()
             }}>
               Log Out
-            </DropdownItem> */}
+            </DropdownItem>
           </DropdownMenu>
         </Dropdown>
       </NavbarContent>
