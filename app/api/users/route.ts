@@ -6,8 +6,11 @@ const saltRounds = 10
 export async function GET() {
     try {
         // Get all users
-        const rows: any = await conn.query('SELECT id, user, condominium, type FROM users')
+        // const rows: any = await conn.query('SELECT id, user, condominium, type FROM users')
+        const rows: any = await conn.query('SELECT users.id, users.user, users.type, condominiums.id AS condominiumID, condominiums.name AS condominium FROM users INNER JOIN condominiums ON users.condominium = condominiums.id')
         const getUsers = rows
+
+        await conn.end()
 
         if (!getUsers) throw new Error('No users')
 
@@ -41,6 +44,8 @@ export async function POST(request: Request) {
             const edit: any = await conn.query(`UPDATE users SET user=?, password=?, condominium=?, type=?, edit_date=? WHERE id=? AND user='${userToEdit}' AND condominium='${condominiumToEdit}'`, [user, encryptPassword, condominium, typeUser, currentDate, id])
             const res = edit[0]
 
+            await conn.end()
+
             if (res) return NextResponse.json({ status: 400, message: 'Error to create user' })
 
             return NextResponse.json({ status: 200 })
@@ -64,6 +69,8 @@ export async function POST(request: Request) {
             // Create user
             const create: any = await conn.query('INSERT INTO users (user, password, condominium, type, creation_date) VALUES (?, ?, ?, ?, ?)', [user, encryptPassword, condominium, typeUser, currentDate])
             const ifCreate = create[0]
+
+            await conn.end()
 
             if (ifCreate) return NextResponse.json({ status: 400, message: 'Error to create user' })
 

@@ -20,6 +20,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPen, faTrashCan, faPlus, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import ModalDeleteUser from "./modalDeleteUser"
 import ModalEditUser from "./modalEditUser"
+import axios from 'axios'
 
 const columns = [
   { name: "ID", uid: "id", sortable: true },
@@ -54,24 +55,14 @@ const CreateTable = () => {
 
 
   const getUsers = async () => {
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-
-    const requestOptions = {
-      method: "GET",
-      headers: myHeaders,
-      redirect: "follow"
-    };
-
-    await fetch("/api/users", requestOptions)
-      .then((response) => response.text())
-      .then((result) => {
-        setUsers(JSON.parse(result).users)
+    await axios.get('/api/users')
+      .then(function (response) {
+        console.log(response.data)
+        setUsers(response.data.users)
       })
-      .catch((error) => {
-        console.error(error)
-      });
-
+      .catch(function (error) {
+        console.log(error)
+      })
 
     setIsLoading(false)
     setReload(false)
@@ -95,6 +86,7 @@ const CreateTable = () => {
       filteredUsers = filteredUsers.filter((user) =>
         user.user.toLowerCase().includes(filterValue.toLowerCase())
         || user.condominium.toLowerCase().includes(filterValue.toLowerCase())
+        || user.address.toLowerCase().includes(filterValue.toLowerCase())
       )
     }
 
@@ -137,6 +129,12 @@ const CreateTable = () => {
           </div>
         );
       case "condominium":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{cellValue}</p>
+          </div>
+        );
+      case "address":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{cellValue}</p>
@@ -246,9 +244,9 @@ const CreateTable = () => {
     return (
       <div className="py-2 px-2 flex justify-between items-center">
         <span className="w-[30%] text-small text-default-400">
-          {selectedKeys === "all"
+          {/* {selectedKeys === "all"
             ? "All items selected"
-            : `${selectedKeys.size} of ${filteredItems.length} selected`}
+            : `${selectedKeys.size} of ${filteredItems.length} selected`} */}
         </span>
         <Pagination
           isCompact

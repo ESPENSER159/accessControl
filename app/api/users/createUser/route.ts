@@ -14,6 +14,8 @@ export async function POST(request: Request) {
         const searchUser: any = await conn.query('SELECT user, condominium FROM users WHERE user = ? AND condominium = ?', [user, condominium])
         const getUser = searchUser[0]
 
+        await conn.end()
+
         if (getUser) return NextResponse.json({ status: 400, message: 'User already exists' })
 
         let typeUser = type
@@ -26,6 +28,8 @@ export async function POST(request: Request) {
         // Create user
         const create: any = await conn.query('INSERT INTO users (user, password, condominium, type, creation_date) VALUES (?, ?, ?, ?, ?)', [user, encryptPassword, condominium, typeUser, creationDate])
         const ifCreate = create[0]
+
+        await conn.end()
 
         if (ifCreate) return NextResponse.json({ status: 400, message: 'Error to create user' })
 

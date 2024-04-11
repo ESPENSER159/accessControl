@@ -6,6 +6,7 @@ import {
     ModalFooter
 } from "@nextui-org/react";
 import { useState } from 'react'
+import axios from 'axios'
 
 export default function ModalDeleteUser({ dataUser, onClose, setReload }) {
     const [error, setError] = useState(null)
@@ -14,38 +15,22 @@ export default function ModalDeleteUser({ dataUser, onClose, setReload }) {
     const handlerDeleteUser = async () => {
         setIsLoading(true)
 
-        console.log(`Delete user`)
+        await axios.post('/api/users/deleteUser', {
+            id: dataUser.id,
+            user: dataUser.user,
+            condominium: dataUser.condominium
+        }).then(function (response) {
+            const res = response.data
 
-        const myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-
-        const raw = JSON.stringify({
-            "id": dataUser.id,
-            "user": dataUser.user,
-            "condominium": dataUser.condominium
-        });
-
-        const requestOptions = {
-            method: "POST",
-            headers: myHeaders,
-            body: raw,
-            redirect: "follow"
-        };
-
-        await fetch("/api/users/deleteUser", requestOptions)
-            .then((response) => response.text())
-            .then((result) => {
-                const res = JSON.parse(result)
-
-                if (res.status === 200) {
-                    setReload(true)
-                    onClose()
-                } else {
-                    setError(res.message)
-                }
-            })
-            .catch((error) => console.error(error));
-
+            if (res.status === 200) {
+                setReload(true)
+                onClose()
+            } else {
+                setError(res.message)
+            }
+        }).catch(function (error) {
+            console.log(error)
+        })
 
         setIsLoading(false)
     }
