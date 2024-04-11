@@ -1,3 +1,4 @@
+"use client"
 import {
     Button,
     Chip,
@@ -18,7 +19,7 @@ export default function ModalDeleteUser({ dataUser, onClose, setReload }) {
         await axios.post('/api/users/deleteUser', {
             id: dataUser.id,
             user: dataUser.user,
-            condominium: dataUser.condominium
+            condominium: dataUser.condominiumID
         }).then(function (response) {
             const res = response.data
 

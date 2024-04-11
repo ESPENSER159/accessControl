@@ -1,3 +1,4 @@
+"use client"
 import {
     Button,
     Chip,
@@ -38,7 +39,7 @@ export default function ModalEditUser({ edit, dataUser, onClose, setReload }) {
             id: dataUser && dataUser.id,
             edit: edit,
             userToEdit: dataUser && dataUser.user,
-            condominiumToEdit: dataUser && dataUser.condominium,
+            condominiumToEdit: dataUser && dataUser.condominiumID,
             user: username,
             pass: password,
             condominium: dataCondominium[0],

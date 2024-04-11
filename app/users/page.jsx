@@ -47,17 +47,17 @@ const CreateTable = () => {
   const [users, setUsers] = React.useState([])
   const [reload, setReload] = React.useState(false)
 
-  const handleOpenModal = (type, info) => {
-    setDataUser(info && { id: info[0], user: info[1], condominium: info[2], type: info[3] })
+  const handleOpenModal = React.useCallback((type, info) => {
+    setDataUser(info && { id: info[0], user: info[1], condominiumID: info[2], condominium: info[3], type: info[4] })
     setTypeModal(type)
     onOpen()
-  }
+  }, [onOpen])
 
 
   const getUsers = async () => {
     await axios.get('/api/users')
       .then(function (response) {
-        console.log(response.data)
+        console.log(response)
         setUsers(response.data.users)
       })
       .catch(function (error) {
@@ -72,7 +72,7 @@ const CreateTable = () => {
     setIsLoading(true)
     getUsers()
     typeModal === 'delete' && setPage(1)
-  }, [reload])
+  }, [reload, typeModal])
 
 
   const [page, setPage] = React.useState(1);
@@ -91,7 +91,7 @@ const CreateTable = () => {
     }
 
     return filteredUsers;
-  }, [users, filterValue, statusFilter]);
+  }, [users, filterValue, hasSearchFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -151,14 +151,14 @@ const CreateTable = () => {
           <div className="relative flex items-center gap-5">
             <Tooltip content="Edit user">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                onClick={() => handleOpenModal('edit', [user.id, user.user, user.condominium, user.type])}
+                onClick={() => handleOpenModal('edit', [user.id, user.user, user.condominiumID, user.condominium, user.type])}
               >
                 <FontAwesomeIcon icon={faPen} size="sm" />
               </span>
             </Tooltip>
             <Tooltip color="danger" content="Delete user">
               <span className="text-lg text-danger cursor-pointer active:opacity-50"
-                onClick={() => handleOpenModal('delete', [user.id, user.user, user.condominium, user.type])}
+                onClick={() => handleOpenModal('delete', [user.id, user.user, user.condominiumID, user.condominium, user.type])}
               >
                 <FontAwesomeIcon icon={faTrashCan} size="sm" />
               </span>
@@ -168,7 +168,7 @@ const CreateTable = () => {
       default:
         return cellValue;
     }
-  }, []);
+  }, [handleOpenModal]);
 
   const onNextPage = React.useCallback(() => {
     if (page < pages) {
@@ -232,12 +232,11 @@ const CreateTable = () => {
       </div>
     );
   }, [
+    onClear,
     filterValue,
-    statusFilter,
     onSearchChange,
     onRowsPerPageChange,
-    users.length,
-    hasSearchFilter,
+    users.length
   ]);
 
   const bottomContent = React.useMemo(() => {
@@ -268,7 +267,7 @@ const CreateTable = () => {
         </div>
       </div>
     );
-  }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+  }, [page, pages, onNextPage, onPreviousPage]);
 
   return (
     <main className="mt-6">
