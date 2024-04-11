@@ -1,32 +1,47 @@
-"use client"
+import {
+    Button,
+    Chip,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Select, SelectItem, Input
+} from "@nextui-org/react";
+
 import { useState } from 'react'
-import { Spinner, Select, SelectItem, Input, Chip, Button } from "@nextui-org/react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { Switch } from "@nextui-org/react"
-import { useRouter } from 'next/navigation'
 
-export default function CreateUser() {
-    const [username, setUsername] = useState('')
+export default function ModalEditUser({ edit, dataUser, onClose, setReload }) {
+    const [username, setUsername] = useState(dataUser && dataUser.user)
     const [password, setPassword] = useState('')
-    const [condominium, setCondominium] = useState('')
+    const [condominium, setCondominium] = useState('condominium_1')
     const [error, setError] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const [isVisible, setIsVisible] = useState(false)
-    const [isAdmin, setIsAdmin] = useState(false)
-
-    const router = useRouter()
+    const [isAdmin, setIsAdmin] = useState(dataUser && dataUser.type === 'admin' ? true : false)
 
     const toggleVisibility = () => setIsVisible(!isVisible)
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         setIsLoading(true)
+        setError()
+
+        if (edit) {
+            console.log(`Edit user`)
+        } else {
+            console.log(`Create user`)
+        }
 
         const myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
 
         const raw = JSON.stringify({
+            "id": dataUser && dataUser.id,
+            "edit": edit,
+            "userToEdit": dataUser && dataUser.user,
+            "condominiumToEdit": dataUser && dataUser.condominium,
             "user": username,
             "pass": password,
             "condominium": condominium,
@@ -40,13 +55,14 @@ export default function CreateUser() {
             redirect: "follow"
         };
 
-        await fetch("/api/users/createUser", requestOptions)
+        await fetch("/api/users", requestOptions)
             .then((response) => response.text())
             .then((result) => {
                 const res = JSON.parse(result)
 
                 if (res.status === 200) {
-                    router.push('/users')
+                    setReload(true)
+                    onClose()
                 } else {
                     setError(res.message)
                 }
@@ -57,12 +73,10 @@ export default function CreateUser() {
     }
 
     return (
-        <main className="d-flex justify-center">
-            <div className='w-full flex justify-center text-center mb-8'>
-                <form className="w-80 space-y-4 md:space-y-6" onSubmit={handleSubmit} autoComplete="off" >
-
-                    <p className='text-center my-6 text-2xl font-bold'>Create User</p>
-
+        <>
+            <ModalHeader className="flex justify-center text-2xl font-bold my-4"> {edit ? 'Edit' : 'Create'} User</ModalHeader>
+            <ModalBody>
+                <form className="w-full space-y-4 md:space-y-6" onSubmit={handleSubmit} autoComplete="off" >
                     <div>
                         <label htmlFor="condominium" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Condominium</label>
 
@@ -72,6 +86,7 @@ export default function CreateUser() {
                             aria-label='condominium'
                             placeholder="Select an condominium"
                             variant='faded'
+                            value={condominium}
                             className='focus:ring-primary-600 focus:border-primary-600'
                             onChange={(e) => {
                                 setCondominium(e.target.value)
@@ -123,29 +138,27 @@ export default function CreateUser() {
                         />
                     </div>
 
-                    <Switch color='primary' isSelected={isAdmin} onValueChange={setIsAdmin}>
-                        Admin
-                    </Switch>
-
-                    <div>
-                        <Button type="submit" className="w-full text-white bg-primary-500 hover:bg-primary-600 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-500 dark:hover:bg-primary-600 dark:focus:ring-primary-800" isLoading={isLoading}>
-                            Create User
-                        </Button>
+                    <div className='text-center'>
+                        <Switch color='primary' isSelected={isAdmin} onValueChange={setIsAdmin}>
+                            Admin
+                        </Switch>
                     </div>
 
-                    {/* {isLoading ?
-                        <div className='text-center'>
-                            <Spinner color="success" size="lg" />
-                        </div>
-                        :
-                        <button type="submit" className="w-full text-white bg-primary-500 hover:bg-primary-600 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-500 dark:hover:bg-primary-600 dark:focus:ring-primary-800">Create User</button>
-                    } */}
-
-                    {error &&
-                        <Chip color="danger" className='min-w-full py-4 rounded-md' variant="bordered">{error}</Chip>
-                    }
+                    <ModalFooter className="text-center flex justify-between">
+                        <Button isDisabled={isLoading} color="default" onPress={onClose}>
+                            Cancel
+                        </Button>
+                        <Button type="submit" color="primary" variant="ghost" isLoading={isLoading}>
+                            {edit ? 'Edit' : 'Create'} User
+                        </Button>
+                    </ModalFooter>
                 </form>
-            </div>
-        </main>
+
+                {error &&
+                    <Chip color="danger" className='min-w-full py-4 rounded-md mb-2' variant="bordered">{error}</Chip>
+                }
+
+            </ModalBody>
+        </>
     )
 }
