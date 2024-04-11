@@ -57,7 +57,6 @@ const CreateTable = () => {
   const getUsers = async () => {
     await axios.get('/api/users')
       .then(function (response) {
-        console.log(response)
         setUsers(response.data.users)
       })
       .catch(function (error) {
