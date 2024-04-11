@@ -7,6 +7,8 @@ export async function GET() {
         const rows: any = await conn.query('SELECT id, name FROM condominiums')
         const getInfo = rows
 
+        await conn.end()
+
         if (!getInfo) throw new Error('No info')
 
         return NextResponse.json({ status: 200, info: getInfo })
