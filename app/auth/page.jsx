@@ -1,6 +1,6 @@
 "use client"
 import './login.css'
-import { Select, SelectItem, Input } from "@nextui-org/react"
+import { Select, SelectItem, Input, Chip } from "@nextui-org/react"
 import { FormEvent, useEffect, useState } from 'react'
 import { Spinner } from "@nextui-org/react";
 import { signIn } from 'next-auth/react'
@@ -13,17 +13,23 @@ export default function Login() {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [condominium, setCondominium] = useState('')
-    const [error, setError] = useState<any>(null)
-    const [IsLoading, setIsLoading] = useState(false)
-    const [isVisible, setIsVisible] = useState(false);
+    const [error, setError] = useState(null)
+    const [IsLoading, setIsLoading] = useState(true)
+    const [isVisible, setIsVisible] = useState(false)
+
+    const [getCondominiums, setCondominiums] = useState([])
 
     const toggleVisibility = () => setIsVisible(!isVisible);
 
     const router = useRouter()
 
-    const handleSubmit = async (e: FormEvent) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
         setIsLoading(true)
+
+        console.log(username)
+        console.log(password)
+        console.log(condominium)
 
         const res = await signIn('credentials', {
             email: username,
@@ -47,6 +53,35 @@ export default function Login() {
         router.refresh()
     }, [IsLoading, router])
 
+    const getUsers = async () => {
+        const myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        const requestOptions = {
+            method: "GET",
+            headers: myHeaders,
+            redirect: "follow"
+        };
+
+        await fetch("/api/condominiums", requestOptions)
+            .then((response) => response.text())
+            .then((result) => {
+                console.log(JSON.parse(result).info)
+                setCondominiums(JSON.parse(result).info)
+            })
+            .catch((error) => {
+                console.error(error)
+            });
+
+
+        setIsLoading(false)
+    }
+
+    useEffect(() => {
+        setIsLoading(true)
+        getUsers()
+    }, [])
+
     return (
         <section>
             <div className="backgroundLogin"></div>
@@ -57,6 +92,7 @@ export default function Login() {
                     alt="Login icon"
                     width={100}
                     height={24}
+                    priority
                 />
                 <div className="w-full bg-white rounded-xl shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
@@ -79,12 +115,22 @@ export default function Login() {
                                         setError(null)
                                     }}
                                 >
-                                    <SelectItem key='condominium_1' value='condominium_1'>
+                                    {/* <SelectItem key='condominium_1' value='condominium_1'>
                                         Condominium 1
                                     </SelectItem>
                                     <SelectItem key='condominium_2' value='condominium_2'>
                                         Condominium 2
-                                    </SelectItem>
+                                    </SelectItem> */}
+
+                                    {
+                                        getCondominiums.map((value) => {
+                                            return (
+                                                <SelectItem key={value.id} textValue={value.name}>
+                                                    {value.name}
+                                                </SelectItem>
+                                            )
+                                        })
+                                    }
                                 </Select>
                             </div>
                             <div>
@@ -133,9 +179,7 @@ export default function Login() {
                             }
 
                             {error &&
-                                <div className='bg-red-200 w-full rounded p-3 text-red-500'>
-                                    {error}
-                                </div>
+                                <Chip color="danger" className='min-w-full py-4 rounded-md mb-2' variant="bordered">{error}</Chip>
                             }
                         </form>
                     </div>
