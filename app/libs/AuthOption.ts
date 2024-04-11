@@ -18,6 +18,8 @@ export const authOptions = {
                 const rows: any = await conn.query('SELECT id, user, password, condominium FROM users WHERE user = ? AND condominium = ?', [credentials.email, credentials.condominium])
                 const getUser: any = rows[0]
 
+                await conn.end()
+
                 if (!getUser) throw new Error('Invalid credentials')
 
                 const isValidPassword = await bcrypt.compare(credentials.password, getUser.password)

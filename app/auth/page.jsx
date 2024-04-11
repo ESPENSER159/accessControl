@@ -1,13 +1,14 @@
 "use client"
 import './login.css'
 import { Select, SelectItem, Input, Chip } from "@nextui-org/react"
-import { FormEvent, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Spinner } from "@nextui-org/react";
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import Image from "next/image"
+import axios from 'axios'
 
 export default function Login() {
     const [username, setUsername] = useState('')
@@ -27,14 +28,15 @@ export default function Login() {
         e.preventDefault()
         setIsLoading(true)
 
-        console.log(username)
-        console.log(password)
+        let dataCondominium = condominium.replaceAll(' ', '').split('-')
+
         console.log(condominium)
+        console.log(dataCondominium[0])
 
         const res = await signIn('credentials', {
             email: username,
             password: password,
-            condominium: condominium,
+            condominium: dataCondominium[0],
             redirect: false
         })
 
@@ -42,7 +44,9 @@ export default function Login() {
             setError(res?.error)
         } else {
             localStorage.setItem('user', username)
-            localStorage.setItem('location', condominium)
+            localStorage.setItem('idLocation', dataCondominium[0])
+            localStorage.setItem('location', dataCondominium[1])
+
             router.push('/registerAccess')
         }
 
@@ -54,25 +58,13 @@ export default function Login() {
     }, [IsLoading, router])
 
     const getUsers = async () => {
-        const myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-
-        const requestOptions = {
-            method: "GET",
-            headers: myHeaders,
-            redirect: "follow"
-        };
-
-        await fetch("/api/condominiums", requestOptions)
-            .then((response) => response.text())
-            .then((result) => {
-                console.log(JSON.parse(result).info)
-                setCondominiums(JSON.parse(result).info)
+        await axios.get('/api/condominiums')
+            .then(function (response) {
+                setCondominiums(response.data.info)
             })
-            .catch((error) => {
-                console.error(error)
-            });
-
+            .catch(function (error) {
+                console.log(error)
+            })
 
         setIsLoading(false)
     }
@@ -100,82 +92,78 @@ export default function Login() {
                             Login
                         </h1>
                         <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit} autoComplete="off" >
-                            <div>
-                                <label htmlFor="condominium" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Condominium</label>
-
-                                <Select
-                                    isRequired
-                                    id='condominium'
-                                    aria-label='condominium'
-                                    placeholder="Select an condominium"
-                                    variant='faded'
-                                    className='focus:ring-primary-600 focus:border-primary-600'
-                                    onChange={(e) => {
-                                        setCondominium(e.target.value)
-                                        setError(null)
-                                    }}
-                                >
-                                    {/* <SelectItem key='condominium_1' value='condominium_1'>
-                                        Condominium 1
-                                    </SelectItem>
-                                    <SelectItem key='condominium_2' value='condominium_2'>
-                                        Condominium 2
-                                    </SelectItem> */}
-
-                                    {
-                                        getCondominiums.map((value) => {
-                                            return (
-                                                <SelectItem key={value.id} textValue={value.name}>
-                                                    {value.name}
-                                                </SelectItem>
-                                            )
-                                        })
-                                    }
-                                </Select>
-                            </div>
-                            <div>
-                                <label htmlFor="user" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User</label>
-
-                                <Input
-                                    type="text"
-                                    autoComplete="off"
-                                    id='user'
-                                    placeholder='User'
-                                    value={username}
-                                    onValueChange={setUsername}
-                                    onClear={() => console.log("input cleared")}
-                                    isRequired
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-
-                                <Input
-                                    id='password'
-                                    autoComplete="off"
-                                    placeholder='Password'
-                                    value={password}
-                                    onValueChange={setPassword}
-                                    endContent={
-                                        <button className="focus:outline-none" type="button" onClick={toggleVisibility}>
-                                            {isVisible ? (
-                                                <FontAwesomeIcon icon={faEyeSlash} />
-                                            ) : (
-                                                <FontAwesomeIcon icon={faEye} />
-                                            )}
-                                        </button>
-                                    }
-                                    type={isVisible ? "text" : "password"}
-                                    isRequired
-                                />
-                            </div>
 
                             {IsLoading ?
                                 <div className='text-center'>
                                     <Spinner color="success" size="lg" />
                                 </div>
                                 :
-                                <button type="submit" className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Sign in</button>
+                                <>
+                                    <div>
+                                        <label htmlFor="condominium" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Condominium</label>
+
+                                        <Select
+                                            isRequired
+                                            id='condominium'
+                                            aria-label='condominium'
+                                            placeholder="Select an condominium"
+                                            variant='faded'
+                                            className='focus:ring-primary-600 focus:border-primary-600'
+                                            onChange={(e) => {
+                                                setCondominium(e.target.value)
+                                                setError(null)
+                                            }}
+                                        >
+                                            {getCondominiums &&
+                                                getCondominiums.map((value) => {
+                                                    return (
+                                                        <SelectItem key={`${value.id} - ${value.name}`} textValue={value.name}>
+                                                            {value.name}
+                                                        </SelectItem>
+                                                    )
+                                                })
+                                            }
+                                        </Select>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="user" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User</label>
+
+                                        <Input
+                                            type="text"
+                                            autoComplete="off"
+                                            id='user'
+                                            placeholder='User'
+                                            value={username}
+                                            onValueChange={setUsername}
+                                            onClear={() => console.log("input cleared")}
+                                            isRequired
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
+
+                                        <Input
+                                            id='password'
+                                            autoComplete="off"
+                                            placeholder='Password'
+                                            value={password}
+                                            onValueChange={setPassword}
+                                            endContent={
+                                                <button className="focus:outline-none" type="button" onClick={toggleVisibility}>
+                                                    {isVisible ? (
+                                                        <FontAwesomeIcon icon={faEyeSlash} />
+                                                    ) : (
+                                                        <FontAwesomeIcon icon={faEye} />
+                                                    )}
+                                                </button>
+                                            }
+                                            type={isVisible ? "text" : "password"}
+                                            isRequired
+                                        />
+                                    </div>
+
+                                    <button type="submit" className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Sign in</button>
+                                </>
                             }
 
                             {error &&
