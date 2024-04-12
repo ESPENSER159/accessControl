@@ -71,6 +71,11 @@ export default function NavBar() {
             Users
           </Link>
         </NavbarItem>
+        <NavbarItem>
+          <Link color="foreground" href="/condominiums">
+            Condominiums
+          </Link>
+        </NavbarItem>
       </NavbarContent>
 
       <NavbarContent as="div" justify="end">
