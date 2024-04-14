@@ -1,5 +1,5 @@
 "use client"
-import React from "react"
+import React, { useState } from "react"
 import {
   Table,
   TableHeader,
@@ -44,6 +44,8 @@ const Residents = () => {
     direction: "ascending",
   })
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const [sizeModal, setSizeModal] = React.useState('5xl')
+  const [styleModal, setStyleModal] = React.useState('h-5/6 overflow-y-auto')
   const [data, setData] = React.useState([])
   const [typeModal, setTypeModal] = React.useState()
 
@@ -51,8 +53,12 @@ const Residents = () => {
   const [reload, setReload] = React.useState(false)
 
   const handleOpenModal = React.useCallback((type, info) => {
-    setData(info && { id: info[0], name: info[1], address: info[2] })
+    setData(info && { id: info[0], firstName: info[1], lastName: info[2], condominium: info[3], address: info[4], phone1: info[5], phone2: info[6], phone3: info[7], phone4: info[8], phone5: info[9], family: info[10], authorized: info[11] })
     setTypeModal(type)
+
+    type === 'delete' ? setSizeModal('md') : setSizeModal('5xl')
+    type === 'delete' ? setStyleModal('') : setStyleModal('h-5/6 overflow-y-auto')
+
     onOpen()
   }, [onOpen])
 
@@ -60,6 +66,7 @@ const Residents = () => {
   const getInfoForTable = async () => {
     await axios.get('/api/residents')
       .then(function (response) {
+        console.log(response.data.info)
         setUsers(response.data.info)
       })
       .catch(function (error) {
@@ -73,6 +80,7 @@ const Residents = () => {
   React.useEffect(() => {
     setIsLoading(true)
     getInfoForTable()
+    // onClose()
     typeModal === 'delete' && setPage(1)
   }, [reload, typeModal])
 
@@ -135,14 +143,14 @@ const Residents = () => {
           <div className="relative flex items-center gap-5">
             <Tooltip content="Edit user">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                onClick={() => handleOpenModal('edit', [user.id, user.name, user.address])}
+                onClick={() => handleOpenModal('edit', [user.id, user.first_name, user.last_name, user.condominium, user.address, user.phone1, user.phone2, user.phone3, user.phone4, user.phone5, user.family, user.authorized])}
               >
                 <FontAwesomeIcon icon={faPen} size="sm" />
               </span>
             </Tooltip>
             <Tooltip color="danger" content="Delete user">
               <span className="text-lg text-danger cursor-pointer active:opacity-50"
-                onClick={() => handleOpenModal('delete', [user.id, user.name, user.address])}
+                onClick={() => handleOpenModal('delete', [user.id, user.first_name, user.last_name, user.condominium, user.address])}
               >
                 <FontAwesomeIcon icon={faTrashCan} size="sm" />
               </span>
@@ -309,7 +317,7 @@ const Residents = () => {
           </div>
       }
 
-      <Modal backdrop='blur' size='5xl' className="h-5/6 overflow-y-auto" isOpen={isOpen} onClose={onClose} hideCloseButton={isLoading} isDismissable={false}>
+      <Modal backdrop='blur' size={sizeModal} className={styleModal} isOpen={isOpen} onClose={onClose} hideCloseButton={typeModal === 'delete' ? true : false} isDismissable={false}>
         <ModalContent>
           {(onClose) => (
             typeModal === 'delete' && <ModalDelete data={data} onClose={onClose} setReload={setReload} />

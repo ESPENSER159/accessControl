@@ -17,10 +17,8 @@ export default function ModalDelete({ data, onClose, setReload }) {
         setIsLoading(true)
         setError()
 
-        await axios.post('/api/condominiums/delete', {
-            id: data.id,
-            name: data.name,
-            address: data.address
+        await axios.post('/api/residents/delete', {
+            id: data.id
         }).then(function (response) {
             const res = response.data
 
@@ -39,7 +37,7 @@ export default function ModalDelete({ data, onClose, setReload }) {
 
     return (
         <>
-            <ModalHeader className="flex flex-col gap-1">Delete Condominium</ModalHeader>
+            <ModalHeader className="flex flex-col gap-1">Delete Resident</ModalHeader>
             <ModalBody>
                 <p>
                     Are you sure to delete?
@@ -54,9 +52,16 @@ export default function ModalDelete({ data, onClose, setReload }) {
                     <br />
                     <div>
                         <p className="font-bold">
-                            CONDOMINIUM NAME:
+                            RESIDENT NAME:
                         </p>
-                        {data.name}
+                        {data.firstName} {data.lastName}
+                    </div>
+                    <br />
+                    <div>
+                        <p className="font-bold">
+                            CONDOMINIUM:
+                        </p>
+                        {data.condominium}
                     </div>
                     <br />
                     <div>
@@ -66,6 +71,9 @@ export default function ModalDelete({ data, onClose, setReload }) {
                         {data.address}
                     </div>
                 </div>
+                <p className="text-sm">
+                    The <span className="text-primary">family</span> and <span className="text-primary">authorized</span> persons associated with the resident will be eliminated
+                </p>
 
                 {error &&
                     <Chip className='min-w-full h-auto mt-4 py-2 rounded-md text-wrap' color="danger" variant="bordered">

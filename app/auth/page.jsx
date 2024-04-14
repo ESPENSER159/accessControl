@@ -44,7 +44,7 @@ export default function Login() {
             localStorage.setItem('idLocation', dataCondominium[0])
             localStorage.setItem('location', dataCondominium[1])
 
-            router.push('/registerAccess')
+            router.push('/users')
         }
 
         setIsLoading(false)
