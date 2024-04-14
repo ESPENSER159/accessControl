@@ -37,8 +37,6 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
     const [family, setFamily] = useState(data ? data.family : [])
     const [authorized, setAuthorized] = useState(data ? data.authorized : [])
 
-    // console.log(data)
-
     const handleSubmit = async (e) => {
         e.preventDefault()
         setIsLoading(true)

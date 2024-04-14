@@ -24,7 +24,7 @@ import axios from 'axios'
 const columns = [
   { name: "ID", uid: "id", sortable: true },
   { name: "RESIDENT NAME", uid: "first_name", sortable: true },
-  { name: "CONDOMINIUM", uid: "condominium", sortable: true },
+  { name: "CONDOMINIUM", uid: "condominium_name", sortable: true },
   { name: "ADDRESS", uid: "address", sortable: true },
   { name: "PHONE", uid: "phone1", sortable: true },
   { name: "PHONE 2", uid: "phone2", sortable: true },
@@ -66,7 +66,6 @@ const Residents = () => {
   const getInfoForTable = async () => {
     await axios.get('/api/residents')
       .then(function (response) {
-        console.log(response.data.info)
         setUsers(response.data.info)
       })
       .catch(function (error) {

@@ -5,7 +5,11 @@ import { getCurrentDate } from '../../libs/getCurrentDate'
 export async function GET() {
     try {
         // Get all users
-        const rows: any = await conn.query('SELECT id, first_name, last_name, phone1, phone2, phone3, phone4, phone5, condominium, address FROM residents')
+        // SELECT users.id, users.user, users.type, condominiums.id AS condominiumID, condominiums.name AS condominium FROM users INNER JOIN condominiums ON users.condominium = condominiums.id
+
+        // const rows: any = await conn.query('SELECT id, first_name, last_name, phone1, phone2, phone3, phone4, phone5, condominium, address FROM residents')
+
+        const rows: any = await conn.query('SELECT residents.id, residents.first_name, residents.last_name, residents.phone1, residents.phone2, residents.phone3, residents.phone4, residents.phone5, residents.condominium, residents.address, condominiums.id AS condominiumID, condominiums.name AS condominium_name FROM residents INNER JOIN condominiums ON residents.condominium = condominiums.id')
         const getInfo = rows
 
         let family: any = []
