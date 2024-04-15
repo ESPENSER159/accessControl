@@ -5,6 +5,7 @@ export const config = {
         "/users/:path*",
         "/residents/:path*",
         "/condominiums/:path*",
+        "/accessControl/:path*",
         "/api/((?!condominiums).*)"
     ]
 }

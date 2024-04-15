@@ -71,6 +71,11 @@ export default function NavBar() {
             Residents
           </Link>
         </NavbarItem>
+        <NavbarItem>
+          <Link color="foreground" href="/accessControl">
+            Access Control
+          </Link>
+        </NavbarItem>
       </NavbarContent>
 
       <NavbarContent as="div" justify="end">
@@ -129,6 +134,15 @@ export default function NavBar() {
             size="lg"
           >
             Residents
+          </Link>
+        </NavbarMenuItem>
+        <NavbarMenuItem>
+          <Link
+            className="w-full"
+            href="/accessControl"
+            size="lg"
+          >
+            Access Control
           </Link>
         </NavbarMenuItem>
       </NavbarMenu>
