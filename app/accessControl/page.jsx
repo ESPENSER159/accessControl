@@ -18,12 +18,11 @@ import {
   CardHeader,
   CardBody,
   Textarea,
-  Switch
+  Switch,
+  Chip
 } from "@nextui-org/react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPen, faTrashCan, faUnlock, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
-import ModalDelete from "./modalDelete"
-import ModalEdit from "./modalEdit"
 import axios from 'axios'
 import TableAuthorized from './tableAuthorized'
 
@@ -40,31 +39,33 @@ const columns = [
 ]
 
 const AccessControl = () => {
-  const [filterValue, setFilterValue] = React.useState("")
-  const [selectedKeys, setSelectedKeys] = React.useState(new Set([]))
-  const [rowsPerPage, setRowsPerPage] = React.useState(5)
-  const [isLoading, setIsLoading] = React.useState(false)
-  const [sortDescriptor, setSortDescriptor] = React.useState({
+  const [filterValue, setFilterValue] = useState("")
+  const [selectedKeys, setSelectedKeys] = useState(new Set([]))
+  const [rowsPerPage, setRowsPerPage] = useState(5)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingBtn, setIsLoadingBtn] = useState(false)
+  const [error, setError] = useState(null)
+  const [sortDescriptor, setSortDescriptor] = useState({
     column: "age",
     direction: "ascending",
   })
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [sizeModal, setSizeModal] = React.useState('5xl')
-  const [styleModal, setStyleModal] = React.useState('h-5/6 overflow-y-auto')
-  const [data, setData] = React.useState([])
-  const [typeModal, setTypeModal] = React.useState()
-
-  const [users, setUsers] = React.useState([])
-  const [reload, setReload] = React.useState(false)
-
-  const [authorized, setAuthorized] = React.useState([])
-  const [idAuthorized, setIdAuthorized] = React.useState()
-
-  const [showAuthorized, setShowAuthorized] = React.useState(false)
-
-  const [IsDelivery, setIsDelivery] = useState(false)
-
-  const [printTicket, setPrintTicket] = useState(true)
+  const [sizeModal, setSizeModal] = useState('5xl')
+  const [styleModal, setStyleModal] = useState('h-5/6 overflow-y-auto')
+  const [data, setData] = useState([])
+  const [typeModal, setTypeModal] = useState()
+  const [users, setUsers] = useState([])
+  const [reload, setReload] = useState(false)
+  const [authorized, setAuthorized] = useState([])
+  const [idAuthorized, setIdAuthorized] = useState()
+  const [showAuthorized, setShowAuthorized] = useState(false)
+  const [printTicket, setPrintTicket] = useState(false)
+  const [guestInfo, setGuestInfo] = useState(
+    {
+      delivery: false
+    }
+  )
+  // const [IsDelivery, setIsDelivery] = useState(false)
 
   const handleOpenModal = React.useCallback((type, info) => {
     setData(info && { id: info[0], firstName: info[1], lastName: info[2], condominium: info[3], address: info[4], phone1: info[5], phone2: info[6], phone3: info[7], phone4: info[8], phone5: info[9], family: info[10], authorized: info[11] })
@@ -85,10 +86,10 @@ const AccessControl = () => {
       })
       .catch(function (error) {
         console.log(error)
+        setError(error)
       })
 
     setIsLoading(false)
-    setReload(false)
   }
 
   React.useEffect(() => {
@@ -277,198 +278,202 @@ const AccessControl = () => {
   }, [page, pages, onNextPage, onPreviousPage])
 
 
-  const authorizedAccess = async () => {
+  const authorizedAccess = async (e) => {
+    e.preventDefault()
+    setIsLoadingBtn(true)
 
-    console.log(`Guest Register Access`)
+    let access = users.filter(au => au.id === parseInt(idAuthorized))
 
-    // await axios.post('/api/accessControl/authorizedAccess', {
-    //   info: access[0]
-    // }).then(function (response) {
-    //   const res = response.data
+    await axios.post('/api/accessControl/guestAccess', {
+      infoResident: access[0],
+      infoGuest: guestInfo
+    }).then(function (response) {
+      const res = response.data
 
-    //   if (res.status === 200) {
-    //     console.log(`log created`)
+      if (res.status === 200) {
+        console.log(`log created`)
+        setReload(true)
+      } else {
+        console.log(res.message)
+        setError(res.message)
+      }
+    }).catch(function (error) {
+      console.log(error)
+      setError(error)
+    })
 
-    //   } else {
-    //     console.log(res.message)
-    //   }
-    // }).catch(function (error) {
-    //   console.log(error)
-    // })
-
+    setGuestInfo({ delivery: false })
+    setIsLoadingBtn(false)
   }
 
   return (
-    <main className="my-6">
-      {/* <div className="gap-3 w-full flex justify-center mb-6">
-        <Button color='primary' endContent={<FontAwesomeIcon icon={faPlus} size="lg"
-        />}
-          onClick={() => handleOpenModal('create')}
-        >
-          Add New
-        </Button>
-      </div> */}
-
+    <main className="my-6 lg:mx-20 md:mx-20">
       {
         isLoading ?
           <div className='flex justify-center items-center flex-col'>
             <Spinner color="primary" size="lg" />
           </div>
           :
-          <div className='lg:mx-20 md:mx-20'>
-            <Table
-              aria-label="Table Access Control"
-              isHeaderSticky
-              bottomContent={bottomContent}
-              bottomContentPlacement="outside"
-              classNames={{
-                wrapper: "max-h-[382px]",
-              }}
-              color="primary"
-              selectionMode="single"
-              // selectionBehavior="replace"
-              // selectedKeys={selectedKeys}
-              // onRowAction={(key) => {
-              //   console.log(key)
-              // }}
-              onSelectionChange={(key) => {
+          <Table
+            aria-label="Table Access Control"
+            isHeaderSticky
+            bottomContent={bottomContent}
+            bottomContentPlacement="outside"
+            classNames={{
+              wrapper: "max-h-[382px]",
+            }}
+            color="primary"
+            selectionMode="single"
+            // selectionBehavior="replace"
+            // selectedKeys={selectedKeys}
+            // onRowAction={(key) => {
+            //   console.log(key)
+            // }}
+            onSelectionChange={(key) => {
 
-                const setIter = key.keys()
-                const getKey = setIter.next().value
+              const setIter = key.keys()
+              const getKey = setIter.next().value
 
-                if (getKey) {
-                  setShowAuthorized(true)
-                  setIdAuthorized(getKey)
+              if (getKey) {
+                setShowAuthorized(true)
+                setIdAuthorized(getKey)
 
-                } else {
-                  setShowAuthorized(false)
-                }
+              } else {
+                setShowAuthorized(false)
+              }
 
-              }}
-              // sortDescriptor={sortDescriptor}
-              topContent={topContent}
-              topContentPlacement="outside"
-            // onSelectionChange={setSelectedKeys}
-            // onSortChange={setSortDescriptor}
-            >
-              <TableHeader columns={columns}>
-                {(column) => (
-                  <TableColumn
-                    key={column.uid}
-                    align={column.uid === "actions" ? "center" : "start"}
-                    allowsSorting={column.sortable}
-                  >
-                    {column.name}
-                  </TableColumn>
-                )}
-              </TableHeader>
-              <TableBody emptyContent={"No info found"} items={sortedItems}>
-                {(item) => (
-                  <TableRow key={item.id}>
-                    {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-
-          </div>
+            }}
+            // sortDescriptor={sortDescriptor}
+            topContent={topContent}
+            topContentPlacement="outside"
+          // onSelectionChange={setSelectedKeys}
+          // onSortChange={setSortDescriptor}
+          >
+            <TableHeader columns={columns}>
+              {(column) => (
+                <TableColumn
+                  key={column.uid}
+                  align={column.uid === "actions" ? "center" : "start"}
+                  allowsSorting={column.sortable}
+                >
+                  {column.name}
+                </TableColumn>
+              )}
+            </TableHeader>
+            <TableBody emptyContent={"No info found"} items={sortedItems}>
+              {(item) => (
+                <TableRow key={item.id}>
+                  {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
       }
 
       {showAuthorized &&
-        <TableAuthorized id={idAuthorized} setReload={setReload} />
-      }
+        <>
+          <TableAuthorized id={idAuthorized} setReload={setReload} setError={setError} />
 
-      <form className="w-full space-y-4 md:space-y-6" onSubmit={authorizedAccess} autoComplete="off" >
-        <Card className='mx-4 lg:mx-20 md:mx-20 border-solid p-4 my-8'>
-          <CardHeader className="flex gap-3">
-            <div className="flex flex-col">
-              <p className="text-md font-bold">Guest Information</p>
+          {error &&
+            <Chip className='min-w-full h-auto mt-4 py-2 rounded-md text-wrap' color="danger" variant="bordered">
+              {error}
+            </Chip>
+          }
+
+          <form className="w-full space-y-4 md:space-y-6" onSubmit={authorizedAccess} autoComplete="off" >
+            <Card className='border-solid p-4 my-8'>
+              <CardHeader className="flex gap-3">
+                <div className="flex flex-col">
+                  <p className="text-md font-bold">Guest Information</p>
+                </div>
+              </CardHeader>
+              <CardBody>
+                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 md:gap-4">
+                  <div className="mx-2 mb-4">
+                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-900 dark:text-white">Guest Name</label>
+
+                    <Input
+                      type="text"
+                      autoComplete="off"
+                      id='firstName'
+                      placeholder='First Name'
+                      value={guestInfo.guestName}
+                      onValueChange={(e) => setGuestInfo({ ...guestInfo, guestName: e })}
+                      onClear={() => console.log("input cleared")}
+                      isRequired
+                    />
+                  </div>
+                  <div className="mx-2 mb-4">
+                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-900 dark:text-white">Guest Drv.Lic.Nro</label>
+
+                    <Input
+                      id='lastName'
+                      type="text"
+                      autoComplete="off"
+                      placeholder='Last Name'
+                      value={guestInfo.licenseNum}
+                      onValueChange={(e) => setGuestInfo({ ...guestInfo, licenseNum: e })}
+                      onClear={() => console.log("input cleared")}
+                      isRequired
+                    />
+                  </div>
+                  <div className="mx-2 mb-4">
+                    <label htmlFor="address" className="block text-sm font-medium text-gray-900 dark:text-white">Card Tad No.</label>
+
+                    <Input
+                      id='address'
+                      type="text"
+                      autoComplete="off"
+                      placeholder='Address'
+                      value={guestInfo.cardNum}
+                      onValueChange={(e) => setGuestInfo({ ...guestInfo, cardNum: e })}
+                      onClear={() => console.log("input cleared")}
+                      isRequired
+                    />
+                  </div>
+                  <div className="my-6 flex justify-center">
+                    <Switch color='primary'
+                      isSelected={guestInfo.delivery}
+                      onValueChange={(e) => setGuestInfo({ ...guestInfo, delivery: e })}
+                    >
+                      Delivery
+                    </Switch>
+                  </div>
+                  <div className="mx-2 mb-4 col-span-2">
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-900 dark:text-white">Memo</label>
+                    <Textarea
+                      labelPlacement="outside"
+                      placeholder="Enter memo"
+                      className="max-w-md"
+                      value={guestInfo.memo}
+                      onValueChange={(e) => setGuestInfo({ ...guestInfo, memo: e })}
+                    />
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+
+            <div className="my-6 flex justify-center">
+              <Switch color='primary'
+                isSelected={printTicket}
+                onValueChange={setPrintTicket}
+              >
+                Print parking permit
+              </Switch>
             </div>
-          </CardHeader>
-          <CardBody>
-            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 md:gap-4">
-              <div className="mx-2 mb-4">
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-900 dark:text-white">Guest Name</label>
 
-                <Input
-                  type="text"
-                  autoComplete="off"
-                  id='firstName'
-                  placeholder='First Name'
-                  value={''}
-                  // onValueChange={setFirstName}
-                  onClear={() => console.log("input cleared")}
-                  isRequired
-                />
-              </div>
-              <div className="mx-2 mb-4">
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-900 dark:text-white">Guest Drv.Lic.Nro</label>
-
-                <Input
-                  id='lastName'
-                  type="text"
-                  autoComplete="off"
-                  placeholder='Last Name'
-                  // value={lastName ?? ''}
-                  // onValueChange={setLastName}
-                  onClear={() => console.log("input cleared")}
-                  isRequired
-                />
-              </div>
-              <div className="mx-2 mb-4">
-                <label htmlFor="address" className="block text-sm font-medium text-gray-900 dark:text-white">Card Tad No.</label>
-
-                <Input
-                  id='address'
-                  type="text"
-                  autoComplete="off"
-                  placeholder='Address'
-                  // value={address ?? ''}
-                  // onValueChange={setAddress}
-                  onClear={() => console.log("input cleared")}
-                  isRequired
-                />
-              </div>
-              <div className="my-6 flex justify-center">
-                <Switch color='primary'
-                  isSelected={IsDelivery}
-                  onValueChange={setIsDelivery}
+            <div className="flex justify-center">
+              <div className="gap-3 w-full flex justify-center my-6">
+                <Button type="submit" color='primary' isLoading={isLoadingBtn} endContent={<FontAwesomeIcon icon={faUnlock} size="lg"
+                />}
                 >
-                  Delivery
-                </Switch>
-              </div>
-              <div className="mx-2 mb-4 col-span-2">
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-900 dark:text-white">Memo</label>
-                <Textarea
-                  // isRequired
-                  labelPlacement="outside"
-                  placeholder="Enter memo"
-                  className="max-w-md"
-                />
+                  Guest Register Access
+                </Button>
               </div>
             </div>
-          </CardBody>
-        </Card>
-
-        <div className="my-6 flex justify-center">
-          <Switch color='primary'
-            isSelected={printTicket}
-            onValueChange={setPrintTicket}
-          >
-            No print parking permit
-          </Switch>
-        </div>
-
-        <div className="flex justify-center">
-          <div className="gap-3 w-full flex justify-center my-6">
-            <Button type="submit" color='primary' endContent={<FontAwesomeIcon icon={faUnlock} size="lg"
-            />}
-            >
-              Guest Register Access
-            </Button>
-          </div>
-        </div>
-      </form>
+          </form>
+        </>
+      }
 
     </main>
   )

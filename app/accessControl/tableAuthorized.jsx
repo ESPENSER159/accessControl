@@ -19,8 +19,6 @@ import {
 } from "@nextui-org/react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUnlock, faPeopleRoof, faPeopleGroup, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
-import ModalDelete from "./modalDelete"
-import ModalEdit from "./modalEdit"
 import axios from 'axios'
 
 const columns = [
@@ -35,11 +33,12 @@ const columns = [
     { name: "PHONE 5", uid: "phone5", sortable: true }
 ]
 
-const TableAuthorized = ({ id, setReload }) => {
+const TableAuthorized = ({ id, setReload, setError }) => {
     const [filterValue, setFilterValue] = React.useState("")
     const [selectedKeys, setSelectedKeys] = React.useState(new Set([]))
     const [rowsPerPage, setRowsPerPage] = React.useState(5)
     const [isLoading, setIsLoading] = React.useState(false)
+    const [isLoadingBtn, setIsLoadingBtn] = useState(false)
     const [sortDescriptor, setSortDescriptor] = React.useState({
         column: "age",
         direction: "ascending",
@@ -76,14 +75,15 @@ const TableAuthorized = ({ id, setReload }) => {
             const res = response.data
 
             if (res.status === 200) {
-
                 setUsers(res.info)
 
             } else {
                 console.log(res.message)
+                setError(res.message)
             }
         }).catch(function (error) {
             console.log(error)
+            setError(error)
         })
 
         setIsLoading(false)
@@ -265,6 +265,8 @@ const TableAuthorized = ({ id, setReload }) => {
 
 
     const authorizedAccess = async () => {
+        setIsLoadingBtn(true)
+
         let access = users.filter(au => au.id === parseInt(idAuthorized))
 
         await axios.post('/api/accessControl/authorizedAccess', {
@@ -274,17 +276,18 @@ const TableAuthorized = ({ id, setReload }) => {
 
             if (res.status === 200) {
                 console.log(`log created`)
-
+                setReload(true)
             } else {
                 console.log(res.message)
+                setError(res.message)
             }
         }).catch(function (error) {
             console.log(error)
+            setError(error)
         })
 
         setShowAuthorizedBtn(false)
-        setSelected([...selected, idAuthorized])
-        setReload(true)
+        setIsLoadingBtn(false)
     }
 
 
@@ -296,14 +299,12 @@ const TableAuthorized = ({ id, setReload }) => {
                         <Spinner color="primary" size="lg" />
                     </div>
                     :
-                    <div className='lg:mx-20 md:mx-20'>
-
+                    <div>
                         <div className="text-center text-xl">
                             <p className="font-bold">AUTHORIZED</p>
                         </div>
 
                         <Table
-                            disabledKeys={selected}
                             aria-label="Table Access Control"
                             isHeaderSticky
                             bottomContent={bottomContent}
@@ -357,7 +358,7 @@ const TableAuthorized = ({ id, setReload }) => {
 
             {showAuthorizedBtn &&
                 <div className="gap-3 w-full flex justify-center my-6">
-                    <Button color='primary' endContent={<FontAwesomeIcon icon={faUnlock} size="lg"
+                    <Button color='primary' isLoading={isLoadingBtn} endContent={<FontAwesomeIcon icon={faUnlock} size="lg"
                     />}
                         onPress={authorizedAccess}
                     >
