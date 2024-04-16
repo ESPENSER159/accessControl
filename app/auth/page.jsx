@@ -30,9 +30,6 @@ export default function Login() {
 
         let dataCondominium = condominium.replaceAll(' ', '').split('-')
 
-        console.log(condominium)
-        console.log(dataCondominium[0])
-
         const res = await signIn('credentials', {
             email: username,
             password: password,
@@ -57,7 +54,7 @@ export default function Login() {
         router.refresh()
     }, [IsLoading, router])
 
-    const getUsers = async () => {
+    const getCondoms = async () => {
         await axios.get('/api/condominiums')
             .then(function (response) {
                 setCondominiums(response.data.info)
@@ -71,7 +68,7 @@ export default function Login() {
 
     useEffect(() => {
         setIsLoading(true)
-        getUsers()
+        getCondoms()
     }, [])
 
     return (
