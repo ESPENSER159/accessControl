@@ -254,6 +254,11 @@ const Condominiums = () => {
 
   return (
     <main className="mt-6">
+
+      <div className="text-center my-6">
+        <h1 class="inline-block text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight dark:text-slate-200">Condominiums</h1>
+      </div>
+
       <div className="gap-3 w-full flex justify-center mb-6">
         <Button color='primary' endContent={<FontAwesomeIcon icon={faPlus} size="lg"
         />}
