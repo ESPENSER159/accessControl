@@ -320,6 +320,11 @@ const AccessControl = () => {
 
   return (
     <main className="my-6 lg:mx-20 md:mx-20">
+
+      <div className="text-center my-6">
+        <h1 class="inline-block text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight dark:text-slate-200">Access Control</h1>
+      </div>
+
       {
         isLoading ?
           <div className='flex justify-center items-center flex-col'>
