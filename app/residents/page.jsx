@@ -93,8 +93,8 @@ const Residents = () => {
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((user) =>
-        user.user.toLowerCase().includes(filterValue.toLowerCase())
-        || user.condominium.toLowerCase().includes(filterValue.toLowerCase())
+        user.first_name.toLowerCase().includes(filterValue.toLowerCase())
+        || user.condominium_name.toLowerCase().includes(filterValue.toLowerCase())
         || user.address.toLowerCase().includes(filterValue.toLowerCase())
       )
     }
@@ -140,14 +140,14 @@ const Residents = () => {
       case "actions":
         return (
           <div className="relative flex items-center gap-5">
-            <Tooltip content="Edit user">
+            <Tooltip content="Edit">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50"
                 onClick={() => handleOpenModal('edit', [user.id, user.first_name, user.last_name, user.condominium, user.address, user.phone1, user.phone2, user.phone3, user.phone4, user.phone5, user.family, user.authorized])}
               >
                 <FontAwesomeIcon icon={faPen} size="sm" />
               </span>
             </Tooltip>
-            <Tooltip color="danger" content="Delete user">
+            <Tooltip color="danger" content="Delete">
               <span className="text-lg text-danger cursor-pointer active:opacity-50"
                 onClick={() => handleOpenModal('delete', [user.id, user.first_name, user.last_name, user.condominium, user.address])}
               >
