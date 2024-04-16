@@ -85,7 +85,7 @@ const CreateTable = () => {
       filteredUsers = filteredUsers.filter((user) =>
         user.user.toLowerCase().includes(filterValue.toLowerCase())
         || user.condominium.toLowerCase().includes(filterValue.toLowerCase())
-        || user.address.toLowerCase().includes(filterValue.toLowerCase())
+        || user.type.toLowerCase().includes(filterValue.toLowerCase())
       )
     }
 
@@ -148,14 +148,14 @@ const CreateTable = () => {
       case "actions":
         return (
           <div className="relative flex items-center gap-5">
-            <Tooltip content="Edit user">
+            <Tooltip content="Edit">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50"
                 onClick={() => handleOpenModal('edit', [user.id, user.user, user.condominiumID, user.condominium, user.type])}
               >
                 <FontAwesomeIcon icon={faPen} size="sm" />
               </span>
             </Tooltip>
-            <Tooltip color="danger" content="Delete user">
+            <Tooltip color="danger" content="Delete">
               <span className="text-lg text-danger cursor-pointer active:opacity-50"
                 onClick={() => handleOpenModal('delete', [user.id, user.user, user.condominiumID, user.condominium, user.type])}
               >
@@ -207,7 +207,7 @@ const CreateTable = () => {
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Search by name..."
+            placeholder="Search by user..."
             startContent={<FontAwesomeIcon icon={faMagnifyingGlass} size="lg" width={20} />}
             value={filterValue}
             onClear={() => onClear()}
