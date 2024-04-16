@@ -480,7 +480,7 @@ const AccessControl = () => {
             </div>
 
             <div className="flex justify-center">
-              <div className="gap-3 w-full flex justify-center my-6 text-default-600">
+              <div className="gap-3 w-full flex justify-center my-6">
                 <Button type="submit" color='primary' isLoading={isLoadingBtn} endContent={<FontAwesomeIcon icon={faUnlock} size="lg"
                 />}
                 >
