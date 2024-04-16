@@ -320,6 +320,11 @@ const AccessControl = () => {
 
   return (
     <main className="my-6 lg:mx-20 md:mx-20">
+
+      <div className="text-center my-6">
+        <h1 class="inline-block text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight dark:text-slate-200">Access Control</h1>
+      </div>
+
       {
         isLoading ?
           <div className='flex justify-center items-center flex-col'>
@@ -402,13 +407,13 @@ const AccessControl = () => {
               <CardBody>
                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 md:gap-4">
                   <div className="mx-2 mb-4">
-                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-900 dark:text-white">Guest Name</label>
+                    <label htmlFor="guestName" className="block text-sm font-medium text-gray-900 dark:text-white">Guest Name</label>
 
                     <Input
                       type="text"
                       autoComplete="off"
-                      id='firstName'
-                      placeholder='First Name'
+                      id='guestName'
+                      placeholder='Guest Name'
                       value={guestInfo.guestName}
                       onValueChange={(e) => setGuestInfo({ ...guestInfo, guestName: e })}
                       onClear={() => console.log("input cleared")}
@@ -416,13 +421,13 @@ const AccessControl = () => {
                     />
                   </div>
                   <div className="mx-2 mb-4">
-                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-900 dark:text-white">Guest Drv.Lic.Nro</label>
+                    <label htmlFor="licenseNum" className="block text-sm font-medium text-gray-900 dark:text-white">Guest Drv.Lic.Nro</label>
 
                     <Input
-                      id='lastName'
+                      id='licenseNum'
                       type="text"
                       autoComplete="off"
-                      placeholder='Last Name'
+                      placeholder='Guest Drv.Lic.Nro'
                       value={guestInfo.licenseNum}
                       onValueChange={(e) => setGuestInfo({ ...guestInfo, licenseNum: e })}
                       onClear={() => console.log("input cleared")}
@@ -430,13 +435,13 @@ const AccessControl = () => {
                     />
                   </div>
                   <div className="mx-2 mb-4">
-                    <label htmlFor="address" className="block text-sm font-medium text-gray-900 dark:text-white">Card Tad No.</label>
+                    <label htmlFor="cardNum" className="block text-sm font-medium text-gray-900 dark:text-white">Card Tad No.</label>
 
                     <Input
-                      id='address'
+                      id='cardNum'
                       type="text"
                       autoComplete="off"
-                      placeholder='Address'
+                      placeholder='Card Tad No.'
                       value={guestInfo.cardNum}
                       onValueChange={(e) => setGuestInfo({ ...guestInfo, cardNum: e })}
                       onClear={() => console.log("input cleared")}
