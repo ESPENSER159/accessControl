@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "./libs/AuthOption";
 import NavBar from "./components/navbar";
 import { Providers } from "./providers";
+import Head from 'next/head'
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,6 +24,9 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
+      <Head>
+        <meta name="viewport" content="width=device-width" />
+      </Head>
       <body className={inter.className}>
         <Providers>
           {session?.user &&
