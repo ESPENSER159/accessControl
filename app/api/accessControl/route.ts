@@ -1,6 +1,14 @@
 import { NextResponse } from "next/server"
 import { conn } from '../../libs/mysql'
 
+export async function GET(request: Request) {
+    const { id } = await request.json()
+
+    console.log(id)
+
+    return NextResponse.json({ status: 200 })
+}
+
 export async function POST(request: Request) {
     const { id } = await request.json()
 

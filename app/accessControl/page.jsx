@@ -11,7 +11,6 @@ import {
   Button,
   Pagination,
   Tooltip,
-  Modal, ModalContent,
   useDisclosure,
   Spinner,
   Card,
@@ -20,11 +19,13 @@ import {
   Textarea,
   Switch,
   Chip
-} from "@nextui-org/react";
+} from "@nextui-org/react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPen, faTrashCan, faUnlock, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
 import TableAuthorized from './tableAuthorized'
+import AccessTicket from './accessTicket'
+import { getCurrentDate } from '../libs/getCurrentDate'
 
 const columns = [
   // { name: "ID", uid: "id", sortable: true },
@@ -59,13 +60,18 @@ const AccessControl = () => {
   const [authorized, setAuthorized] = useState([])
   const [idAuthorized, setIdAuthorized] = useState()
   const [showAuthorized, setShowAuthorized] = useState(false)
+  const [ticket, setTicket] = useState(false)
   const [printTicket, setPrintTicket] = useState(false)
   const [guestInfo, setGuestInfo] = useState(
     {
       delivery: false
     }
   )
-  // const [IsDelivery, setIsDelivery] = useState(false)
+
+  const [getDate, setDate] = useState('')
+  const [guest, setGuest] = useState('')
+  const [address, setAddress] = useState('')
+  const [accessBy, setAccessBy] = useState('')
 
   const handleOpenModal = React.useCallback((type, info) => {
     setData(info && { id: info[0], firstName: info[1], lastName: info[2], condominium: info[3], address: info[4], phone1: info[5], phone2: info[6], phone3: info[7], phone4: info[8], phone5: info[9], family: info[10], authorized: info[11] })
@@ -79,15 +85,16 @@ const AccessControl = () => {
 
 
   const getInfoForTable = async () => {
-    await axios.get('/api/residents')
-      .then(function (response) {
-        // console.log(response.data.info)
-        setUsers(response.data.info)
-      })
-      .catch(function (error) {
-        console.log(error)
-        setError(error)
-      })
+    await axios.post('/api/accessControl/residents', {
+      idCondominium: localStorage.getItem('idLocation')
+    }).then(function (response) {
+      // console.log(response.data.info)
+      setUsers(response.data.info)
+
+    }).catch(function (error) {
+      console.log(error)
+      setError(error)
+    })
 
     setIsLoading(false)
   }
@@ -98,6 +105,9 @@ const AccessControl = () => {
     getInfoForTable()
     // onClose()
     typeModal === 'delete' && setPage(1)
+    setReload(false)
+
+    setAccessBy(localStorage.getItem('user'))
   }, [reload, typeModal])
 
 
@@ -251,9 +261,6 @@ const AccessControl = () => {
     return (
       <div className="py-0 px-2 flex justify-between items-center">
         <span className="w-[30%] text-small text-default-400">
-          {/* {selectedKeys === "all"
-            ? "All items selected"
-            : `${selectedKeys.size} of ${filteredItems.length} selected`} */}
         </span>
         <Pagination
           isCompact
@@ -280,9 +287,14 @@ const AccessControl = () => {
 
   const authorizedAccess = async (e) => {
     e.preventDefault()
+
     setIsLoadingBtn(true)
 
     let access = users.filter(au => au.id === parseInt(idAuthorized))
+
+    setDate(getCurrentDate())
+    setGuest(guestInfo.guestName)
+    setAddress(access[0].address)
 
     await axios.post('/api/accessControl/guestAccess', {
       infoResident: access[0],
@@ -293,6 +305,7 @@ const AccessControl = () => {
       if (res.status === 200) {
         console.log(`log created`)
         setReload(true)
+        ticket && setPrintTicket(true)
       } else {
         console.log(res.message)
         setError(res.message)
@@ -302,6 +315,7 @@ const AccessControl = () => {
       setError(error)
     })
 
+    setTicket(false)
     setGuestInfo({ delivery: false })
     setIsLoadingBtn(false)
   }
@@ -343,11 +357,11 @@ const AccessControl = () => {
               }
 
             }}
-            // sortDescriptor={sortDescriptor}
+            sortDescriptor={sortDescriptor}
+            onSortChange={setSortDescriptor}
             topContent={topContent}
             topContentPlacement="outside"
-          // onSelectionChange={setSelectedKeys}
-          // onSortChange={setSortDescriptor}
+            // onSelectionChange={setSelectedKeys}
           >
             <TableHeader columns={columns}>
               {(column) => (
@@ -455,8 +469,8 @@ const AccessControl = () => {
 
             <div className="my-6 flex justify-center">
               <Switch color='primary'
-                isSelected={printTicket}
-                onValueChange={setPrintTicket}
+                isSelected={ticket}
+                onValueChange={setTicket}
               >
                 Print parking permit
               </Switch>
@@ -474,6 +488,8 @@ const AccessControl = () => {
           </form>
         </>
       }
+
+      <AccessTicket printTicket={printTicket} setPrintTicket={setPrintTicket} visitor={guest} address={address} by={accessBy} getDate={getDate} />
 
     </main>
   )

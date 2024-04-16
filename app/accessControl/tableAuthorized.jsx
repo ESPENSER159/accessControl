@@ -10,8 +10,6 @@ import {
     Input,
     Button,
     Pagination,
-    Tooltip,
-    Modal, ModalContent,
     useDisclosure,
     Spinner,
     Chip,
@@ -44,18 +42,11 @@ const TableAuthorized = ({ id, setReload, setError }) => {
         direction: "ascending",
     })
     const { isOpen, onOpen, onClose } = useDisclosure()
-    const [sizeModal, setSizeModal] = React.useState('5xl')
-    const [styleModal, setStyleModal] = React.useState('h-5/6 overflow-y-auto')
-    const [data, setData] = React.useState([])
-    const [typeModal, setTypeModal] = React.useState()
 
     const [users, setUsers] = React.useState([])
 
-    const [authorized, setAuthorized] = React.useState([])
-
     const [showAuthorizedBtn, setShowAuthorizedBtn] = React.useState(false)
     const [idAuthorized, setIdAuthorized] = React.useState()
-    const [selected, setSelected] = React.useState([])
 
     const handleOpenModal = React.useCallback((type, info) => {
         setData(info && { id: info[0], firstName: info[1], lastName: info[2], condominium: info[3], address: info[4], phone1: info[5], phone2: info[6], phone3: info[7], phone4: info[8], phone5: info[9], family: info[10], authorized: info[11] })
@@ -314,8 +305,6 @@ const TableAuthorized = ({ id, setReload, setError }) => {
                             }}
                             color="primary"
                             selectionMode="single"
-                            // selectionBehavior="replace"
-                            // selectedKeys={selectedKeys}
                             onSelectionChange={(key) => {
                                 const setIter = key.keys()
                                 const getKey = setIter.next().value
@@ -328,11 +317,11 @@ const TableAuthorized = ({ id, setReload, setError }) => {
                                     setShowAuthorizedBtn(false)
                                 }
                             }}
-                            // sortDescriptor={sortDescriptor}
-                            // topContent={topContent}
+                            sortDescriptor={sortDescriptor}
+                            onSortChange={setSortDescriptor}
                             topContentPlacement="outside"
+                        // topContent={topContent}
                         // onSelectionChange={setSelectedKeys}
-                        // onSortChange={setSortDescriptor}
                         >
                             <TableHeader columns={columns}>
                                 {(column) => (

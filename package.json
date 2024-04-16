@@ -23,6 +23,7 @@
     "next-auth": "^4.24.7",
     "react": "^18",
     "react-dom": "^18",
+    "react-to-print": "^2.15.1",
     "serverless-mysql": "^1.5.5"
   },
   "devDependencies": {
