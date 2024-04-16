@@ -407,13 +407,13 @@ const AccessControl = () => {
               <CardBody>
                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 md:gap-4">
                   <div className="mx-2 mb-4">
-                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-900 dark:text-white">Guest Name</label>
+                    <label htmlFor="guestName" className="block text-sm font-medium text-gray-900 dark:text-white">Guest Name</label>
 
                     <Input
                       type="text"
                       autoComplete="off"
-                      id='firstName'
-                      placeholder='First Name'
+                      id='guestName'
+                      placeholder='Guest Name'
                       value={guestInfo.guestName}
                       onValueChange={(e) => setGuestInfo({ ...guestInfo, guestName: e })}
                       onClear={() => console.log("input cleared")}
@@ -421,13 +421,13 @@ const AccessControl = () => {
                     />
                   </div>
                   <div className="mx-2 mb-4">
-                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-900 dark:text-white">Guest Drv.Lic.Nro</label>
+                    <label htmlFor="licenseNum" className="block text-sm font-medium text-gray-900 dark:text-white">Guest Drv.Lic.Nro</label>
 
                     <Input
-                      id='lastName'
+                      id='licenseNum'
                       type="text"
                       autoComplete="off"
-                      placeholder='Last Name'
+                      placeholder='Guest Drv.Lic.Nro'
                       value={guestInfo.licenseNum}
                       onValueChange={(e) => setGuestInfo({ ...guestInfo, licenseNum: e })}
                       onClear={() => console.log("input cleared")}
@@ -435,13 +435,13 @@ const AccessControl = () => {
                     />
                   </div>
                   <div className="mx-2 mb-4">
-                    <label htmlFor="address" className="block text-sm font-medium text-gray-900 dark:text-white">Card Tad No.</label>
+                    <label htmlFor="cardNum" className="block text-sm font-medium text-gray-900 dark:text-white">Card Tad No.</label>
 
                     <Input
-                      id='address'
+                      id='cardNum'
                       type="text"
                       autoComplete="off"
-                      placeholder='Address'
+                      placeholder='Card Tad No.'
                       value={guestInfo.cardNum}
                       onValueChange={(e) => setGuestInfo({ ...guestInfo, cardNum: e })}
                       onClear={() => console.log("input cleared")}
@@ -480,7 +480,7 @@ const AccessControl = () => {
             </div>
 
             <div className="flex justify-center">
-              <div className="gap-3 w-full flex justify-center my-6">
+              <div className="gap-3 w-full flex justify-center my-6 text-default-600">
                 <Button type="submit" color='primary' isLoading={isLoadingBtn} endContent={<FontAwesomeIcon icon={faUnlock} size="lg"
                 />}
                 >
