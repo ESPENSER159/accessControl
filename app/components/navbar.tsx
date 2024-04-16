@@ -57,16 +57,6 @@ export default function NavBar() {
           <p className="font-bold text-inherit">ACCESS CONTROL</p>
         </NavbarBrand>
         <NavbarItem>
-          <Link href="/registerAccess" aria-current="page">
-            Register Access
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="/createAccess">
-            Create Access
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
           <Link color="foreground" href="/users">
             Users
           </Link>
@@ -74,6 +64,11 @@ export default function NavBar() {
         <NavbarItem>
           <Link color="foreground" href="/condominiums">
             Condominiums
+          </Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Link color="foreground" href="/residents">
+            Residents
           </Link>
         </NavbarItem>
       </NavbarContent>
@@ -112,28 +107,28 @@ export default function NavBar() {
         <NavbarMenuItem>
           <Link
             className="w-full"
-            href="/registerAccess"
-            size="lg"
-          >
-            Register Access
-          </Link>
-        </NavbarMenuItem>
-        <NavbarMenuItem>
-          <Link
-            className="w-full"
-            href="/createAccess"
-            size="lg"
-          >
-            Create Access
-          </Link>
-        </NavbarMenuItem>
-        <NavbarMenuItem>
-          <Link
-            className="w-full"
             href="/users"
             size="lg"
           >
             Users
+          </Link>
+        </NavbarMenuItem>
+        <NavbarMenuItem>
+          <Link
+            className="w-full"
+            href="/condomoniums"
+            size="lg"
+          >
+            Condominiums
+          </Link>
+        </NavbarMenuItem>
+        <NavbarMenuItem>
+          <Link
+            className="w-full"
+            href="/residents"
+            size="lg"
+          >
+            Residents
           </Link>
         </NavbarMenuItem>
       </NavbarMenu>
