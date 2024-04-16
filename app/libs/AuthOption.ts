@@ -15,7 +15,7 @@ export const authOptions = {
             async authorize(credentials: any, req) {
 
                 // Consultar el usuario por email
-                const rows: any = await conn.query('SELECT id, user, password, condominium FROM users WHERE user = ? AND condominium = ?', [credentials.email, credentials.condominium])
+                const rows: any = await conn.query('SELECT id, user, password, type, condominium FROM users WHERE user = ? AND condominium = ?', [credentials.email, credentials.condominium])
                 const getUser: any = rows[0]
 
                 await conn.end()
@@ -28,12 +28,49 @@ export const authOptions = {
 
                 return {
                     id: getUser.id,
-                    user: getUser.user,
+                    name: getUser.user,
+                    type: getUser.type,
                     condominium: getUser.condominium
                 }
             }
         })
     ],
+    callbacks: {
+        async signIn({ user }) {
+
+            // console.log(user)
+
+            return user
+
+            const isAllowedToSignIn = true
+            if (isAllowedToSignIn) {
+                return true
+            } else {
+                // Return false to display a default error message
+                return false
+                // Or you can return a URL to redirect to:
+                // return '/unauthorized'
+            }
+        },
+        // async jwt({ token, account, profile }) {
+        //     // console.log(profile)
+        //     // Persist the OAuth access_token and or the user id to the token right after signin
+        //     if (account) {
+        //         token.accessToken = account.access_token
+        //         token.id = profile.id
+        //     }
+        //     return token
+        // },
+        // async session({ session, token, name }) {
+        //     // Send properties to the client, like an access_token and user id from a provider.
+        //     session.accessToken = token.accessToken
+        //     session.user.id = token.id
+
+        //     // console.log(token)
+
+        //     return session
+        // }
+    },
     pages: {
         signIn: '/auth'
     },
