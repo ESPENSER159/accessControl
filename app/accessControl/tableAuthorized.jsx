@@ -59,7 +59,7 @@ const TableAuthorized = ({ id, setReload, setError }) => {
     }, [onOpen])
 
 
-    const getInfoForTable = async () => {
+    const getInfoForTable = React.useCallback(async () => {
         await axios.post('/api/accessControl', {
             id: id,
         }).then(function (response) {
@@ -78,13 +78,13 @@ const TableAuthorized = ({ id, setReload, setError }) => {
         })
 
         setIsLoading(false)
-    }
+    }, [id, setError])
 
     React.useEffect(() => {
         setShowAuthorizedBtn(false)
         setIsLoading(true)
         getInfoForTable()
-    }, [id])
+    }, [id, getInfoForTable])
 
 
     const [page, setPage] = React.useState(1);
@@ -153,7 +153,7 @@ const TableAuthorized = ({ id, setReload, setError }) => {
             default:
                 return cellValue;
         }
-    }, [handleOpenModal]);
+    }, []);
 
     const onNextPage = React.useCallback(() => {
         if (page < pages) {
@@ -219,10 +219,8 @@ const TableAuthorized = ({ id, setReload, setError }) => {
     }, [
         onClear,
         filterValue,
-        onSearchChange,
-        onRowsPerPageChange,
-        users.length
-    ]);
+        onSearchChange
+    ])
 
     const bottomContent = React.useMemo(() => {
         return (
