@@ -252,10 +252,8 @@ const AccessControl = () => {
   }, [
     onClear,
     filterValue,
-    onSearchChange,
-    onRowsPerPageChange,
-    users.length
-  ]);
+    onSearchChange
+  ])
 
   const bottomContent = React.useMemo(() => {
     return (
@@ -361,7 +359,7 @@ const AccessControl = () => {
             onSortChange={setSortDescriptor}
             topContent={topContent}
             topContentPlacement="outside"
-            // onSelectionChange={setSelectedKeys}
+          // onSelectionChange={setSelectedKeys}
           >
             <TableHeader columns={columns}>
               {(column) => (
