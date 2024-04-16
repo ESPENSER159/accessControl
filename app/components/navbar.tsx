@@ -35,13 +35,12 @@ export default function NavBar() {
         <NavbarBrand>
           <Image
             src="/icons/accessIcon.svg"
-            className="mr-3 h-10 sm:h-12"
+            className="mr-3 max-h-10 min-h-10 h-10"
             alt="Access Icon"
-            style={{ width: "auto", height: "auto" }}
-            width={100}
+            width={70}
             height={24}
           />
-          <p className="font-bold text-inherit">ACCESS CONTROL</p>
+          {/* <p className="font-bold text-inherit">ACCESS CONTROL</p> */}
         </NavbarBrand>
       </NavbarContent>
 
@@ -49,12 +48,12 @@ export default function NavBar() {
         <NavbarBrand>
           <Image
             src="/icons/accessIcon.svg"
-            className="mr-3 h-10 sm:h-12"
+            className="mr-3 max-h-10 min-h-10 h-10"
             alt="Access Icon"
-            width={100}
+            width={70}
             height={24}
           />
-          <p className="font-bold text-inherit">ACCESS CONTROL</p>
+          {/* <p className="font-bold text-inherit">ACCESS CONTROL</p> */}
         </NavbarBrand>
         <NavbarItem>
           <Link color="foreground" href="/users">
@@ -109,38 +108,42 @@ export default function NavBar() {
       </NavbarContent>
 
       <NavbarMenu>
-        <NavbarMenuItem>
+        <NavbarMenuItem className="border-solid border-2 border-default-200 rounded-lg pl-4 py-2">
           <Link
-            className="w-full"
+            className="w-full text-default-500"
             href="/users"
             size="lg"
+            onClick={() => setIsMenuOpen(false)}
           >
             Users
           </Link>
         </NavbarMenuItem>
-        <NavbarMenuItem>
+        <NavbarMenuItem className="border-solid border-2 border-default-200 rounded-lg pl-4 py-2">
           <Link
-            className="w-full"
-            href="/condomoniums"
+            className="w-full text-default-500"
+            href="/condominiums"
             size="lg"
+            onClick={() => setIsMenuOpen(false)}
           >
             Condominiums
           </Link>
         </NavbarMenuItem>
-        <NavbarMenuItem>
+        <NavbarMenuItem className="border-solid border-2 border-default-200 rounded-lg pl-4 py-2">
           <Link
-            className="w-full"
+            className="w-full text-default-500"
             href="/residents"
             size="lg"
+            onClick={() => setIsMenuOpen(false)}
           >
             Residents
           </Link>
         </NavbarMenuItem>
-        <NavbarMenuItem>
+        <NavbarMenuItem className="border-solid border-2 border-default-200 rounded-lg pl-4 py-2">
           <Link
-            className="w-full"
+            className="w-full text-default-500"
             href="/accessControl"
             size="lg"
+            onClick={() => setIsMenuOpen(false)}
           >
             Access Control
           </Link>
