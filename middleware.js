@@ -2,7 +2,10 @@ export { default } from "next-auth/middleware"
 
 export const config = {
     matcher: [
-        "/createAccess",
-        "/registerAccess"
+        "/users/:path*",
+        "/residents/:path*",
+        "/condominiums/:path*",
+        "/accessControl/:path*",
+        "/api/((?!condominiums).*)"
     ]
 }
