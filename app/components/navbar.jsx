@@ -17,7 +17,7 @@ export default function NavBar({ type }) {
     if (getType === 'user') {
       router.push('/accessControl')
     }
-  }, [router])
+  }, [router, getType])
 
   useEffect(() => {
     let getUser = localStorage.getItem('user')
