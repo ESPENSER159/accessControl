@@ -144,7 +144,7 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
 
                     {isLoading ?
                         <div className='text-center'>
-                            <Spinner color="success" size="lg" />
+                            <Spinner color="primary" size="lg" />
                         </div>
                         :
                         <>

@@ -42,13 +42,13 @@ export default function NavBar({ type }) {
       </NavbarContent>
 
       <NavbarContent className="sm:hidden pr-3" justify="center">
-        <NavbarBrand>
+        <NavbarBrand className="max-w-none">
           <Image
-            src="/icons/accessIcon.svg"
-            className="mr-3 max-h-10 min-h-10 h-10"
+            src="/bluelogo.png"
+            // className="mr-3 max-w-40 min-w-40 w-40"
             alt="Access Icon"
-            width={70}
-            height={24}
+            width={200}
+            height={200}
           />
           {/* <p className="font-bold text-inherit">ACCESS CONTROL</p> */}
         </NavbarBrand>
@@ -57,11 +57,11 @@ export default function NavBar({ type }) {
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarBrand>
           <Image
-            src="/icons/accessIcon.svg"
-            className="mr-3 max-h-10 min-h-10 h-10"
+            src="/bluelogo.png"
+            // className="mr-3 max-w-40 min-w-40 w-40"
             alt="Access Icon"
-            width={70}
-            height={24}
+            width={200}
+            height={200}
           />
           {/* <p className="font-bold text-inherit">ACCESS CONTROL</p> */}
         </NavbarBrand>
