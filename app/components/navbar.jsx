@@ -3,15 +3,25 @@ import { signOut } from "next-auth/react"
 import { useEffect, useState } from "react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, Avatar, NavbarMenu, NavbarMenuItem, NavbarMenuToggle, Image, Button } from "@nextui-org/react";
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, Avatar, NavbarMenu, NavbarMenuItem, NavbarMenuToggle, Image } from "@nextui-org/react"
+import { useRouter } from 'next/navigation'
 
-export default function NavBar() {
+export default function NavBar({ type }) {
   const [user, setUser] = useState('')
   const [location, setLocation] = useState('')
+  const [getType, setType] = useState(type)
+
+  const router = useRouter()
 
   useEffect(() => {
-    let getUser: any = localStorage.getItem('user')
-    let getLocation: any = localStorage.getItem('location')
+    if (getType === 'user') {
+      router.push('/accessControl')
+    }
+  }, [router, getType])
+
+  useEffect(() => {
+    let getUser = localStorage.getItem('user')
+    let getLocation = localStorage.getItem('location')
 
     setUser(getUser)
     setLocation(getLocation)
@@ -55,21 +65,29 @@ export default function NavBar() {
           />
           {/* <p className="font-bold text-inherit">ACCESS CONTROL</p> */}
         </NavbarBrand>
-        <NavbarItem>
-          <Link color="foreground" href="/users">
-            Users
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="/condominiums">
-            Condominiums
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="/residents">
-            Residents
-          </Link>
-        </NavbarItem>
+
+        {getType === 'admin' ?
+          <>
+            <NavbarItem>
+              <Link color="foreground" href="/users">
+                Users
+              </Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Link color="foreground" href="/condominiums">
+                Condominiums
+              </Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Link color="foreground" href="/residents">
+                Residents
+              </Link>
+            </NavbarItem>
+          </>
+          :
+          <></>
+        }
+
         <NavbarItem>
           <Link color="foreground" href="/accessControl">
             Access Control
@@ -108,36 +126,44 @@ export default function NavBar() {
       </NavbarContent>
 
       <NavbarMenu>
-        <NavbarMenuItem className="border-solid border-2 border-default-200 rounded-lg pl-4 py-2">
-          <Link
-            className="w-full text-default-500"
-            href="/users"
-            size="lg"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Users
-          </Link>
-        </NavbarMenuItem>
-        <NavbarMenuItem className="border-solid border-2 border-default-200 rounded-lg pl-4 py-2">
-          <Link
-            className="w-full text-default-500"
-            href="/condominiums"
-            size="lg"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Condominiums
-          </Link>
-        </NavbarMenuItem>
-        <NavbarMenuItem className="border-solid border-2 border-default-200 rounded-lg pl-4 py-2">
-          <Link
-            className="w-full text-default-500"
-            href="/residents"
-            size="lg"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Residents
-          </Link>
-        </NavbarMenuItem>
+
+        {getType === 'admin' ?
+          <>
+            <NavbarMenuItem className="border-solid border-2 border-default-200 rounded-lg pl-4 py-2">
+              <Link
+                className="w-full text-default-500"
+                href="/users"
+                size="lg"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Users
+              </Link>
+            </NavbarMenuItem>
+            <NavbarMenuItem className="border-solid border-2 border-default-200 rounded-lg pl-4 py-2">
+              <Link
+                className="w-full text-default-500"
+                href="/condominiums"
+                size="lg"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Condominiums
+              </Link>
+            </NavbarMenuItem>
+            <NavbarMenuItem className="border-solid border-2 border-default-200 rounded-lg pl-4 py-2">
+              <Link
+                className="w-full text-default-500"
+                href="/residents"
+                size="lg"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Residents
+              </Link>
+            </NavbarMenuItem>
+          </>
+          :
+          <></>
+        }
+
         <NavbarMenuItem className="border-solid border-2 border-default-200 rounded-lg pl-4 py-2">
           <Link
             className="w-full text-default-500"
