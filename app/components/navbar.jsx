@@ -103,7 +103,7 @@ export default function NavBar({ type }) {
               as="button"
               className="transition-transform"
               size="sm"
-              src="./icons/iconAccount.png"
+              // src="./icons/iconAccount.png"
             />
           </DropdownTrigger>
           <DropdownMenu aria-label="Profile Actions" variant="flat">
