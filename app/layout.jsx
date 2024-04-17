@@ -15,13 +15,13 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
   const session = await getServerSession(authOptions)
-  const type = ''
+  const type = session?.user.email
 
   return (
     <html lang="en">
-      {/* <Head>
-        <meta name="viewport" content="width=device-width" />
-      </Head> */}
+      <Head>
+        <meta name="viewport" content="width=device-width, user-scalable=no" />
+      </Head>
       <body className={inter.className}>
         <Providers>
           {session?.user &&
