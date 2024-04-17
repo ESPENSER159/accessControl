@@ -12,11 +12,11 @@ export const authOptions = {
                 email: { label: "user", type: "text" },
                 password: { label: "password", type: "password" }
             },
-            async authorize(credentials: any, req) {
+            async authorize(credentials, req) {
 
                 // Consultar el usuario por email
-                const rows: any = await conn.query('SELECT id, user, password, condominium FROM users WHERE user = ? AND condominium = ?', [credentials.email, credentials.condominium])
-                const getUser: any = rows[0]
+                const rows = await conn.query('SELECT id, user, password, type, condominium FROM users WHERE user = ? AND condominium = ?', [credentials.email, credentials.condominium])
+                const getUser = rows[0]
 
                 await conn.end()
 
@@ -28,7 +28,8 @@ export const authOptions = {
 
                 return {
                     id: getUser.id,
-                    user: getUser.user,
+                    name: getUser.user,
+                    email: getUser.type,
                     condominium: getUser.condominium
                 }
             }

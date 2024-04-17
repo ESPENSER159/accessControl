@@ -2,12 +2,11 @@
 import './login.css'
 import { Select, SelectItem, Input, Chip } from "@nextui-org/react"
 import { useEffect, useState } from 'react'
-import { Spinner } from "@nextui-org/react";
+import { Spinner, Image, Button } from "@nextui-org/react";
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
-import Image from "next/image"
 import axios from 'axios'
 
 export default function Login() {
@@ -44,7 +43,7 @@ export default function Login() {
             localStorage.setItem('idLocation', dataCondominium[0])
             localStorage.setItem('location', dataCondominium[1])
 
-            router.push('/users')
+            router.push('/accessControl')
         }
 
         setIsLoading(false)
@@ -74,25 +73,25 @@ export default function Login() {
     return (
         <section>
             <div className="backgroundLogin"></div>
-            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-                <Image
-                    className="w-44 h-44 mr-2"
-                    src="/loginIcon.svg"
-                    alt="Login icon"
-                    width={100}
-                    height={24}
-                    priority
-                />
+            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen lg:py-0">
                 <div className="w-full bg-white rounded-xl shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-                        <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center">
-                            Login
-                        </h1>
+
+                        <div className='flex justify-center mt-0 mb-10'>
+                            <Image
+                                className="w-60 h-auto mr-2"
+                                src="/bluelogo.png"
+                                alt="Login icon"
+                                width={240}
+                                height={240}
+                            />
+                        </div>
+
                         <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit} autoComplete="off" >
 
                             {IsLoading ?
                                 <div className='text-center'>
-                                    <Spinner color="success" size="lg" />
+                                    <Spinner color="primary" size="lg" />
                                 </div>
                                 :
                                 <>
@@ -159,7 +158,7 @@ export default function Login() {
                                         />
                                     </div>
 
-                                    <button type="submit" className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Sign in</button>
+                                    <Button type="submit" color='primary' className="w-full text-white hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:hover:bg-primary-700 dark:focus:ring-primary-800">Sign in</Button>
                                 </>
                             }
 

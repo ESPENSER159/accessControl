@@ -21,6 +21,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/api/login/route.ts", "app/auth/page.tsx", "app/api/auth/[...nextauth]/route.ts", "middleware.ts", "app/users/page.jsx", "app/users/pageBK.jsx", "app/users/createUser/page.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/api/login/route.ts", "app/auth/page.tsx", "app/api/auth/[...nextauth]/route.ts", "middleware.ts", "app/users/page.jsx", "app/users/pageBK.jsx", "app/users/createUser/page.jsx", "app/layout.jsx", "app/layout.jsx", "app/components/navbar.jsx", "app/libs/AuthOption.js"],
   "exclude": ["node_modules"]
 }
