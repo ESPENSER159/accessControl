@@ -296,7 +296,8 @@ const AccessControl = () => {
 
     await axios.post('/api/accessControl/guestAccess', {
       infoResident: access[0],
-      infoGuest: guestInfo
+      infoGuest: guestInfo,
+      accessBy: localStorage.getItem('user')
     }).then(function (response) {
       const res = response.data
 
