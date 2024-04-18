@@ -15,12 +15,12 @@ import {
     Avatar
 } from "@nextui-org/react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPeopleRoof, faPeopleGroup, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import { faPeopleRoof, faPeopleGroup, faMagnifyingGlass, faBox, faPersonShelter } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
 
 const columns = [
     // { name: "ID", uid: "id", sortable: true },
-    { name: "AUTHORIZED NAME", uid: "firstName", sortable: true },
+    { name: "GUEST NAME", uid: "guest_name", sortable: true },
     { name: "TYPE", uid: "type", sortable: true },
     { name: "RESIDENT NAME", uid: "resident_name", sortable: true },
     { name: "RESIDENT PHONE", uid: "phone", sortable: true },
@@ -30,7 +30,7 @@ const columns = [
     { name: "DATE", uid: "date", sortable: true }
 ]
 
-const TableAuthorized = ({ setError }) => {
+const TableGuest = ({ setError }) => {
     const [users, setUsers] = React.useState([])
     const [filterValue, setFilterValue] = React.useState("")
     const [rowsPerPage, setRowsPerPage] = React.useState(5)
@@ -42,10 +42,11 @@ const TableAuthorized = ({ setError }) => {
 
 
     const getInfoForTable = React.useCallback(async () => {
-        await axios.get('/api/incomeRecord/authorized').then(function (response) {
+        await axios.get('/api/incomeRecord/guest').then(function (response) {
             const res = response.data
 
             if (res.status === 200) {
+                console.log(res.info)
                 setUsers(res.info)
 
             } else {
@@ -113,24 +114,24 @@ const TableAuthorized = ({ setError }) => {
                         <p className="text-bold text-small capitalize">{cellValue}</p>
                     </div>
                 )
-            case "firstName":
+            case "guest_name":
                 return (
                     <div className="flex justify-start items-center flex-row">
                         {/* <Avatar
-                            icon={<FontAwesomeIcon icon={user.type === 'family' ? faPeopleRoof : faPeopleGroup} className="text-primary" size="lg" />}
+                            icon={<FontAwesomeIcon icon={user.type === 'delivery' ? faBox : faPersonShelter} className="text-primary" size="lg" />}
                             className="min-w-10"
                         /> */}
-                        <p className="ml-2 text-bold text-small capitalize">{cellValue} {user.lastName}</p>
+                        <p className="ml-2 text-bold text-small capitalize">{cellValue}</p>
                     </div >
                 )
             case "type":
                 return (
                     <div className="flex justify-start items-center flex-row">
                         <Avatar
-                            icon={<FontAwesomeIcon icon={user.type === 'family' ? faPeopleRoof : faPeopleGroup} className="text-primary" size="lg" />}
+                            icon={<FontAwesomeIcon icon={user.type === 'delivery' ? faBox : faPersonShelter} className="text-primary" size="lg" />}
                             className="min-w-10 mr-2"
                         />
-                        <Chip className="capitalize" color={cellValue === 'family' ? "primary" : "warning"} size="sm" variant="flat">
+                        <Chip className="capitalize" color={cellValue === 'delivery' ? "primary" : "warning"} size="sm" variant="flat">
                             {cellValue}
                         </Chip>
                     </div>
@@ -257,7 +258,7 @@ const TableAuthorized = ({ setError }) => {
                     :
                     <div>
                         <div className="text-center text-xl">
-                            <p className="font-bold">AUTHORIZED</p>
+                            <p className="font-bold">GUEST</p>
                         </div>
 
                         <Table
@@ -301,4 +302,4 @@ const TableAuthorized = ({ setError }) => {
     )
 }
 
-export default TableAuthorized
+export default TableGuest
