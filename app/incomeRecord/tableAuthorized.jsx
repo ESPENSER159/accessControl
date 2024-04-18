@@ -75,9 +75,12 @@ const TableAuthorized = ({ setError }) => {
 
         if (hasSearchFilter) {
             filteredUsers = filteredUsers.filter((user) =>
-                user.first_name.toLowerCase().includes(filterValue.toLowerCase())
-                || user.last_name.toLowerCase().includes(filterValue.toLowerCase())
+                user.firstName.toLowerCase().includes(filterValue.toLowerCase())
+                || user.resident_name.toLowerCase().includes(filterValue.toLowerCase())
+                || user.condominium_name.toLowerCase().includes(filterValue.toLowerCase())
                 || user.address.toLowerCase().includes(filterValue.toLowerCase())
+                || user.access_by && user.access_by.toLowerCase().includes(filterValue.toLowerCase())
+                || user.date.toLowerCase().includes(filterValue.toLowerCase())
             )
         }
 
@@ -145,6 +148,10 @@ const TableAuthorized = ({ setError }) => {
                         <p className="ml-2 text-bold text-small capitalize">{cellValue} {user.resident_last_name}</p>
                     </div >
                 )
+            case "date":
+                return (
+                    <p className="ml-2 text-bold text-small capitalize">{cellValue.split('T')[0]} {cellValue.split('T')[1].split('.')[0]}</p>
+                )
             default:
                 return cellValue;
         }
@@ -188,7 +195,7 @@ const TableAuthorized = ({ setError }) => {
                     <Input
                         isClearable
                         className="w-full sm:max-w-[44%]"
-                        placeholder="Search by resident or address..."
+                        placeholder="Search by..."
                         startContent={<FontAwesomeIcon icon={faMagnifyingGlass} size="lg" width={20} />}
                         value={filterValue}
                         onClear={() => onClear()}
@@ -273,8 +280,7 @@ const TableAuthorized = ({ setError }) => {
                             sortDescriptor={sortDescriptor}
                             onSortChange={setSortDescriptor}
                             topContentPlacement="outside"
-                        // topContent={topContent}
-                        // onSelectionChange={setSelectedKeys}
+                            topContent={topContent}
                         >
                             <TableHeader columns={columns}>
                                 {(column) => (

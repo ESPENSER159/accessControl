@@ -46,7 +46,6 @@ const TableGuest = ({ setError }) => {
             const res = response.data
 
             if (res.status === 200) {
-                console.log(res.info)
                 setUsers(res.info)
 
             } else {
@@ -76,9 +75,12 @@ const TableGuest = ({ setError }) => {
 
         if (hasSearchFilter) {
             filteredUsers = filteredUsers.filter((user) =>
-                user.first_name.toLowerCase().includes(filterValue.toLowerCase())
-                || user.last_name.toLowerCase().includes(filterValue.toLowerCase())
+                user.guest_name.toLowerCase().includes(filterValue.toLowerCase())
+                || user.resident_name.toLowerCase().includes(filterValue.toLowerCase())
+                || user.condominium_name.toLowerCase().includes(filterValue.toLowerCase())
                 || user.address.toLowerCase().includes(filterValue.toLowerCase())
+                || user.access_by.toLowerCase().includes(filterValue.toLowerCase())
+                || user.date.toLowerCase().includes(filterValue.toLowerCase())
             )
         }
 
@@ -146,6 +148,10 @@ const TableGuest = ({ setError }) => {
                         <p className="ml-2 text-bold text-small capitalize">{cellValue} {user.resident_last_name}</p>
                     </div >
                 )
+            case "date":
+                return (
+                    <p className="ml-2 text-bold text-small capitalize">{cellValue.split('T')[0]} {cellValue.split('T')[1].split('.')[0]}</p>
+                )
             default:
                 return cellValue;
         }
@@ -189,7 +195,7 @@ const TableGuest = ({ setError }) => {
                     <Input
                         isClearable
                         className="w-full sm:max-w-[44%]"
-                        placeholder="Search by resident or address..."
+                        placeholder="Search..."
                         startContent={<FontAwesomeIcon icon={faMagnifyingGlass} size="lg" width={20} />}
                         value={filterValue}
                         onClear={() => onClear()}
@@ -274,8 +280,7 @@ const TableGuest = ({ setError }) => {
                             sortDescriptor={sortDescriptor}
                             onSortChange={setSortDescriptor}
                             topContentPlacement="outside"
-                        // topContent={topContent}
-                        // onSelectionChange={setSelectedKeys}
+                            topContent={topContent}
                         >
                             <TableHeader columns={columns}>
                                 {(column) => (
