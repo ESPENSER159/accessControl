@@ -83,6 +83,11 @@ export default function NavBar({ type }) {
                 Residents
               </Link>
             </NavbarItem>
+            <NavbarItem>
+              <Link color="foreground" href="/incomeRecord">
+                Income Record
+              </Link>
+            </NavbarItem>
           </>
           :
           <></>
@@ -103,7 +108,7 @@ export default function NavBar({ type }) {
               as="button"
               className="transition-transform"
               size="sm"
-              // src="./icons/iconAccount.png"
+            // src="./icons/iconAccount.png"
             />
           </DropdownTrigger>
           <DropdownMenu aria-label="Profile Actions" variant="flat">
@@ -157,6 +162,16 @@ export default function NavBar({ type }) {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Residents
+              </Link>
+            </NavbarMenuItem>
+            <NavbarMenuItem className="border-solid border-2 border-default-200 rounded-lg pl-4 py-2">
+              <Link
+                className="w-full text-default-500"
+                href="/incomeRecord"
+                size="lg"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Income Record
               </Link>
             </NavbarMenuItem>
           </>
