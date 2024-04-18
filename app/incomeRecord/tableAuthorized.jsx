@@ -63,7 +63,7 @@ const TableAuthorized = ({ setError }) => {
     React.useEffect(() => {
         setIsLoading(true)
         getInfoForTable()
-    }, [])
+    }, [getInfoForTable])
 
 
     const [page, setPage] = React.useState(1);
