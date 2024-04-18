@@ -259,7 +259,8 @@ const TableAuthorized = ({ id, setReload, setError }) => {
         let access = users.filter(au => au.id === parseInt(idAuthorized))
 
         await axios.post('/api/accessControl/authorizedAccess', {
-            info: access[0]
+            info: access[0],
+            accessBy: localStorage.getItem('user')
         }).then(function (response) {
             const res = response.data
 
