@@ -225,7 +225,7 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
                                             />
                                         </div>
                                         <div className="mx-2 mb-4">
-                                            <label htmlFor="phone" className="block text-sm font-medium text-gray-900 dark:text-white">Main phone</label>
+                                            <label htmlFor="phone" className="block text-sm font-medium text-gray-900 dark:text-white">Phone 1</label>
                                             <Input
                                                 id='phone'
                                                 type="number"
@@ -242,7 +242,7 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
                                             <Accordion className="border-none p-0" isCompact>
                                                 <AccordionItem key="alternative_numbers" indicator={<FontAwesomeIcon icon={faPhoneFlip} />} aria-label="Phones" title="Phones">
                                                     <div className="mb-2 mx-2">
-                                                        <label htmlFor="phone2" className="block text-sm font-medium text-gray-900 dark:text-white">Phone Two</label>
+                                                        <label htmlFor="phone2" className="block text-sm font-medium text-gray-900 dark:text-white">Phone 2</label>
                                                         <Input
                                                             id='phone2'
                                                             type="number"
@@ -254,7 +254,7 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
                                                     </div>
 
                                                     <div className="mb-2 mx-2">
-                                                        <label htmlFor="phone3" className="block text-sm font-medium text-gray-900 dark:text-white">Phone Three</label>
+                                                        <label htmlFor="phone3" className="block text-sm font-medium text-gray-900 dark:text-white">Phone 3</label>
                                                         <Input
                                                             id='phone3'
                                                             type="number"
@@ -266,7 +266,7 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
                                                     </div>
 
                                                     <div className="mb-2 mx-2">
-                                                        <label htmlFor="phone4" className="block text-sm font-medium text-gray-900 dark:text-white">Phone Four</label>
+                                                        <label htmlFor="phone4" className="block text-sm font-medium text-gray-900 dark:text-white">Phone 4</label>
                                                         <Input
                                                             id='phone4'
                                                             type="number"
@@ -278,7 +278,7 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
                                                     </div>
 
                                                     <div className="mb-2 mx-2">
-                                                        <label htmlFor="phone5" className="block text-sm font-medium text-gray-900 dark:text-white">Phone Five</label>
+                                                        <label htmlFor="phone5" className="block text-sm font-medium text-gray-900 dark:text-white">Phone 5</label>
                                                         <Input
                                                             id='phone5'
                                                             type="number"
@@ -326,7 +326,7 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
                             Cancel
                         </Button>
                         <Button type="submit" color="primary" variant="ghost" isLoading={isLoading}>
-                            {edit ? 'Edit' : 'Create'}
+                            {edit ? 'Save' : 'Create'}
                         </Button>
                     </ModalFooter>
                 </form>
