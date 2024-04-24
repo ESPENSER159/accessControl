@@ -42,7 +42,7 @@ const TableGuest = ({ setError }) => {
 
 
     const getInfoForTable = React.useCallback(async () => {
-        await axios.get('/api/incomeRecord/guest').then(function (response) {
+        await axios.post('/api/incomeRecord/guest').then(function (response) {
             const res = response.data
 
             if (res.status === 200) {
