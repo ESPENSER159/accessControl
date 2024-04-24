@@ -168,7 +168,7 @@ export default function ModalEditUser({ edit, dataUser, onClose, setReload }) {
                             Cancel
                         </Button>
                         <Button type="submit" color="primary" variant="ghost" isLoading={isLoading}>
-                            {edit ? 'Edit' : 'Create'} User
+                            {edit ? 'Save' : 'Create'} User
                         </Button>
                     </ModalFooter>
                 </form>
