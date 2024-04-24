@@ -25,6 +25,7 @@ const columns = [
   { name: "ID", uid: "id", sortable: true },
   { name: "CONDOMINIUM", uid: "name", sortable: true },
   { name: "ADDRESS", uid: "address", sortable: true },
+  { name: "TEXT TICKET", uid: "text_ticket", sortable: true },
   { name: "ACTIONS", uid: "actions" },
 ]
 
@@ -45,7 +46,7 @@ const Condominiums = () => {
   const [reload, setReload] = React.useState(false)
 
   const handleOpenModal = React.useCallback((type, info) => {
-    setData(info && { id: info[0], name: info[1], address: info[2] })
+    setData(info && { id: info[0], name: info[1], address: info[2], textTicket: info[3] })
     setTypeModal(type)
     onOpen()
   }, [onOpen])
@@ -134,14 +135,14 @@ const Condominiums = () => {
           <div className="relative flex items-center gap-5">
             <Tooltip content="Edit">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                onClick={() => handleOpenModal('edit', [user.id, user.name, user.address])}
+                onClick={() => handleOpenModal('edit', [user.id, user.name, user.address, user.text_ticket])}
               >
                 <FontAwesomeIcon icon={faPen} size="sm" />
               </span>
             </Tooltip>
             <Tooltip color="danger" content="Delete">
               <span className="text-lg text-danger cursor-pointer active:opacity-50"
-                onClick={() => handleOpenModal('delete', [user.id, user.name, user.address])}
+                onClick={() => handleOpenModal('delete', [user.id, user.name, user.address, user.text_ticket])}
               >
                 <FontAwesomeIcon icon={faTrashCan} size="sm" />
               </span>
