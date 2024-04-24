@@ -122,7 +122,7 @@ export default function NavBar({ type }) {
             </DropdownItem>
             <DropdownItem key="logout" startContent={<FontAwesomeIcon icon={faRightFromBracket} />} color="danger" onClick={() => {
               localStorage.clear()
-              signOut()
+              signOut({ callbackUrl: '/', redirect: true })
             }}>
               Log Out
             </DropdownItem>
