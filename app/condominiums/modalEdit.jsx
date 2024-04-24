@@ -6,7 +6,8 @@ import {
     ModalBody,
     ModalFooter,
     Input,
-    Spinner
+    Spinner,
+    Textarea
 } from "@nextui-org/react";
 import { useState } from 'react'
 import axios from 'axios'
@@ -14,6 +15,7 @@ import axios from 'axios'
 export default function ModalEdit({ edit, data, onClose, setReload }) {
     const [name, setName] = useState(data && data.name)
     const [address, setAddress] = useState(data && data.address)
+    const [textTicket, setTextTicket] = useState(data && data.textTicket)
     const [error, setError] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
 
@@ -28,6 +30,7 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
             toEdit: data && data.name,
             name: name,
             address: address,
+            textTicket: textTicket,
         }).then(function (response) {
             const res = response.data
 
@@ -83,6 +86,17 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
                                     onValueChange={setAddress}
                                     onClear={() => console.log("input cleared")}
                                     isRequired
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="textToTicket" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Text for the ticket</label>
+
+                                <Textarea
+                                    labelPlacement="outside"
+                                    placeholder="Text ticket"
+                                    className="max-w-md"
+                                    value={textTicket}
+                                    onValueChange={(e) => setTextTicket(e)}
                                 />
                             </div>
                         </>
