@@ -42,7 +42,7 @@ const TableAuthorized = ({ setError }) => {
 
 
     const getInfoForTable = React.useCallback(async () => {
-        await axios.get('/api/incomeRecord/authorized').then(function (response) {
+        await axios.post('/api/incomeRecord/authorized').then(function (response) {
             const res = response.data
 
             if (res.status === 200) {
