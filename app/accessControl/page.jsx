@@ -71,6 +71,8 @@ const AccessControl = () => {
   const [getDate, setDate] = useState('')
   const [guest, setGuest] = useState('')
   const [address, setAddress] = useState('')
+  const [numTag, setNumTag] = useState('')
+  const [condominium, setCondominium] = useState('')
   const [accessBy, setAccessBy] = useState('')
 
   const handleOpenModal = React.useCallback((type, info) => {
@@ -293,6 +295,10 @@ const AccessControl = () => {
     setDate(getCurrentDate())
     setGuest(guestInfo.guestName)
     setAddress(access[0].address)
+    setNumTag(guestInfo.cardNum)
+    setCondominium(localStorage.getItem('location'))
+
+    console.log(guestInfo.cardNum)
 
     await axios.post('/api/accessControl/guestAccess', {
       infoResident: access[0],
@@ -436,13 +442,13 @@ const AccessControl = () => {
                     />
                   </div>
                   <div className="mx-2 mb-4">
-                    <label htmlFor="cardNum" className="block text-sm font-medium text-gray-900 dark:text-white">Card Tad No.</label>
+                    <label htmlFor="cardNum" className="block text-sm font-medium text-gray-900 dark:text-white">Card Tag</label>
 
                     <Input
                       id='cardNum'
                       type="text"
                       autoComplete="off"
-                      placeholder='Card Tad No.'
+                      placeholder='Card Tag'
                       value={guestInfo.cardNum}
                       onValueChange={(e) => setGuestInfo({ ...guestInfo, cardNum: e })}
                       onClear={() => console.log("input cleared")}
@@ -493,7 +499,7 @@ const AccessControl = () => {
         </>
       }
 
-      <AccessTicket printTicket={printTicket} setPrintTicket={setPrintTicket} visitor={guest} address={address} by={accessBy} getDate={getDate} />
+      <AccessTicket printTicket={printTicket} setPrintTicket={setPrintTicket} visitor={guest} address={address} numTag={numTag} condominium={condominium} by={accessBy} getDate={getDate} />
 
     </main>
   )
