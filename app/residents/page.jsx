@@ -1,5 +1,5 @@
 "use client"
-import React from "react"
+import React, { useState } from "react"
 import {
   Table,
   TableHeader,
@@ -9,7 +9,6 @@ import {
   TableCell,
   Input,
   Button,
-  Chip,
   Pagination,
   Tooltip,
   Modal, ModalContent,
@@ -18,46 +17,56 @@ import {
 } from "@nextui-org/react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPen, faTrashCan, faPlus, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
-import ModalDeleteUser from "./modalDeleteUser"
-import ModalEditUser from "./modalEditUser"
+import ModalDelete from "./modalDelete"
+import ModalEdit from "./modalEdit"
 import axios from 'axios'
 
 const columns = [
   { name: "ID", uid: "id", sortable: true },
-  { name: "USER", uid: "user", sortable: true },
-  { name: "CONDOMINIUM", uid: "condominium", sortable: true },
-  { name: "TYPE", uid: "type", sortable: true },
+  { name: "RESIDENT NAME", uid: "first_name", sortable: true },
+  { name: "CONDOMINIUM", uid: "condominium_name", sortable: true },
+  { name: "ADDRESS", uid: "address", sortable: true },
+  { name: "PHONE", uid: "phone1", sortable: true },
+  { name: "PHONE 2", uid: "phone2", sortable: true },
+  { name: "PHONE 3", uid: "phone3", sortable: true },
+  { name: "PHONE 4", uid: "phone4", sortable: true },
+  { name: "PHONE 5", uid: "phone5", sortable: true },
   { name: "ACTIONS", uid: "actions" },
 ]
 
-const CreateTable = () => {
-  const [filterValue, setFilterValue] = React.useState("");
-  const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
-  const [statusFilter, setStatusFilter] = React.useState("all");
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+const Residents = () => {
+  const [filterValue, setFilterValue] = React.useState("")
+  const [selectedKeys, setSelectedKeys] = React.useState(new Set([]))
+  const [rowsPerPage, setRowsPerPage] = React.useState(5)
   const [isLoading, setIsLoading] = React.useState(false)
   const [sortDescriptor, setSortDescriptor] = React.useState({
     column: "age",
     direction: "ascending",
-  });
+  })
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [dataUser, setDataUser] = React.useState([])
+  const [sizeModal, setSizeModal] = React.useState('5xl')
+  const [styleModal, setStyleModal] = React.useState('h-5/6 overflow-y-auto')
+  const [data, setData] = React.useState([])
   const [typeModal, setTypeModal] = React.useState()
 
   const [users, setUsers] = React.useState([])
   const [reload, setReload] = React.useState(false)
 
   const handleOpenModal = React.useCallback((type, info) => {
-    setDataUser(info && { id: info[0], user: info[1], condominiumID: info[2], condominium: info[3], type: info[4] })
+    setData(info && { id: info[0], firstName: info[1], lastName: info[2], condominium: info[3], address: info[4], phone1: info[5], phone2: info[6], phone3: info[7], phone4: info[8], phone5: info[9], family: info[10], authorized: info[11] })
     setTypeModal(type)
+
+    type === 'delete' ? setSizeModal('md') : setSizeModal('5xl')
+    type === 'delete' ? setStyleModal('') : setStyleModal('h-5/6 overflow-y-auto')
+
     onOpen()
   }, [onOpen])
 
 
-  const getUsers = async () => {
-    await axios.get('/api/users')
+  const getInfoForTable = async () => {
+    await axios.get('/api/residents')
       .then(function (response) {
-        setUsers(response.data.users)
+        setUsers(response.data.info)
       })
       .catch(function (error) {
         console.log(error)
@@ -69,7 +78,8 @@ const CreateTable = () => {
 
   React.useEffect(() => {
     setIsLoading(true)
-    getUsers()
+    getInfoForTable()
+    // onClose()
     typeModal === 'delete' && setPage(1)
   }, [reload, typeModal])
 
@@ -83,9 +93,9 @@ const CreateTable = () => {
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((user) =>
-        user.user.toLowerCase().includes(filterValue.toLowerCase())
-        || user.condominium.toLowerCase().includes(filterValue.toLowerCase())
-        || user.type.toLowerCase().includes(filterValue.toLowerCase())
+        user.first_name.toLowerCase().includes(filterValue.toLowerCase())
+        || user.condominium_name.toLowerCase().includes(filterValue.toLowerCase())
+        || user.address.toLowerCase().includes(filterValue.toLowerCase())
       )
     }
 
@@ -121,43 +131,25 @@ const CreateTable = () => {
             <p className="text-bold text-small capitalize">{cellValue}</p>
           </div>
         );
-      case "user":
+      case "first_name":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{cellValue}</p>
+            <p className="text-bold text-small capitalize">{cellValue} {user.last_name}</p>
           </div>
         );
-      case "condominium":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{cellValue}</p>
-          </div>
-        );
-      case "address":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{cellValue}</p>
-          </div>
-        );
-      case "type":
-        return (
-          <Chip className="capitalize" color={cellValue === 'admin' ? "warning" : "primary"} size="sm" variant="flat">
-            {cellValue}
-          </Chip>
-        )
       case "actions":
         return (
           <div className="relative flex items-center gap-5">
             <Tooltip content="Edit">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                onClick={() => handleOpenModal('edit', [user.id, user.user, user.condominiumID, user.condominium, user.type])}
+                onClick={() => handleOpenModal('edit', [user.id, user.first_name, user.last_name, user.condominium, user.address, user.phone1, user.phone2, user.phone3, user.phone4, user.phone5, user.family, user.authorized])}
               >
                 <FontAwesomeIcon icon={faPen} size="sm" />
               </span>
             </Tooltip>
             <Tooltip color="danger" content="Delete">
               <span className="text-lg text-danger cursor-pointer active:opacity-50"
-                onClick={() => handleOpenModal('delete', [user.id, user.user, user.condominiumID, user.condominium, user.type])}
+                onClick={() => handleOpenModal('delete', [user.id, user.first_name, user.last_name, user.condominium, user.address])}
               >
                 <FontAwesomeIcon icon={faTrashCan} size="sm" />
               </span>
@@ -207,7 +199,7 @@ const CreateTable = () => {
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Search by user..."
+            placeholder="Search by resident..."
             startContent={<FontAwesomeIcon icon={faMagnifyingGlass} size="lg" width={20} />}
             value={filterValue}
             onClear={() => onClear()}
@@ -272,7 +264,7 @@ const CreateTable = () => {
     <main className="mt-6">
 
       <div className="text-center my-6">
-        <h1 className="inline-block text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight dark:text-slate-200">Users</h1>
+        <h1 className="inline-block text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight dark:text-slate-200">Residents</h1>
       </div>
 
       <div className="gap-3 w-full flex justify-center mb-6">
@@ -290,7 +282,7 @@ const CreateTable = () => {
             <Spinner color="primary" size="lg" />
           </div>
           :
-          <div className='lg:mx-40 md:mx-20'>
+          <div className='lg:mx-20 md:mx-20'>
             <Table
               aria-label="Example table with custom cells, pagination and sorting"
               isHeaderSticky
@@ -329,14 +321,14 @@ const CreateTable = () => {
           </div>
       }
 
-      <Modal backdrop='blur' isOpen={isOpen} onClose={onClose} hideCloseButton={true} isDismissable={false}>
+      <Modal backdrop='blur' size={sizeModal} className={styleModal} isOpen={isOpen} onClose={onClose} hideCloseButton={typeModal === 'delete' ? true : false} isDismissable={false}>
         <ModalContent>
           {(onClose) => (
-            typeModal === 'delete' && <ModalDeleteUser dataUser={dataUser} onClose={onClose} setReload={setReload} />
+            typeModal === 'delete' && <ModalDelete data={data} onClose={onClose} setReload={setReload} />
             ||
-            typeModal === 'edit' && <ModalEditUser edit={true} dataUser={dataUser} onClose={onClose} setReload={setReload} />
+            typeModal === 'edit' && <ModalEdit edit={true} data={data} onClose={onClose} setReload={setReload} />
             ||
-            typeModal === 'create' && <ModalEditUser edit={false} dataUser={dataUser} onClose={onClose} setReload={setReload} />
+            typeModal === 'create' && <ModalEdit edit={false} data={data} onClose={onClose} setReload={setReload} />
           )}
         </ModalContent>
       </Modal>
@@ -344,4 +336,4 @@ const CreateTable = () => {
   );
 }
 
-export default CreateTable
+export default Residents
