@@ -21,6 +21,7 @@ import axios from 'axios'
 const columns = [
     // { name: "ID", uid: "id", sortable: true },
     { name: "GUEST NAME", uid: "guest_name", sortable: true },
+    { name: "LICENSE", uid: "license_num", sortable: true },
     { name: "TYPE", uid: "type", sortable: true },
     { name: "RESIDENT NAME", uid: "resident_name", sortable: true },
     { name: "RESIDENT PHONE", uid: "phone", sortable: true },
