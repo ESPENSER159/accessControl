@@ -71,6 +71,9 @@ const AccessControl = () => {
   const [getDate, setDate] = useState('')
   const [guest, setGuest] = useState('')
   const [address, setAddress] = useState('')
+  const [numTag, setNumTag] = useState('')
+  const [condominium, setCondominium] = useState('')
+  const [condominiumText, setCondominiumText] = useState('')
   const [accessBy, setAccessBy] = useState('')
 
   const handleOpenModal = React.useCallback((type, info) => {
@@ -90,6 +93,11 @@ const AccessControl = () => {
     }).then(function (response) {
       // console.log(response.data.info)
       setUsers(response.data.info)
+
+      if (response.data.info.length) {
+        setCondominiumText(response.data.info[0].text_ticket)
+        setCondominium(response.data.info[0].condominium_name)
+      }
 
     }).catch(function (error) {
       console.log(error)
@@ -293,6 +301,9 @@ const AccessControl = () => {
     setDate(getCurrentDate())
     setGuest(guestInfo.guestName)
     setAddress(access[0].address)
+    setNumTag(guestInfo.cardNum)
+
+    console.log(guestInfo.cardNum)
 
     await axios.post('/api/accessControl/guestAccess', {
       infoResident: access[0],
@@ -430,19 +441,30 @@ const AccessControl = () => {
                       autoComplete="off"
                       placeholder='Guest Drv.Lic.Nro'
                       value={guestInfo.licenseNum}
-                      onValueChange={(e) => setGuestInfo({ ...guestInfo, licenseNum: e })}
+                      onValueChange={(e) => {
+                        setGuestInfo({ ...guestInfo, licenseNum: e })
+
+                        if (e.includes('DLDAQ')) {
+                          let numLicen = e.split('DLDAQ')[1].split('DCS')[0]
+                          let firstName = e.split('DDENDAC')[1].split('DDFNDAD')[0]
+                          let lastName = e.split('DCS')[1].split('DDENDAC')[0]
+
+                          setGuestInfo({ ...guestInfo, licenseNum: numLicen, guestName: `${firstName} ${lastName}` })
+
+                        }
+                      }}
                       onClear={() => console.log("input cleared")}
                       isRequired
                     />
                   </div>
                   <div className="mx-2 mb-4">
-                    <label htmlFor="cardNum" className="block text-sm font-medium text-gray-900 dark:text-white">Card Tad No.</label>
+                    <label htmlFor="cardNum" className="block text-sm font-medium text-gray-900 dark:text-white">Card Tag</label>
 
                     <Input
                       id='cardNum'
                       type="text"
                       autoComplete="off"
-                      placeholder='Card Tad No.'
+                      placeholder='Card Tag'
                       value={guestInfo.cardNum}
                       onValueChange={(e) => setGuestInfo({ ...guestInfo, cardNum: e })}
                       onClear={() => console.log("input cleared")}
@@ -493,7 +515,7 @@ const AccessControl = () => {
         </>
       }
 
-      <AccessTicket printTicket={printTicket} setPrintTicket={setPrintTicket} visitor={guest} address={address} by={accessBy} getDate={getDate} />
+      <AccessTicket printTicket={printTicket} setPrintTicket={setPrintTicket} visitor={guest} address={address} numTag={numTag} condominium={condominium} condominiumText={condominiumText} by={accessBy} getDate={getDate} />
 
     </main>
   )
