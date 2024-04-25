@@ -73,6 +73,7 @@ const AccessControl = () => {
   const [address, setAddress] = useState('')
   const [numTag, setNumTag] = useState('')
   const [condominium, setCondominium] = useState('')
+  const [condominiumText, setCondominiumText] = useState('')
   const [accessBy, setAccessBy] = useState('')
 
   const handleOpenModal = React.useCallback((type, info) => {
@@ -92,6 +93,11 @@ const AccessControl = () => {
     }).then(function (response) {
       // console.log(response.data.info)
       setUsers(response.data.info)
+
+      if (response.data.info.length) {
+        setCondominiumText(response.data.info[0].text_ticket)
+        setCondominium(response.data.info[0].condominium_name)
+      }
 
     }).catch(function (error) {
       console.log(error)
@@ -296,7 +302,6 @@ const AccessControl = () => {
     setGuest(guestInfo.guestName)
     setAddress(access[0].address)
     setNumTag(guestInfo.cardNum)
-    setCondominium(localStorage.getItem('location'))
 
     console.log(guestInfo.cardNum)
 
@@ -436,7 +441,18 @@ const AccessControl = () => {
                       autoComplete="off"
                       placeholder='Guest Drv.Lic.Nro'
                       value={guestInfo.licenseNum}
-                      onValueChange={(e) => setGuestInfo({ ...guestInfo, licenseNum: e })}
+                      onValueChange={(e) => {
+                        setGuestInfo({ ...guestInfo, licenseNum: e })
+
+                        if (e.includes('DLDAQ')) {
+                          let numLicen = e.split('DLDAQ')[1].split('DCS')[0]
+                          let firstName = e.split('DDENDAC')[1].split('DDFNDAD')[0]
+                          let lastName = e.split('DCS')[1].split('DDENDAC')[0]
+
+                          setGuestInfo({ ...guestInfo, licenseNum: numLicen, guestName: `${firstName} ${lastName}` })
+
+                        }
+                      }}
                       onClear={() => console.log("input cleared")}
                       isRequired
                     />
@@ -499,7 +515,7 @@ const AccessControl = () => {
         </>
       }
 
-      <AccessTicket printTicket={printTicket} setPrintTicket={setPrintTicket} visitor={guest} address={address} numTag={numTag} condominium={condominium} by={accessBy} getDate={getDate} />
+      <AccessTicket printTicket={printTicket} setPrintTicket={setPrintTicket} visitor={guest} address={address} numTag={numTag} condominium={condominium} condominiumText={condominiumText} by={accessBy} getDate={getDate} />
 
     </main>
   )
