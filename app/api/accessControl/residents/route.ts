@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     if (!idCondominium) return NextResponse.json({ status: 400, message: 'Empty fields' })
 
     try {
-        const rows: any = await conn.query('SELECT residents.id, residents.first_name, residents.last_name, residents.phone1, residents.phone2, residents.phone3, residents.phone4, residents.phone5, residents.condominium, residents.address, condominiums.id AS condominiumID, condominiums.name AS condominium_name FROM residents INNER JOIN condominiums ON residents.condominium = condominiums.id WHERE residents.condominium =?', [idCondominium])
+        const rows: any = await conn.query('SELECT residents.id, residents.first_name, residents.last_name, residents.phone1, residents.phone2, residents.phone3, residents.phone4, residents.phone5, residents.condominium, residents.address, condominiums.id AS condominiumID, condominiums.name AS condominium_name, condominiums.text_ticket FROM residents INNER JOIN condominiums ON residents.condominium = condominiums.id WHERE residents.condominium =?', [idCondominium])
         const getInfo = rows
 
         let family: any = []
