@@ -60,7 +60,7 @@ const AccessControl = () => {
   const [authorized, setAuthorized] = useState([])
   const [idAuthorized, setIdAuthorized] = useState()
   const [showAuthorized, setShowAuthorized] = useState(false)
-  const [ticket, setTicket] = useState(false)
+  const [ticket, setTicket] = useState(true)
   const [printTicket, setPrintTicket] = useState(false)
   const [guestInfo, setGuestInfo] = useState(
     {
@@ -298,13 +298,6 @@ const AccessControl = () => {
 
     let access = users.filter(au => au.id === parseInt(idAuthorized))
 
-    setDate(getCurrentDate())
-    setGuest(guestInfo.guestName)
-    setAddress(access[0].address)
-    setNumTag(guestInfo.cardNum)
-
-    console.log(guestInfo.cardNum)
-
     await axios.post('/api/accessControl/guestAccess', {
       infoResident: access[0],
       infoGuest: guestInfo,
@@ -315,7 +308,7 @@ const AccessControl = () => {
       if (res.status === 200) {
         console.log(`log created`)
         setReload(true)
-        ticket && setPrintTicket(true)
+        ticket && infoToPrint(guestInfo.guestName, access[0].address, guestInfo.cardNum)
       } else {
         console.log(res.message)
         setError(res.message)
@@ -328,6 +321,16 @@ const AccessControl = () => {
     setTicket(false)
     setGuestInfo({ delivery: false })
     setIsLoadingBtn(false)
+  }
+
+  const infoToPrint = (name, address, cardNum) => {
+
+    setDate(getCurrentDate())
+    setGuest(name)
+    setAddress(address)
+    setNumTag(cardNum)
+
+    setPrintTicket(true)
   }
 
   return (
@@ -401,7 +404,16 @@ const AccessControl = () => {
 
       {showAuthorized &&
         <>
-          <TableAuthorized id={idAuthorized} setReload={setReload} setError={setError} />
+          <div className="my-16 flex justify-center">
+            <Switch color='primary'
+              isSelected={ticket}
+              onValueChange={setTicket}
+            >
+              Print parking permit
+            </Switch>
+          </div>
+
+          <TableAuthorized id={idAuthorized} setReload={setReload} setError={setError} ticket={ticket} infoToPrint={infoToPrint} />
 
           {error &&
             <Chip className='min-w-full h-auto mt-4 py-2 rounded-md text-wrap' color="danger" variant="bordered">
@@ -474,7 +486,11 @@ const AccessControl = () => {
                   <div className="my-6 flex justify-center">
                     <Switch color='primary'
                       isSelected={guestInfo.delivery}
-                      onValueChange={(e) => setGuestInfo({ ...guestInfo, delivery: e })}
+                      onValueChange={(e) => {
+                        setGuestInfo({ ...guestInfo, delivery: e })
+
+                        e && setTicket(false)
+                      }}
                     >
                       Delivery
                     </Switch>
@@ -492,15 +508,6 @@ const AccessControl = () => {
                 </div>
               </CardBody>
             </Card>
-
-            <div className="my-6 flex justify-center">
-              <Switch color='primary'
-                isSelected={ticket}
-                onValueChange={setTicket}
-              >
-                Print parking permit
-              </Switch>
-            </div>
 
             <div className="flex justify-center">
               <div className="gap-3 w-full flex justify-center my-6">
