@@ -21,7 +21,7 @@ import {
   Chip
 } from "@nextui-org/react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPen, faTrashCan, faUnlock, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import { faPen, faTrashCan, faUnlock, faMagnifyingGlass, faL } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
 import TableAuthorized from './tableAuthorized'
 import AccessTicket from './accessTicket'
@@ -62,6 +62,7 @@ const AccessControl = () => {
   const [showAuthorized, setShowAuthorized] = useState(false)
   const [ticket, setTicket] = useState(true)
   const [printTicket, setPrintTicket] = useState(false)
+  const [accessToPrintTicket, setAccessToPrintTicket] = useState(false)
   const [guestInfo, setGuestInfo] = useState(
     {
       delivery: false
@@ -108,6 +109,11 @@ const AccessControl = () => {
   }
 
   React.useEffect(() => {
+
+    let permitPrint = localStorage.getItem('ticket') ? true : false
+    setAccessToPrintTicket(permitPrint)
+    setTicket(permitPrint)
+
     setIsLoading(true)
     setShowAuthorized(false)
     getInfoForTable()
@@ -404,14 +410,17 @@ const AccessControl = () => {
 
       {showAuthorized &&
         <>
-          <div className="my-16 flex justify-center">
-            <Switch color='primary'
-              isSelected={ticket}
-              onValueChange={setTicket}
-            >
-              Print parking permit
-            </Switch>
-          </div>
+
+          {accessToPrintTicket &&
+            <div className="my-16 flex justify-center">
+              <Switch color='primary'
+                isSelected={ticket}
+                onValueChange={setTicket}
+              >
+                Print parking permit
+              </Switch>
+            </div>
+          }
 
           <TableAuthorized id={idAuthorized} setReload={setReload} setError={setError} ticket={ticket} infoToPrint={infoToPrint} />
 
