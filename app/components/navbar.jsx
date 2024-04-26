@@ -85,7 +85,7 @@ export default function NavBar({ type }) {
             </NavbarItem>
             <NavbarItem>
               <Link color="foreground" href="/incomeRecord">
-                Income Record
+                Record Log
               </Link>
             </NavbarItem>
           </>
@@ -171,7 +171,7 @@ export default function NavBar({ type }) {
                 size="lg"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Income Record
+                Record Log
               </Link>
             </NavbarMenuItem>
           </>
