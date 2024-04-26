@@ -14,9 +14,13 @@ export default function NavBar({ type, session }) {
   const router = useRouter()
 
   useEffect(() => {
-    localStorage.setItem('user', session.user.name)
-    localStorage.setItem('idLocation', session.user.image[0])
-    localStorage.setItem('location', session.user.image[1])
+
+    if (session?.user) {
+      localStorage.setItem('user', session.user.name)
+      localStorage.setItem('idLocation', session.user.image[0])
+      localStorage.setItem('location', session.user.image[1])
+      localStorage.setItem('ticket', session.user.image[2] === 'YES' ? 'true' : '')
+    }
 
     if (getType === 'user') {
       router.push('/accessControl')

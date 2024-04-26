@@ -18,7 +18,7 @@ export const authOptions = {
                 const rows = await conn.query('SELECT id, user, password, type, condominium FROM users WHERE user = ?', [credentials.email])
                 const getUser = rows[0]
 
-                const getCondominium = await conn.query('SELECT id, name FROM condominiums WHERE id = ?', [getUser.condominium])
+                const getCondominium = await conn.query('SELECT id, name, print_ticket FROM condominiums WHERE id = ?', [getUser.condominium])
 
                 await conn.end()
 
@@ -32,7 +32,7 @@ export const authOptions = {
                     id: getUser.id,
                     name: getUser.user,
                     email: getUser.type,
-                    image: [getUser.condominium, getCondominium[0].name]
+                    image: [getUser.condominium, getCondominium[0].name, getCondominium[0].print_ticket]
                 }
             }
         })
