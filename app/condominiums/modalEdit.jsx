@@ -7,7 +7,8 @@ import {
     ModalFooter,
     Input,
     Spinner,
-    Textarea
+    Textarea,
+    Switch
 } from "@nextui-org/react";
 import { useState } from 'react'
 import axios from 'axios'
@@ -16,6 +17,7 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
     const [name, setName] = useState(data && data.name)
     const [address, setAddress] = useState(data && data.address)
     const [textTicket, setTextTicket] = useState(data && data.textTicket)
+    const [ticket, setTicket] = useState(data && data.print_ticket === 'YES' ? true : false)
     const [error, setError] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
 
@@ -31,6 +33,7 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
             name: name,
             address: address,
             textTicket: textTicket,
+            printTicket: ticket,
         }).then(function (response) {
             const res = response.data
 
@@ -98,6 +101,14 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
                                     value={textTicket}
                                     onValueChange={(e) => setTextTicket(e)}
                                 />
+                            </div>
+                            <div className="my-6 flex justify-center">
+                                <Switch color='primary'
+                                    isSelected={ticket}
+                                    onValueChange={setTicket}
+                                >
+                                    Print parking permit
+                                </Switch>
                             </div>
                         </>
                     }
