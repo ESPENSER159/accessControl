@@ -76,12 +76,6 @@ const Residents = () => {
     setReload(false)
   }
 
-  React.useEffect(() => {
-    setIsLoading(true)
-    getInfoForTable()
-    // onClose()
-    typeModal === 'delete' && setPage(1)
-  }, [reload, typeModal])
 
 
   const [page, setPage] = React.useState(1);
@@ -229,6 +223,19 @@ const Residents = () => {
     onRowsPerPageChange,
     users.length
   ]);
+
+  React.useEffect(() => {
+    setIsLoading(true)
+    getInfoForTable()
+    // onClose()
+    typeModal === 'delete' && setPage(1)
+
+    // Filter condominium
+    const queryParameters = new URLSearchParams(window.location.search)
+    const condom = queryParameters.get("condominium")
+    onSearchChange(condom ? condom : '')
+
+  }, [reload, typeModal, onSearchChange])
 
   const bottomContent = React.useMemo(() => {
     return (
