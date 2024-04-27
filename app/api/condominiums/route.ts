@@ -5,7 +5,7 @@ import { getCurrentDate } from '../../libs/getCurrentDate'
 export async function GET() {
     try {
         // Get all users
-        const rows: any = await conn.query('SELECT id, name, address, text_ticket FROM condominiums')
+        const rows: any = await conn.query('SELECT id, name, address, text_ticket, print_ticket FROM condominiums')
         const getInfo = rows
 
         await conn.end()
@@ -20,7 +20,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-    const { id, edit, toEdit, name, address, textTicket } = await request.json()
+    const { id, edit, toEdit, name, address, textTicket, printTicket } = await request.json()
 
     // Validar los campos de entrada
     if (!name || !address) return NextResponse.json({ status: 400, message: 'Empty fields' })
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
 
         const editQuery = async () => {
             // Edit
-            const edit: any = await conn.query(`UPDATE condominiums SET name=?, address=?, text_ticket=?, edit_date=? WHERE id=? AND name='${toEdit}'`, [name, address, textTicket, currentDate, id])
+            const edit: any = await conn.query(`UPDATE condominiums SET name=?, address=?, text_ticket=?, print_ticket=?, edit_date=? WHERE id=? AND name='${toEdit}'`, [name, address, textTicket, printTicket ? 'YES' : 'NO', currentDate, id])
             const res = edit[0]
 
             await conn.end()
@@ -60,7 +60,7 @@ export async function POST(request: Request) {
             if (getData) return NextResponse.json({ status: 400, message: 'User already exists' })
 
             // Create
-            const create: any = await conn.query('INSERT INTO condominiums (name, address, text_ticket, creation_date) VALUES (?, ?, ?, ?)', [name, address, textTicket, currentDate])
+            const create: any = await conn.query('INSERT INTO condominiums (name, address, text_ticket, print_ticket, creation_date) VALUES (?, ?, ?, ?, ?)', [name, address, textTicket, printTicket ? 'YES' : 'NO', currentDate])
             const ifCreate = create[0]
 
             await conn.end()
