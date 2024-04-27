@@ -12,12 +12,12 @@ import axios from 'axios'
 export default function Login() {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const [condominium, setCondominium] = useState('')
+    // const [condominium, setCondominium] = useState('')
     const [error, setError] = useState(null)
-    const [IsLoading, setIsLoading] = useState(true)
+    const [IsLoading, setIsLoading] = useState(false)
     const [isVisible, setIsVisible] = useState(false)
 
-    const [getCondominiums, setCondominiums] = useState([])
+    // const [getCondominiums, setCondominiums] = useState([])
 
     const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -27,22 +27,18 @@ export default function Login() {
         e.preventDefault()
         setIsLoading(true)
 
-        let dataCondominium = condominium.replaceAll(' ', '').split('-')
+        // let dataCondominium = condominium.replaceAll(' ', '').split('-')
 
         const res = await signIn('credentials', {
             email: username,
             password: password,
-            condominium: dataCondominium[0],
+            // condominium: dataCondominium[0],
             redirect: false
         })
 
         if (res?.error) {
             setError(res?.error)
         } else {
-            localStorage.setItem('user', username)
-            localStorage.setItem('idLocation', dataCondominium[0])
-            localStorage.setItem('location', dataCondominium[1])
-
             router.push('/accessControl')
         }
 
@@ -53,22 +49,22 @@ export default function Login() {
         router.refresh()
     }, [IsLoading, router])
 
-    const getCondoms = async () => {
-        await axios.get('/api/condominiums')
-            .then(function (response) {
-                setCondominiums(response.data.info)
-            })
-            .catch(function (error) {
-                console.log(error)
-            })
+    // const getCondoms = async () => {
+    //     await axios.get('/api/condominiums')
+    //         .then(function (response) {
+    //             setCondominiums(response.data.info)
+    //         })
+    //         .catch(function (error) {
+    //             console.log(error)
+    //         })
 
-        setIsLoading(false)
-    }
+    //     setIsLoading(false)
+    // }
 
-    useEffect(() => {
-        setIsLoading(true)
-        getCondoms()
-    }, [])
+    // useEffect(() => {
+    //     setIsLoading(true)
+    //     getCondoms()
+    // }, [])
 
     return (
         <section>
@@ -95,7 +91,7 @@ export default function Login() {
                                 </div>
                                 :
                                 <>
-                                    <div>
+                                    {/* <div>
                                         <label htmlFor="condominium" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Condominium</label>
 
                                         <Select
@@ -120,7 +116,7 @@ export default function Login() {
                                                 })
                                             }
                                         </Select>
-                                    </div>
+                                    </div> */}
                                     <div>
                                         <label htmlFor="user" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User</label>
 
