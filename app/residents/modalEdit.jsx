@@ -152,29 +152,15 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
                                 <AccordionItem key="1" keepContentMounted={true} aria-label="Resident" title="Resident" startContent={<FontAwesomeIcon icon={faUser} className="text-primary" />}>
                                     <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 md:gap-4">
                                         <div className="mx-2 mb-4">
-                                            <label htmlFor="firstName" className="block text-sm font-medium text-gray-900 dark:text-white">First Name</label>
+                                            <label htmlFor="address" className="block text-sm font-medium text-gray-900 dark:text-white">Address</label>
 
                                             <Input
+                                                id='address'
                                                 type="text"
                                                 autoComplete="off"
-                                                id='firstName'
-                                                placeholder='First Name'
-                                                value={firstName ?? ''}
-                                                onValueChange={setFirstName}
-                                                onClear={() => console.log("input cleared")}
-                                                isRequired
-                                            />
-                                        </div>
-                                        <div className="mx-2 mb-4">
-                                            <label htmlFor="lastName" className="block text-sm font-medium text-gray-900 dark:text-white">Last Name</label>
-
-                                            <Input
-                                                id='lastName'
-                                                type="text"
-                                                autoComplete="off"
-                                                placeholder='Last Name'
-                                                value={lastName ?? ''}
-                                                onValueChange={setLastName}
+                                                placeholder='Address'
+                                                value={address ?? ''}
+                                                onValueChange={setAddress}
                                                 onClear={() => console.log("input cleared")}
                                                 isRequired
                                             />
@@ -211,15 +197,29 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
                                             </Select>
                                         </div>
                                         <div className="mx-2 mb-4">
-                                            <label htmlFor="address" className="block text-sm font-medium text-gray-900 dark:text-white">Address</label>
+                                            <label htmlFor="firstName" className="block text-sm font-medium text-gray-900 dark:text-white">First Name</label>
 
                                             <Input
-                                                id='address'
                                                 type="text"
                                                 autoComplete="off"
-                                                placeholder='Address'
-                                                value={address ?? ''}
-                                                onValueChange={setAddress}
+                                                id='firstName'
+                                                placeholder='First Name'
+                                                value={firstName ?? ''}
+                                                onValueChange={setFirstName}
+                                                onClear={() => console.log("input cleared")}
+                                                isRequired
+                                            />
+                                        </div>
+                                        <div className="mx-2 mb-4">
+                                            <label htmlFor="lastName" className="block text-sm font-medium text-gray-900 dark:text-white">Last Name</label>
+
+                                            <Input
+                                                id='lastName'
+                                                type="text"
+                                                autoComplete="off"
+                                                placeholder='Last Name'
+                                                value={lastName ?? ''}
+                                                onValueChange={setLastName}
                                                 onClear={() => console.log("input cleared")}
                                                 isRequired
                                             />
