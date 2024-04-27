@@ -93,7 +93,7 @@ export default function NavBar({ type, session }) {
             </NavbarItem>
             <NavbarItem>
               <Link color="foreground" href="/incomeRecord">
-                Income Record
+                Record Log
               </Link>
             </NavbarItem>
           </>
@@ -179,7 +179,7 @@ export default function NavBar({ type, session }) {
                 size="lg"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Income Record
+                Record Log
               </Link>
             </NavbarMenuItem>
           </>
