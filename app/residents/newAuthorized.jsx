@@ -33,20 +33,20 @@ export default function NewAuthorized({ type, info, toggleEdit, toggleDelete }) 
             <div>
                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 md:gap-4">
                     <div className="mx-2 mb-4">
-                        <label htmlFor="firstName" className="block text-sm font-medium text-gray-900 dark:text-white">First Name</label>
+                        <label htmlFor="firstName" className="block text-sm font-medium text-gray-900 dark:text-white">Name</label>
 
                         <Input
                             id='firstName'
                             name='firstName'
                             type="text"
                             autoComplete="off"
-                            placeholder='First Name'
+                            placeholder='Name'
                             value={getInfo.firstName ?? ''}
                             onChange={handleEdit}
                             isRequired
                         />
                     </div>
-                    <div className="mx-2 mb-4">
+                    {/* <div className="mx-2 mb-4">
                         <label htmlFor="lastName" className="block text-sm font-medium text-gray-900 dark:text-white">Last Name</label>
 
                         <Input
@@ -59,7 +59,7 @@ export default function NewAuthorized({ type, info, toggleEdit, toggleDelete }) 
                             onChange={handleEdit}
                             isRequired
                         />
-                    </div>
+                    </div> */}
                     <div className="mx-2 mb-4">
                         <label htmlFor="phone" className="block text-sm font-medium text-gray-900 dark:text-white">Phone 1</label>
                         <Input
@@ -70,7 +70,6 @@ export default function NewAuthorized({ type, info, toggleEdit, toggleDelete }) 
                             placeholder='Phone'
                             value={getInfo.phone ?? ''}
                             onChange={handleEdit}
-                            isRequired
                         />
                     </div>
                     <div className="mx-2 col-span-1">
