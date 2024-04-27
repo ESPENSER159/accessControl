@@ -13,10 +13,11 @@ import {
   Tooltip,
   Modal, ModalContent,
   useDisclosure,
-  Spinner
+  Spinner,
+  Link
 } from "@nextui-org/react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPen, faTrashCan, faPlus, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import { faPen, faTrashCan, faPlus, faMagnifyingGlass, faUsers } from '@fortawesome/free-solid-svg-icons'
 import ModalDelete from "./modalDelete"
 import ModalEdit from "./modalEdit"
 import axios from 'axios'
@@ -135,6 +136,13 @@ const Condominiums = () => {
       case "actions":
         return (
           <div className="relative flex items-center gap-5">
+            <Tooltip content="Residents">
+              <Link color="foreground" href={`/residents?condominium=${user.name}`}>
+                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                  <FontAwesomeIcon icon={faUsers} size="sm" />
+                </span>
+              </Link>
+            </Tooltip>
             <Tooltip content="Edit">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50"
                 onClick={() => handleOpenModal('edit', [user.id, user.name, user.address, user.text_ticket, user.print_ticket])}
