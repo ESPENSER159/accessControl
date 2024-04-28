@@ -98,6 +98,10 @@ const AccessControl = () => {
       if (response.data.info.length) {
         setCondominiumText(response.data.info[0].text_ticket)
         setCondominium(response.data.info[0].condominium_name)
+
+        let permitPrint = response.data.info[0].print_ticket === 'YES' ? true : false
+        setAccessToPrintTicket(permitPrint)
+        setTicket(permitPrint)
       }
 
     }).catch(function (error) {
@@ -109,11 +113,6 @@ const AccessControl = () => {
   }
 
   React.useEffect(() => {
-
-    let permitPrint = localStorage.getItem('ticket') ? true : false
-    setAccessToPrintTicket(permitPrint)
-    setTicket(permitPrint)
-
     setIsLoading(true)
     setShowAuthorized(false)
     getInfoForTable()
