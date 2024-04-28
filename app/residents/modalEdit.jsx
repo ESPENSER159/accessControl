@@ -17,6 +17,7 @@ import axios from 'axios'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faPhoneFlip, faUser, faPeopleRoof, faPeopleGroup } from '@fortawesome/free-solid-svg-icons'
 import NewAuthorized from "./newAuthorized"
+import { convertPhone } from '../libs/convertPhone'
 
 export default function ModalEdit({ edit, data, onClose, setReload }) {
     const [firstName, setFirstName] = useState(data && data.firstName)
@@ -152,29 +153,15 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
                                 <AccordionItem key="1" keepContentMounted={true} aria-label="Resident" title="Resident" startContent={<FontAwesomeIcon icon={faUser} className="text-primary" />}>
                                     <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 md:gap-4">
                                         <div className="mx-2 mb-4">
-                                            <label htmlFor="firstName" className="block text-sm font-medium text-gray-900 dark:text-white">First Name</label>
+                                            <label htmlFor="address" className="block text-sm font-medium text-gray-900 dark:text-white">Address</label>
 
                                             <Input
+                                                id='address'
                                                 type="text"
                                                 autoComplete="off"
-                                                id='firstName'
-                                                placeholder='First Name'
-                                                value={firstName ?? ''}
-                                                onValueChange={setFirstName}
-                                                onClear={() => console.log("input cleared")}
-                                                isRequired
-                                            />
-                                        </div>
-                                        <div className="mx-2 mb-4">
-                                            <label htmlFor="lastName" className="block text-sm font-medium text-gray-900 dark:text-white">Last Name</label>
-
-                                            <Input
-                                                id='lastName'
-                                                type="text"
-                                                autoComplete="off"
-                                                placeholder='Last Name'
-                                                value={lastName ?? ''}
-                                                onValueChange={setLastName}
+                                                placeholder='Address'
+                                                value={address ?? ''}
+                                                onValueChange={setAddress}
                                                 onClear={() => console.log("input cleared")}
                                                 isRequired
                                             />
@@ -211,15 +198,29 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
                                             </Select>
                                         </div>
                                         <div className="mx-2 mb-4">
-                                            <label htmlFor="address" className="block text-sm font-medium text-gray-900 dark:text-white">Address</label>
+                                            <label htmlFor="firstName" className="block text-sm font-medium text-gray-900 dark:text-white">First Name</label>
 
                                             <Input
-                                                id='address'
                                                 type="text"
                                                 autoComplete="off"
-                                                placeholder='Address'
-                                                value={address ?? ''}
-                                                onValueChange={setAddress}
+                                                id='firstName'
+                                                placeholder='First Name'
+                                                value={firstName ?? ''}
+                                                onValueChange={setFirstName}
+                                                onClear={() => console.log("input cleared")}
+                                                isRequired
+                                            />
+                                        </div>
+                                        <div className="mx-2 mb-4">
+                                            <label htmlFor="lastName" className="block text-sm font-medium text-gray-900 dark:text-white">Last Name</label>
+
+                                            <Input
+                                                id='lastName'
+                                                type="text"
+                                                autoComplete="off"
+                                                placeholder='Last Name'
+                                                value={lastName ?? ''}
+                                                onValueChange={setLastName}
                                                 onClear={() => console.log("input cleared")}
                                                 isRequired
                                             />
@@ -228,11 +229,11 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
                                             <label htmlFor="phone" className="block text-sm font-medium text-gray-900 dark:text-white">Phone 1</label>
                                             <Input
                                                 id='phone'
-                                                type="number"
+                                                type="text"
                                                 autoComplete="off"
                                                 placeholder='Phone'
                                                 value={phone ?? ''}
-                                                onValueChange={setPhone}
+                                                onValueChange={(e) => setPhone(convertPhone(e))}
                                                 onClear={() => console.log("input cleared")}
                                                 isRequired
                                             />
@@ -245,10 +246,10 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
                                                         <label htmlFor="phone2" className="block text-sm font-medium text-gray-900 dark:text-white">Phone 2</label>
                                                         <Input
                                                             id='phone2'
-                                                            type="number"
+                                                            type="text"
                                                             autoComplete="off"
                                                             value={alternativePhones.phone2 ?? ''}
-                                                            onValueChange={(e) => setAlternativePhones({ ...alternativePhones, phone2: e })}
+                                                            onValueChange={(e) => setAlternativePhones({ ...alternativePhones, phone2: convertPhone(e) })}
                                                             onClear={() => console.log("input cleared")}
                                                         />
                                                     </div>
@@ -257,10 +258,10 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
                                                         <label htmlFor="phone3" className="block text-sm font-medium text-gray-900 dark:text-white">Phone 3</label>
                                                         <Input
                                                             id='phone3'
-                                                            type="number"
+                                                            type="text"
                                                             autoComplete="off"
                                                             value={alternativePhones.phone3 ?? ''}
-                                                            onValueChange={(e) => setAlternativePhones({ ...alternativePhones, phone3: e })}
+                                                            onValueChange={(e) => setAlternativePhones({ ...alternativePhones, phone3: convertPhone(e) })}
                                                             onClear={() => console.log("input cleared")}
                                                         />
                                                     </div>
@@ -269,10 +270,10 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
                                                         <label htmlFor="phone4" className="block text-sm font-medium text-gray-900 dark:text-white">Phone 4</label>
                                                         <Input
                                                             id='phone4'
-                                                            type="number"
+                                                            type="text"
                                                             autoComplete="off"
                                                             value={alternativePhones.phone4 ?? ''}
-                                                            onValueChange={(e) => setAlternativePhones({ ...alternativePhones, phone4: e })}
+                                                            onValueChange={(e) => setAlternativePhones({ ...alternativePhones, phone4: convertPhone(e) })}
                                                             onClear={() => console.log("input cleared")}
                                                         />
                                                     </div>
@@ -281,10 +282,10 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
                                                         <label htmlFor="phone5" className="block text-sm font-medium text-gray-900 dark:text-white">Phone 5</label>
                                                         <Input
                                                             id='phone5'
-                                                            type="number"
+                                                            type="text"
                                                             autoComplete="off"
                                                             value={alternativePhones.phone5 ?? ''}
-                                                            onValueChange={(e) => setAlternativePhones({ ...alternativePhones, phone5: e })}
+                                                            onValueChange={(e) => setAlternativePhones({ ...alternativePhones, phone5: convertPhone(e) })}
                                                             onClear={() => console.log("input cleared")}
                                                         />
                                                     </div>

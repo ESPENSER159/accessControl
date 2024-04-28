@@ -15,8 +15,9 @@ import {
     Avatar
 } from "@nextui-org/react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPeopleRoof, faPeopleGroup, faMagnifyingGlass, faBox, faPersonShelter } from '@fortawesome/free-solid-svg-icons'
+import { faMagnifyingGlass, faBox, faPersonShelter } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
+import { arrayToCSV, downloadCSV } from '../libs/downloadCSV'
 
 const columns = [
     // { name: "ID", uid: "id", sortable: true },
@@ -33,6 +34,7 @@ const columns = [
 
 const TableGuest = ({ setError }) => {
     const [users, setUsers] = React.useState([])
+    const [usersFilter, setUsersFilter] = React.useState([])
     const [filterValue, setFilterValue] = React.useState("")
     const [rowsPerPage, setRowsPerPage] = React.useState(5)
     const [isLoading, setIsLoading] = React.useState(false)
@@ -79,6 +81,12 @@ const TableGuest = ({ setError }) => {
                 user.guest_name.toLowerCase().includes(filterValue.toLowerCase())
                 || user.resident_name.toLowerCase().includes(filterValue.toLowerCase())
                 || user.condominium_name.toLowerCase().includes(filterValue.toLowerCase())
+
+                || `${user.condominium_name}/${user.date}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
+                || `${user.condominium_name}/${user.resident_name}${user.resident_last_name}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
+                || `${user.condominium_name}/${user.resident_name}${user.resident_last_name}/${user.date}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
+                || `${user.resident_name}${user.resident_last_name}/${user.date}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
+
                 || user.address.toLowerCase().includes(filterValue.toLowerCase())
                 || user.access_by.toLowerCase().includes(filterValue.toLowerCase())
                 || user.date.toLowerCase().includes(filterValue.toLowerCase())
@@ -93,6 +101,8 @@ const TableGuest = ({ setError }) => {
     const items = React.useMemo(() => {
         const start = (page - 1) * rowsPerPage;
         const end = start + rowsPerPage;
+
+        setUsersFilter(filteredItems)
 
         return filteredItems.slice(start, end);
     }, [page, filteredItems, rowsPerPage]);
@@ -189,6 +199,13 @@ const TableGuest = ({ setError }) => {
         setPage(1)
     }, [])
 
+    const createCSV = React.useCallback(() => {
+        let csv = arrayToCSV(usersFilter)
+        let nombreArchivo = "Guest.csv"
+
+        downloadCSV(csv, nombreArchivo)
+    }, [usersFilter])
+
     const topContent = React.useMemo(() => {
         return (
             <div className="flex flex-col gap-4">
@@ -202,6 +219,7 @@ const TableGuest = ({ setError }) => {
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
                     />
+                    <Button onClick={() => createCSV()}>Download CSV</Button>
                 </div>
                 {/* <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">Total {users.length} users</span>
@@ -222,7 +240,8 @@ const TableGuest = ({ setError }) => {
     }, [
         onClear,
         filterValue,
-        onSearchChange
+        onSearchChange,
+        createCSV
     ])
 
     const bottomContent = React.useMemo(() => {

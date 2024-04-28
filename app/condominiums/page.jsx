@@ -13,10 +13,11 @@ import {
   Tooltip,
   Modal, ModalContent,
   useDisclosure,
-  Spinner
+  Spinner,
+  Link
 } from "@nextui-org/react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPen, faTrashCan, faPlus, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import { faPen, faTrashCan, faPlus, faMagnifyingGlass, faUsers } from '@fortawesome/free-solid-svg-icons'
 import ModalDelete from "./modalDelete"
 import ModalEdit from "./modalEdit"
 import axios from 'axios'
@@ -26,6 +27,7 @@ const columns = [
   { name: "CONDOMINIUM", uid: "name", sortable: true },
   { name: "ADDRESS", uid: "address", sortable: true },
   { name: "TEXT TICKET", uid: "text_ticket", sortable: true },
+  { name: "PRINT TICKET", uid: "print_ticket", sortable: true },
   { name: "ACTIONS", uid: "actions" },
 ]
 
@@ -46,7 +48,7 @@ const Condominiums = () => {
   const [reload, setReload] = React.useState(false)
 
   const handleOpenModal = React.useCallback((type, info) => {
-    setData(info && { id: info[0], name: info[1], address: info[2], textTicket: info[3] })
+    setData(info && { id: info[0], name: info[1], address: info[2], textTicket: info[3], print_ticket: info[4] })
     setTypeModal(type)
     onOpen()
   }, [onOpen])
@@ -55,6 +57,7 @@ const Condominiums = () => {
   const getInfoForTable = async () => {
     await axios.get('/api/condominiums')
       .then(function (response) {
+        // console.log(response.data.info)
         setUsers(response.data.info)
       })
       .catch(function (error) {
@@ -133,16 +136,23 @@ const Condominiums = () => {
       case "actions":
         return (
           <div className="relative flex items-center gap-5">
+            <Tooltip content="Residents">
+              <Link color="foreground" href={`/residents?condominium=${user.name}`}>
+                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                  <FontAwesomeIcon icon={faUsers} size="sm" />
+                </span>
+              </Link>
+            </Tooltip>
             <Tooltip content="Edit">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                onClick={() => handleOpenModal('edit', [user.id, user.name, user.address, user.text_ticket])}
+                onClick={() => handleOpenModal('edit', [user.id, user.name, user.address, user.text_ticket, user.print_ticket])}
               >
                 <FontAwesomeIcon icon={faPen} size="sm" />
               </span>
             </Tooltip>
             <Tooltip color="danger" content="Delete">
               <span className="text-lg text-danger cursor-pointer active:opacity-50"
-                onClick={() => handleOpenModal('delete', [user.id, user.name, user.address, user.text_ticket])}
+                onClick={() => handleOpenModal('delete', [user.id, user.name, user.address, user.text_ticket, user.print_ticket])}
               >
                 <FontAwesomeIcon icon={faTrashCan} size="sm" />
               </span>

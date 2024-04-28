@@ -6,7 +6,7 @@ import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, Avatar, NavbarMenu, NavbarMenuItem, NavbarMenuToggle, Image } from "@nextui-org/react"
 import { useRouter } from 'next/navigation'
 
-export default function NavBar({ type }) {
+export default function NavBar({ type, session }) {
   const [user, setUser] = useState('')
   const [location, setLocation] = useState('')
   const [getType, setType] = useState(type)
@@ -14,10 +14,18 @@ export default function NavBar({ type }) {
   const router = useRouter()
 
   useEffect(() => {
+
+    if (session?.user) {
+      localStorage.setItem('user', session.user.name)
+      localStorage.setItem('idLocation', session.user.image[0])
+      localStorage.setItem('location', session.user.image[1])
+      localStorage.setItem('ticket', session.user.image[2] === 'YES' ? 'true' : '')
+    }
+
     if (getType === 'user') {
       router.push('/accessControl')
     }
-  }, [router, getType])
+  }, [router, getType, session])
 
   useEffect(() => {
     let getUser = localStorage.getItem('user')
@@ -85,7 +93,7 @@ export default function NavBar({ type }) {
             </NavbarItem>
             <NavbarItem>
               <Link color="foreground" href="/incomeRecord">
-                Income Record
+                Record Log
               </Link>
             </NavbarItem>
           </>
@@ -171,7 +179,7 @@ export default function NavBar({ type }) {
                 size="lg"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Income Record
+                Record Log
               </Link>
             </NavbarMenuItem>
           </>

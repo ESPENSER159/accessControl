@@ -9,6 +9,7 @@ import {
 } from "@nextui-org/react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPhoneFlip } from '@fortawesome/free-solid-svg-icons'
+import { convertPhone } from '../libs/convertPhone'
 
 export default function NewAuthorized({ type, info, toggleEdit, toggleDelete }) {
     const [getInfo, setInfo] = useState(info)
@@ -16,7 +17,11 @@ export default function NewAuthorized({ type, info, toggleEdit, toggleDelete }) 
 
     const handleEdit = (e) => {
 
-        setInfo({ ...getInfo, [e.target.name]: e.target.value })
+        if ((e.target.name).includes('phone')) {
+            setInfo({ ...getInfo, [e.target.name]: convertPhone(e.target.value) })
+        } else {
+            setInfo({ ...getInfo, [e.target.name]: e.target.value })
+        }
 
         info[e.target.name] = e.target.value
 
@@ -33,20 +38,20 @@ export default function NewAuthorized({ type, info, toggleEdit, toggleDelete }) 
             <div>
                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 md:gap-4">
                     <div className="mx-2 mb-4">
-                        <label htmlFor="firstName" className="block text-sm font-medium text-gray-900 dark:text-white">First Name</label>
+                        <label htmlFor="firstName" className="block text-sm font-medium text-gray-900 dark:text-white">Name</label>
 
                         <Input
                             id='firstName'
                             name='firstName'
                             type="text"
                             autoComplete="off"
-                            placeholder='First Name'
+                            placeholder='Name'
                             value={getInfo.firstName ?? ''}
                             onChange={handleEdit}
                             isRequired
                         />
                     </div>
-                    <div className="mx-2 mb-4">
+                    {/* <div className="mx-2 mb-4">
                         <label htmlFor="lastName" className="block text-sm font-medium text-gray-900 dark:text-white">Last Name</label>
 
                         <Input
@@ -59,18 +64,17 @@ export default function NewAuthorized({ type, info, toggleEdit, toggleDelete }) 
                             onChange={handleEdit}
                             isRequired
                         />
-                    </div>
+                    </div> */}
                     <div className="mx-2 mb-4">
                         <label htmlFor="phone" className="block text-sm font-medium text-gray-900 dark:text-white">Phone 1</label>
                         <Input
                             id='phone'
                             name='phone'
-                            type="number"
+                            type="text"
                             autoComplete="off"
                             placeholder='Phone'
                             value={getInfo.phone ?? ''}
                             onChange={handleEdit}
-                            isRequired
                         />
                     </div>
                     <div className="mx-2 col-span-1">
@@ -82,7 +86,7 @@ export default function NewAuthorized({ type, info, toggleEdit, toggleDelete }) 
                                     <Input
                                         id='phone2'
                                         name="phone2"
-                                        type="number"
+                                        type="text"
                                         autoComplete="off"
                                         value={getInfo.phone2 ?? ''}
                                         onChange={handleEdit}
@@ -94,7 +98,7 @@ export default function NewAuthorized({ type, info, toggleEdit, toggleDelete }) 
                                     <Input
                                         id='phone3'
                                         name="phone3"
-                                        type="number"
+                                        type="text"
                                         autoComplete="off"
                                         value={getInfo.phone3 ?? ''}
                                         onChange={handleEdit}
@@ -106,7 +110,7 @@ export default function NewAuthorized({ type, info, toggleEdit, toggleDelete }) 
                                     <Input
                                         id='phone4'
                                         name='phone4'
-                                        type="number"
+                                        type="text"
                                         autoComplete="off"
                                         value={getInfo.phone4 ?? ''}
                                         onChange={handleEdit}
@@ -118,7 +122,7 @@ export default function NewAuthorized({ type, info, toggleEdit, toggleDelete }) 
                                     <Input
                                         id='phone5'
                                         name='phone5'
-                                        type="number"
+                                        type="text"
                                         autoComplete="off"
                                         value={getInfo.phone5 ?? ''}
                                         onChange={handleEdit}

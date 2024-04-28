@@ -31,7 +31,7 @@ const columns = [
     { name: "PHONE 5", uid: "phone5", sortable: true }
 ]
 
-const TableAuthorized = ({ id, setReload, setError }) => {
+const TableAuthorized = ({ id, setReload, setError, ticket, infoToPrint }) => {
     const [filterValue, setFilterValue] = React.useState("")
     const [selectedKeys, setSelectedKeys] = React.useState(new Set([]))
     const [rowsPerPage, setRowsPerPage] = React.useState(5)
@@ -267,6 +267,7 @@ const TableAuthorized = ({ id, setReload, setError }) => {
             if (res.status === 200) {
                 console.log(`log created`)
                 setReload(true)
+                ticket && infoToPrint(access[0].firstName, access[0].address, '')
             } else {
                 console.log(res.message)
                 setError(res.message)

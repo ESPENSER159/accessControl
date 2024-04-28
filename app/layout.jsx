@@ -25,7 +25,7 @@ export default async function RootLayout({ children }) {
       <body className={inter.className}>
         <Providers>
           {session?.user &&
-            <NavBar type={type} />
+            <NavBar type={type} session={session} />
           }
           {children}
         </Providers>

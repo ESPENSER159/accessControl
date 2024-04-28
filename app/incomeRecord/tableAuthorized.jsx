@@ -17,6 +17,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPeopleRoof, faPeopleGroup, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
+import { arrayToCSV, downloadCSV } from '../libs/downloadCSV'
 
 const columns = [
     // { name: "ID", uid: "id", sortable: true },
@@ -32,6 +33,7 @@ const columns = [
 
 const TableAuthorized = ({ setError }) => {
     const [users, setUsers] = React.useState([])
+    const [usersFilter, setUsersFilter] = React.useState([])
     const [filterValue, setFilterValue] = React.useState("")
     const [rowsPerPage, setRowsPerPage] = React.useState(5)
     const [isLoading, setIsLoading] = React.useState(false)
@@ -46,6 +48,7 @@ const TableAuthorized = ({ setError }) => {
             const res = response.data
 
             if (res.status === 200) {
+                // console.log(res.info)
                 setUsers(res.info)
 
             } else {
@@ -75,9 +78,16 @@ const TableAuthorized = ({ setError }) => {
 
         if (hasSearchFilter) {
             filteredUsers = filteredUsers.filter((user) =>
-                user.firstName.toLowerCase().includes(filterValue.toLowerCase())
+                user.firstName.toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
                 || user.resident_name.toLowerCase().includes(filterValue.toLowerCase())
+                || user.resident_last_name.toLowerCase().includes(filterValue.toLowerCase())
                 || user.condominium_name.toLowerCase().includes(filterValue.toLowerCase())
+
+                || `${user.condominium_name}/${user.date}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
+                || `${user.condominium_name}/${user.resident_name}${user.resident_last_name}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
+                || `${user.condominium_name}/${user.resident_name}${user.resident_last_name}/${user.date}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
+                || `${user.resident_name}${user.resident_last_name}/${user.date}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
+
                 || user.address.toLowerCase().includes(filterValue.toLowerCase())
                 || user.access_by && user.access_by.toLowerCase().includes(filterValue.toLowerCase())
                 || user.date.toLowerCase().includes(filterValue.toLowerCase())
@@ -92,6 +102,8 @@ const TableAuthorized = ({ setError }) => {
     const items = React.useMemo(() => {
         const start = (page - 1) * rowsPerPage;
         const end = start + rowsPerPage;
+
+        setUsersFilter(filteredItems)
 
         return filteredItems.slice(start, end);
     }, [page, filteredItems, rowsPerPage]);
@@ -188,6 +200,13 @@ const TableAuthorized = ({ setError }) => {
         setPage(1)
     }, [])
 
+    const createCSV = React.useCallback(() => {
+        let csv = arrayToCSV(usersFilter)
+        let nombreArchivo = "Authorized.csv"
+
+        downloadCSV(csv, nombreArchivo)
+    }, [usersFilter])
+
     const topContent = React.useMemo(() => {
         return (
             <div className="flex flex-col gap-4">
@@ -201,27 +220,29 @@ const TableAuthorized = ({ setError }) => {
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
                     />
+                    <Button onClick={() => createCSV()}>Download CSV</Button>
                 </div>
                 {/* <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">Total {users.length} users</span>
-          <label className="flex items-center text-default-400 text-small">
-            Rows per page:
-            <select
-              className="bg-transparent outline-none text-default-400 text-small"
-              onChange={onRowsPerPageChange}
-            >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-            </select>
-          </label>
-        </div> */}
+                    <span className="text-default-400 text-small">Total {users.length} users</span>
+                    <label className="flex items-center text-default-400 text-small">
+                        Rows per page:
+                        <select
+                            className="bg-transparent outline-none text-default-400 text-small"
+                            onChange={onRowsPerPageChange}
+                        >
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                        </select>
+                    </label>
+                </div> */}
             </div>
         );
     }, [
         onClear,
         filterValue,
-        onSearchChange
+        onSearchChange,
+        createCSV
     ])
 
     const bottomContent = React.useMemo(() => {
