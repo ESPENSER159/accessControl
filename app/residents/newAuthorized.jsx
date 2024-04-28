@@ -9,6 +9,7 @@ import {
 } from "@nextui-org/react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPhoneFlip } from '@fortawesome/free-solid-svg-icons'
+import { convertPhone } from '../libs/convertPhone'
 
 export default function NewAuthorized({ type, info, toggleEdit, toggleDelete }) {
     const [getInfo, setInfo] = useState(info)
@@ -16,7 +17,11 @@ export default function NewAuthorized({ type, info, toggleEdit, toggleDelete }) 
 
     const handleEdit = (e) => {
 
-        setInfo({ ...getInfo, [e.target.name]: e.target.value })
+        if ((e.target.name).includes('phone')) {
+            setInfo({ ...getInfo, [e.target.name]: convertPhone(e.target.value) })
+        } else {
+            setInfo({ ...getInfo, [e.target.name]: e.target.value })
+        }
 
         info[e.target.name] = e.target.value
 
@@ -65,7 +70,7 @@ export default function NewAuthorized({ type, info, toggleEdit, toggleDelete }) 
                         <Input
                             id='phone'
                             name='phone'
-                            type="number"
+                            type="text"
                             autoComplete="off"
                             placeholder='Phone'
                             value={getInfo.phone ?? ''}
@@ -81,7 +86,7 @@ export default function NewAuthorized({ type, info, toggleEdit, toggleDelete }) 
                                     <Input
                                         id='phone2'
                                         name="phone2"
-                                        type="number"
+                                        type="text"
                                         autoComplete="off"
                                         value={getInfo.phone2 ?? ''}
                                         onChange={handleEdit}
@@ -93,7 +98,7 @@ export default function NewAuthorized({ type, info, toggleEdit, toggleDelete }) 
                                     <Input
                                         id='phone3'
                                         name="phone3"
-                                        type="number"
+                                        type="text"
                                         autoComplete="off"
                                         value={getInfo.phone3 ?? ''}
                                         onChange={handleEdit}
@@ -105,7 +110,7 @@ export default function NewAuthorized({ type, info, toggleEdit, toggleDelete }) 
                                     <Input
                                         id='phone4'
                                         name='phone4'
-                                        type="number"
+                                        type="text"
                                         autoComplete="off"
                                         value={getInfo.phone4 ?? ''}
                                         onChange={handleEdit}
@@ -117,7 +122,7 @@ export default function NewAuthorized({ type, info, toggleEdit, toggleDelete }) 
                                     <Input
                                         id='phone5'
                                         name='phone5'
-                                        type="number"
+                                        type="text"
                                         autoComplete="off"
                                         value={getInfo.phone5 ?? ''}
                                         onChange={handleEdit}
