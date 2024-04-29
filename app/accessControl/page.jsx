@@ -491,7 +491,7 @@ const AccessControl = () => {
                       isRequired
                     />
                   </div>
-                  <div className="my-6 flex justify-center">
+                  {/* <div className="my-6 flex justify-center">
                     <Switch color='primary'
                       isSelected={guestInfo.delivery}
                       onValueChange={(e) => {
@@ -502,7 +502,7 @@ const AccessControl = () => {
                     >
                       Delivery
                     </Switch>
-                  </div>
+                  </div> */}
                   <div className="mx-2 mb-4 col-span-2">
                     <label htmlFor="phone" className="block text-sm font-medium text-gray-900 dark:text-white">Memo</label>
                     <Textarea
