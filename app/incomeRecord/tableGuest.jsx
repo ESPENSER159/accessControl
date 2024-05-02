@@ -18,6 +18,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass, faBox, faPersonShelter } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
 import { arrayToCSV, downloadCSV } from '../libs/downloadCSV'
+import './incomeRecord.css'
+import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
+import { formatDate } from "../libs/getCurrentDate";
 
 const columns = [
     // { name: "ID", uid: "id", sortable: true },
@@ -42,6 +46,10 @@ const TableGuest = ({ setError }) => {
         column: "age",
         direction: "ascending",
     })
+
+    // Datepicker
+    const [startDateCalendar, setStartDateCalendar] = React.useState()
+    const [endDateCalendar, setEndDateCalendar] = React.useState()
 
 
     const getInfoForTable = React.useCallback(async () => {
@@ -82,19 +90,24 @@ const TableGuest = ({ setError }) => {
                 || user.resident_name.toLowerCase().includes(filterValue.toLowerCase())
                 || user.condominium_name.toLowerCase().includes(filterValue.toLowerCase())
 
-                || `${user.condominium_name}/${user.date}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
+                || `${user.condominium_name}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
                 || `${user.condominium_name}/${user.resident_name}${user.resident_last_name}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
-                || `${user.condominium_name}/${user.resident_name}${user.resident_last_name}/${user.date}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
-                || `${user.resident_name}${user.resident_last_name}/${user.date}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
+                || `${user.resident_name}${user.resident_last_name}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
 
                 || user.address.toLowerCase().includes(filterValue.toLowerCase())
                 || user.access_by.toLowerCase().includes(filterValue.toLowerCase())
-                || user.date.toLowerCase().includes(filterValue.toLowerCase())
+                // || user.date.toLowerCase().includes(filterValue.toLowerCase())
+            )
+        }
+
+        if (startDateCalendar) {
+            filteredUsers = filteredUsers.filter((user) =>
+                new Date(user.date) >= new Date(startDateCalendar) && new Date(user.date) <= new Date(endDateCalendar)
             )
         }
 
         return filteredUsers;
-    }, [users, filterValue, hasSearchFilter]);
+    }, [users, filterValue, hasSearchFilter, startDateCalendar, endDateCalendar]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -208,7 +221,7 @@ const TableGuest = ({ setError }) => {
 
     const topContent = React.useMemo(() => {
         return (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 mt-2">
                 <div className="flex justify-between gap-3 items-end">
                     <Input
                         isClearable
@@ -219,7 +232,43 @@ const TableGuest = ({ setError }) => {
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
                     />
-                    <Button onClick={() => createCSV()}>Download CSV</Button>
+
+                    <div className='flex flex-col md:flex-row justify-center '>
+                        <div className='flex flex-col'>
+                            <label className='font-bold text-xs px-2'>Start date</label>
+                            <DatePicker
+                                selected={startDateCalendar}
+                                onChange={(date) => {
+                                    setStartDateCalendar(date && `${formatDate(date)}T00:00:00`)
+                                    setEndDateCalendar()
+                                }}
+                                dateFormat="dd/MM/yyyy"
+                                placeholderText="DD/MM/YYYY"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                            />
+                        </div>
+                        <div className='mx-1 pb-2 flex justify-center items-end'>
+                            <span className='text-sm font-bold md:block hidden'>~</span>
+                        </div>
+                        <div className='flex flex-col'>
+                            <label className='font-bold text-xs px-2'>End date</label>
+                            <DatePicker
+                                selected={endDateCalendar}
+                                onChange={(date) => {
+                                    if (startDateCalendar) {
+                                        setEndDateCalendar(date && `${formatDate(date)}T23:59:59`)
+                                    }
+                                }}
+                                minDate={startDateCalendar}
+                                maxDate={addDays(new Date(startDateCalendar), 60)}
+                                dateFormat="dd/MM/yyyy"
+                                placeholderText="DD/MM/YYYY"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                            />
+                        </div>
+                    </div>
+
+                    <Button onClick={() => createCSV()}>Download Report</Button>
                 </div>
                 {/* <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">Total {users.length} users</span>
@@ -241,7 +290,9 @@ const TableGuest = ({ setError }) => {
         onClear,
         filterValue,
         onSearchChange,
-        createCSV
+        createCSV,
+        startDateCalendar,
+        endDateCalendar
     ])
 
     const bottomContent = React.useMemo(() => {
@@ -273,6 +324,13 @@ const TableGuest = ({ setError }) => {
             </div>
         );
     }, [page, pages, onNextPage, onPreviousPage])
+
+    function addDays(date, days) {
+        if (date) {
+            date.setDate(date.getDate() + days);
+            return date;
+        }
+    }
 
     return (
         <main className="mt-6">
