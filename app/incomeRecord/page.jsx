@@ -12,7 +12,7 @@ const AccessControl = () => {
     <main className="my-6 lg:mx-20 md:mx-20">
 
       <div className="text-center my-6">
-        <h1 className="inline-block text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight dark:text-slate-200">Income Record</h1>
+        <h1 className="inline-block text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight dark:text-slate-200">Record Log</h1>
       </div>
 
       <TableAuthorized setError={setError} />

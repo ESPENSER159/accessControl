@@ -466,8 +466,8 @@ const AccessControl = () => {
 
                         if (e.includes('DLDAQ')) {
                           let numLicen = e.split('DLDAQ')[1].split('DCS')[0]
-                          let firstName = e.split('DDENDAC')[1].split('DDFNDAD')[0]
-                          let lastName = e.split('DCS')[1].split('DDENDAC')[0]
+                          let firstName = e.split('DDE')[1].split('DDF')[0].slice(4)
+                          let lastName = e.split('DCS')[1].split('DDE')[0]
 
                           setGuestInfo({ ...guestInfo, licenseNum: numLicen, guestName: `${firstName} ${lastName}` })
 
@@ -488,7 +488,6 @@ const AccessControl = () => {
                       value={guestInfo.cardNum}
                       onValueChange={(e) => setGuestInfo({ ...guestInfo, cardNum: e })}
                       onClear={() => console.log("input cleared")}
-                      isRequired
                     />
                   </div>
                   {/* <div className="my-6 flex justify-center">

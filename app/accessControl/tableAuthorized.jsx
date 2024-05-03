@@ -23,12 +23,12 @@ const columns = [
     // { name: "ID", uid: "id", sortable: true },
     { name: "AUTHORIZED NAME", uid: "firstName", sortable: true },
     { name: "TYPE", uid: "type", sortable: true },
-    { name: "ADDRESS", uid: "address", sortable: true },
-    { name: "PHONE", uid: "phone", sortable: true },
-    { name: "PHONE 2", uid: "phone2", sortable: true },
-    { name: "PHONE 3", uid: "phone3", sortable: true },
-    { name: "PHONE 4", uid: "phone4", sortable: true },
-    { name: "PHONE 5", uid: "phone5", sortable: true }
+    // { name: "ADDRESS", uid: "address", sortable: true },
+    // { name: "PHONE", uid: "phone", sortable: true },
+    // { name: "PHONE 2", uid: "phone2", sortable: true },
+    // { name: "PHONE 3", uid: "phone3", sortable: true },
+    // { name: "PHONE 4", uid: "phone4", sortable: true },
+    // { name: "PHONE 5", uid: "phone5", sortable: true }
 ]
 
 const TableAuthorized = ({ id, setReload, setError, ticket, infoToPrint }) => {
@@ -96,9 +96,8 @@ const TableAuthorized = ({ id, setReload, setError, ticket, infoToPrint }) => {
 
         if (hasSearchFilter) {
             filteredUsers = filteredUsers.filter((user) =>
-                user.first_name.toLowerCase().includes(filterValue.toLowerCase())
-                || user.last_name.toLowerCase().includes(filterValue.toLowerCase())
-                || user.address.toLowerCase().includes(filterValue.toLowerCase())
+                user.firstName.toLowerCase().includes(filterValue.toLowerCase())
+                || user.type.toLowerCase().includes(filterValue.toLowerCase())
             )
         }
 
@@ -193,7 +192,7 @@ const TableAuthorized = ({ id, setReload, setError, ticket, infoToPrint }) => {
                     <Input
                         isClearable
                         className="w-full sm:max-w-[44%]"
-                        placeholder="Search by resident or address..."
+                        placeholder="Search by authorized..."
                         startContent={<FontAwesomeIcon icon={faMagnifyingGlass} size="lg" width={20} />}
                         value={filterValue}
                         onClear={() => onClear()}
@@ -320,7 +319,7 @@ const TableAuthorized = ({ id, setReload, setError, ticket, infoToPrint }) => {
                             sortDescriptor={sortDescriptor}
                             onSortChange={setSortDescriptor}
                             topContentPlacement="outside"
-                        // topContent={topContent}
+                            topContent={topContent}
                         // onSelectionChange={setSelectedKeys}
                         >
                             <TableHeader columns={columns}>
