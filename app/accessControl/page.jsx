@@ -21,7 +21,7 @@ import {
   Chip
 } from "@nextui-org/react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPen, faTrashCan, faUnlock, faMagnifyingGlass, faL } from '@fortawesome/free-solid-svg-icons'
+import { faPen, faTrashCan, faUnlock, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
 import TableAuthorized from './tableAuthorized'
 import AccessTicket from './accessTicket'
@@ -326,7 +326,7 @@ const AccessControl = () => {
 
     setTicket(false)
     setReading('')
-    setGuestInfo({ delivery: false })
+    setGuestInfo({ delivery: false, guestName: '', licenseNum: '' })
     setIsLoadingBtn(false)
   }
 
@@ -431,7 +431,11 @@ const AccessControl = () => {
             </Chip>
           }
 
-          <form className="w-full space-y-4 md:space-y-6" onSubmit={authorizedAccess} autoComplete="off" >
+          <form className="w-full space-y-4 md:space-y-6"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') e.preventDefault()
+            }}
+            onSubmit={authorizedAccess} autoComplete="off" >
             <Card className='border-solid p-4 my-8'>
               <CardHeader className="flex gap-3">
                 <div className="flex flex-col">
