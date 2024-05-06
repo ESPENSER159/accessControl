@@ -447,7 +447,7 @@ const AccessControl = () => {
                   <label htmlFor="phone" className="block text-sm font-medium text-gray-900 dark:text-white">SCAN DRIVER LICENSE</label>
 
                   <Input
-                    type="text"
+                    type="text" 
                     placeholder='SCAN DRIVER LICENSE'
                     value={reading}
                     onValueChange={(e) => {
