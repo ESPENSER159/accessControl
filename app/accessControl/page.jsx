@@ -76,6 +76,7 @@ const AccessControl = () => {
   const [condominium, setCondominium] = useState('')
   const [condominiumText, setCondominiumText] = useState('')
   const [accessBy, setAccessBy] = useState('')
+  const [reading, setReading] = useState('')
 
   const handleOpenModal = React.useCallback((type, info) => {
     setData(info && { id: info[0], firstName: info[1], lastName: info[2], condominium: info[3], address: info[4], phone1: info[5], phone2: info[6], phone3: info[7], phone4: info[8], phone5: info[9], family: info[10], authorized: info[11] })
@@ -324,6 +325,7 @@ const AccessControl = () => {
     })
 
     setTicket(false)
+    setReading('')
     setGuestInfo({ delivery: false })
     setIsLoadingBtn(false)
   }
@@ -437,6 +439,27 @@ const AccessControl = () => {
                 </div>
               </CardHeader>
               <CardBody>
+                <div className="mx-2 mb-4">
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-900 dark:text-white">Reading</label>
+                  <Textarea
+                    labelPlacement="outside"
+                    placeholder="Reading"
+                    className="w-full"
+                    value={reading}
+                    onValueChange={(e) => {
+
+                      setReading(e)
+
+                      if (e.includes('DLDAQ')) {
+                        let numLicen = e.split('DLDAQ')[1].split('DCS')[0]
+                        let firstName = e.split('DDE')[1].split('DDF')[0].slice(4)
+                        let lastName = e.split('DCS')[1].split('DDE')[0]
+
+                        setGuestInfo({ ...guestInfo, licenseNum: numLicen, guestName: `${firstName} ${lastName}` })
+                      }
+                    }}
+                  />
+                </div>
                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 md:gap-4">
                   <div className="mx-2 mb-4">
                     <label htmlFor="guestName" className="block text-sm font-medium text-gray-900 dark:text-white">Guest Name</label>
@@ -464,14 +487,14 @@ const AccessControl = () => {
                       onValueChange={(e) => {
                         setGuestInfo({ ...guestInfo, licenseNum: e })
 
-                        if (e.includes('DLDAQ')) {
-                          let numLicen = e.split('DLDAQ')[1].split('DCS')[0]
-                          let firstName = e.split('DDE')[1].split('DDF')[0].slice(4)
-                          let lastName = e.split('DCS')[1].split('DDE')[0]
+                        // if (e.includes('DLDAQ')) {
+                        //   let numLicen = e.split('DLDAQ')[1].split('DCS')[0]
+                        //   let firstName = e.split('DDE')[1].split('DDF')[0].slice(4)
+                        //   let lastName = e.split('DCS')[1].split('DDE')[0]
 
-                          setGuestInfo({ ...guestInfo, licenseNum: numLicen, guestName: `${firstName} ${lastName}` })
+                        //   setGuestInfo({ ...guestInfo, licenseNum: numLicen, guestName: `${firstName} ${lastName}` })
 
-                        }
+                        // }
                       }}
                       onClear={() => console.log("input cleared")}
                       isRequired
