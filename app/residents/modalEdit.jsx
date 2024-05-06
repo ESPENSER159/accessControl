@@ -23,7 +23,7 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
     const [firstName, setFirstName] = useState(data && data.firstName)
     const [lastName, setLastName] = useState(data && data.lastName)
     const [getCondominiums, setCondominiums] = useState([])
-    const [condominium, setCondominium] = useState(data && data.condominium)
+    const [condominium, setCondominium] = useState(data && data.condominium ? data.condominium : localStorage.getItem('idLocation'))
     const [address, setAddress] = useState(data && data.address)
     const [phone, setPhone] = useState(data && data.phone1)
     const [alternativePhones, setAlternativePhones] = useState({
@@ -166,7 +166,23 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
                                                 isRequired
                                             />
                                         </div>
-                                        <div className="mx-2 mb-4">
+
+                                        <div className="mx-2 mb-4 hidden">
+                                            <label htmlFor="condominium" className="block text-sm font-medium text-gray-900 dark:text-white">Condominium</label>
+
+                                            <Input
+                                                id='condominium'
+                                                type="text"
+                                                autoComplete="off"
+                                                placeholder='Condominium'
+                                                value={condominium ?? ''}
+                                                onValueChange={setCondominium}
+                                                // onClear={() => console.log("input cleared")}
+                                                disabled
+                                            />
+                                        </div>
+
+                                        {/* <div className="mx-2 mb-4">
                                             <label htmlFor="condominium" className="block text-sm font-medium text-gray-900 dark:text-white">Condominium</label>
 
                                             <Select
@@ -196,7 +212,7 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
                                                     })
                                                 }
                                             </Select>
-                                        </div>
+                                        </div> */}
                                         <div className="mx-2 mb-4">
                                             <label htmlFor="firstName" className="block text-sm font-medium text-gray-900 dark:text-white">First Name</label>
 
