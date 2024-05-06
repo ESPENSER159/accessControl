@@ -444,11 +444,11 @@ const AccessControl = () => {
               </CardHeader>
               <CardBody>
                 <div className="mx-2 mb-4">
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-900 dark:text-white">Reading</label>
-                  <Textarea
-                    labelPlacement="outside"
-                    placeholder="Reading"
-                    className="w-full"
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-900 dark:text-white">SCAN DRIVER LICENSE</label>
+
+                  <Input
+                    type="text" 
+                    placeholder='SCAN DRIVER LICENSE'
                     value={reading}
                     onValueChange={(e) => {
 
@@ -462,6 +462,8 @@ const AccessControl = () => {
                         setGuestInfo({ ...guestInfo, licenseNum: numLicen, guestName: `${firstName} ${lastName}` })
                       }
                     }}
+                    onClear={() => console.log("input cleared")}
+                    isRequired
                   />
                 </div>
                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 md:gap-4">
