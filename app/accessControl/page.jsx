@@ -463,7 +463,6 @@ const AccessControl = () => {
                       }
                     }}
                     onClear={() => console.log("input cleared")}
-                    isRequired
                   />
                 </div>
                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 md:gap-4">
