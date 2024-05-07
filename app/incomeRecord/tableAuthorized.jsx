@@ -86,16 +86,16 @@ const TableAuthorized = ({ setError }) => {
 
         if (hasSearchFilter) {
             filteredUsers = filteredUsers.filter((user) =>
-                user.firstName.toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
-                || user.resident_name.toLowerCase().includes(filterValue.toLowerCase())
-                || user.resident_last_name.toLowerCase().includes(filterValue.toLowerCase())
-                || user.condominium_name.toLowerCase().includes(filterValue.toLowerCase())
+                user.firstName && user.firstName.toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
+                || user.resident_name && user.resident_name.toLowerCase().includes(filterValue.toLowerCase())
+                || user.resident_last_name && user.resident_last_name.toLowerCase().includes(filterValue.toLowerCase())
+                || user.condominium_name && user.condominium_name.toLowerCase().includes(filterValue.toLowerCase())
 
                 || `${user.condominium_name}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
                 || `${user.condominium_name}/${user.resident_name}${user.resident_last_name}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
                 || `${user.resident_name}${user.resident_last_name}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
 
-                || user.address.toLowerCase().includes(filterValue.toLowerCase())
+                || user.address && user.address.toLowerCase().includes(filterValue.toLowerCase())
                 || user.access_by && user.access_by.toLowerCase().includes(filterValue.toLowerCase())
 
                 // || user.date.toLowerCase().includes(filterValue.toLowerCase())
