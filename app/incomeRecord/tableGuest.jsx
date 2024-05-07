@@ -86,7 +86,7 @@ const TableGuest = ({ setError }) => {
 
         if (hasSearchFilter) {
             filteredUsers = filteredUsers.filter((user) =>
-                user.guest_name.toLowerCase().includes(filterValue.toLowerCase())
+                user.guest_name && user.guest_name.toLowerCase().includes(filterValue.toLowerCase())
                 || user.resident_name.toLowerCase().includes(filterValue.toLowerCase())
                 || user.condominium_name.toLowerCase().includes(filterValue.toLowerCase())
 
