@@ -66,6 +66,7 @@ const Residents = () => {
   const getInfoForTable = async () => {
     await axios.get('/api/residents')
       .then(function (response) {
+        // console.log(response)
         setUsers(response.data.info)
       })
       .catch(function (error) {
@@ -87,9 +88,10 @@ const Residents = () => {
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((user) =>
-        user.first_name.toLowerCase().includes(filterValue.toLowerCase())
-        || user.condominium_name.toLowerCase().includes(filterValue.toLowerCase())
-        || user.address.toLowerCase().includes(filterValue.toLowerCase())
+        user.first_name && user.first_name.toLowerCase().includes(filterValue.toLowerCase())
+        || user.last_name && user.last_name.toLowerCase().includes(filterValue.toLowerCase())
+        || user.condominium_name && user.condominium_name.toLowerCase().includes(filterValue.toLowerCase())
+        || user.address && user.address.toLowerCase().includes(filterValue.toLowerCase())
       )
     }
 
