@@ -87,6 +87,7 @@ const TableAuthorized = ({ setError }) => {
         if (hasSearchFilter) {
             filteredUsers = filteredUsers.filter((user) =>
                 user.firstName && user.firstName.toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
+                || user.lastName && user.lastName.toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
                 || user.resident_name && user.resident_name.toLowerCase().includes(filterValue.toLowerCase())
                 || user.resident_last_name && user.resident_last_name.toLowerCase().includes(filterValue.toLowerCase())
                 || user.condominium_name && user.condominium_name.toLowerCase().includes(filterValue.toLowerCase())
