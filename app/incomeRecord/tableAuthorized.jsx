@@ -79,7 +79,7 @@ const TableAuthorized = ({ setError }) => {
 
             if (res.status === 200) {
                 // console.log(res.info)
-                setUsers([...data, ...res.info])
+                setUsers([...data, ...res.info]) 
 
             } else {
                 console.log(res.message)
