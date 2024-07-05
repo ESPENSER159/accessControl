@@ -1,5 +1,7 @@
 export function arrayToCSV(arr) {
-    const cabeceras = Object.keys(arr[0]);
+    // const cabeceras = Object.keys(arr[1]);
+    const cabeceras = ['id', 'resident_ID', 'resident_name', 'resident_last_name', 'phone', 'condominium_ID', 'condominium_name', 'condominium_address', 'address', 'type', 'firstName', 'license_num', 'card_num', 'memo', 'access_by', 'date']
+    
     let csv = cabeceras.join(',') + '\n';
 
     arr.forEach((objeto) => {

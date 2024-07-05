@@ -31,6 +31,7 @@ const columns = [
     { name: "RESIDENT PHONE", uid: "phone", sortable: true },
     { name: "CONDOMINIUM", uid: "condominium_name", sortable: true },
     { name: "ADDRESS", uid: "address", sortable: true },
+    { name: "LICENSE", uid: "license_num", sortable: true },
     { name: "ACCESS BY", uid: "access_by", sortable: true },
     { name: "DATE", uid: "date", sortable: true }
 ]
@@ -58,6 +59,27 @@ const TableAuthorized = ({ setError }) => {
             if (res.status === 200) {
                 // console.log(res.info)
                 setUsers(res.info)
+
+                getInfoForTableGuest(res.info)
+            } else {
+                console.log(res.message)
+                setError(res.message)
+            }
+        }).catch(function (error) {
+            console.log(error)
+            setError(error)
+        })
+
+        // setIsLoading(false)
+    }, [setError])
+
+    const getInfoForTableGuest = React.useCallback(async (data) => {
+        await axios.post('/api/incomeRecord/guest').then(function (response) {
+            const res = response.data
+
+            if (res.status === 200) {
+                // console.log(res.info)
+                setUsers([...data, ...res.info])
 
             } else {
                 console.log(res.message)
@@ -219,6 +241,8 @@ const TableAuthorized = ({ setError }) => {
         let csv = arrayToCSV(usersFilter)
         let nombreArchivo = "Authorized.csv"
 
+        console.log(usersFilter)
+
         downloadCSV(csv, nombreArchivo)
     }, [usersFilter])
 
@@ -344,9 +368,9 @@ const TableAuthorized = ({ setError }) => {
                     </div>
                     :
                     <div>
-                        <div className="text-center text-xl">
+                        {/* <div className="text-center text-xl">
                             <p className="font-bold">AUTHORIZED</p>
-                        </div>
+                        </div> */}
 
                         <Table
                             aria-label="Table Access Control"
