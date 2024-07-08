@@ -12,7 +12,9 @@ import {
     Pagination,
     Spinner,
     Chip,
-    Avatar
+    Avatar,
+    Select,
+    SelectItem
 } from "@nextui-org/react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPeopleRoof, faPeopleGroup, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
@@ -31,6 +33,7 @@ const columns = [
     { name: "RESIDENT PHONE", uid: "phone", sortable: true },
     { name: "CONDOMINIUM", uid: "condominium_name", sortable: true },
     { name: "ADDRESS", uid: "address", sortable: true },
+    { name: "LICENSE", uid: "license_num", sortable: true },
     { name: "ACCESS BY", uid: "access_by", sortable: true },
     { name: "DATE", uid: "date", sortable: true }
 ]
@@ -50,15 +53,50 @@ const TableAuthorized = ({ setError }) => {
     const [startDateCalendar, setStartDateCalendar] = React.useState()
     const [endDateCalendar, setEndDateCalendar] = React.useState()
 
+    const [resident, setResident] = React.useState('')
+    const [getResidents, setGetResidents] = React.useState([])
+    const [condominium, setCondominium] = React.useState('')
+    const [getCondominiums, setCondominiums] = React.useState([])
 
-    const getInfoForTable = React.useCallback(async () => {
-        await axios.post('/api/incomeRecord/authorized').then(function (response) {
+    const [isSelectCondom, setIsSelectCondom] = React.useState(false)
+    const [isLoadResidents, setIsLoadResidents] = React.useState(false)
+
+    const getCondoms = React.useCallback(async () => {
+        await axios.get('/api/condominiums')
+            .then(function (response) {
+                setCondominiums(response.data.info)
+            })
+            .catch(function (error) {
+                console.log(error)
+                setError(error)
+            })
+
+        setIsLoading(false)
+    }, [setError])
+
+    const getAllResidents = React.useCallback(async (condom) => {
+        setIsLoadResidents(true)
+        setResident('')
+
+        await axios.post('/api/residents/all', {
+            idCondominium: condom.split(' - ')[0]
+        }).then(function (response) {
+            setGetResidents(response.data.info)
+        }).catch(function (error) {
+            console.log(error)
+            setError(error)
+        })
+
+        setIsLoadResidents(false)
+    }, [setError])
+
+    const getInfoForTableGuest = React.useCallback(async (data) => {
+        await axios.post('/api/incomeRecord/guest').then(function (response) {
             const res = response.data
 
             if (res.status === 200) {
                 // console.log(res.info)
-                setUsers(res.info)
-
+                setUsers([...data, ...res.info])
             } else {
                 console.log(res.message)
                 setError(res.message)
@@ -67,14 +105,31 @@ const TableAuthorized = ({ setError }) => {
             console.log(error)
             setError(error)
         })
-
-        setIsLoading(false)
     }, [setError])
+
+    const getInfoForTable = React.useCallback(async () => {
+        await axios.post('/api/incomeRecord/authorized').then(function (response) {
+            const res = response.data
+
+            if (res.status === 200) {
+                // console.log(res.info)
+                setUsers(res.info)
+                getInfoForTableGuest(res.info)
+            } else {
+                console.log(res.message)
+                setError(res.message)
+            }
+        }).catch(function (error) {
+            console.log(error)
+            setError(error)
+        })
+    }, [setError, getInfoForTableGuest])
 
     React.useEffect(() => {
         setIsLoading(true)
+        getCondoms()
         getInfoForTable()
-    }, [getInfoForTable])
+    }, [getInfoForTable, getCondoms])
 
 
     const [page, setPage] = React.useState(1);
@@ -90,14 +145,14 @@ const TableAuthorized = ({ setError }) => {
                 || user.lastName && user.lastName.toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
                 || user.resident_name && user.resident_name.toLowerCase().includes(filterValue.toLowerCase())
                 || user.resident_last_name && user.resident_last_name.toLowerCase().includes(filterValue.toLowerCase())
-                || user.condominium_name && user.condominium_name.toLowerCase().includes(filterValue.toLowerCase())
-
-                || `${user.condominium_name}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
-                || `${user.condominium_name}/${user.resident_name}${user.resident_last_name}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
-                || `${user.resident_name}${user.resident_last_name}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
 
                 || user.address && user.address.toLowerCase().includes(filterValue.toLowerCase())
                 || user.access_by && user.access_by.toLowerCase().includes(filterValue.toLowerCase())
+
+                // || user.condominium_name && user.condominium_name.toLowerCase().includes(filterValue.toLowerCase())
+                // || `${user.condominium_name}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
+                // || `${user.condominium_name}/${user.resident_name}${user.resident_last_name}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
+                // || `${user.resident_name}${user.resident_last_name}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
 
                 // || user.date.toLowerCase().includes(filterValue.toLowerCase())
             )
@@ -109,8 +164,20 @@ const TableAuthorized = ({ setError }) => {
             )
         }
 
+        if (condominium) {
+            filteredUsers = filteredUsers.filter((user) =>
+                user.condominium_name && user.condominium_name.toLowerCase().includes(condominium.split(' - ')[1].toLowerCase())
+            )
+        }
+
+        if (resident) {
+            filteredUsers = filteredUsers.filter((user) =>
+                user.resident_name && `${user.resident_name.toLowerCase().replaceAll(' ', '')}${user.resident_last_name.toLowerCase().replaceAll(' ', '')}` === resident.split(' - ')[1].toLowerCase().replaceAll(' ', '')
+            )
+        }
+
         return filteredUsers;
-    }, [users, filterValue, hasSearchFilter, startDateCalendar, endDateCalendar]);
+    }, [users, filterValue, hasSearchFilter, startDateCalendar, endDateCalendar, condominium, resident]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -224,19 +291,90 @@ const TableAuthorized = ({ setError }) => {
 
     const topContent = React.useMemo(() => {
         return (
-            <div className="flex flex-col gap-4 mt-2">
-                <div className="flex justify-between gap-3 items-end">
-                    <Input
-                        isClearable
-                        className="w-full sm:max-w-[44%]"
-                        placeholder="Search..."
-                        startContent={<FontAwesomeIcon icon={faMagnifyingGlass} size="lg" width={20} />}
-                        value={filterValue}
-                        onClear={() => onClear()}
-                        onValueChange={onSearchChange}
-                    />
+            <div className="flex flex-col gap-4 mt-2 mx-2 sm:mx-none">
+                <Input
+                    isClearable
+                    className="w-full sm:max-w-[70%] md:max-w-[44%]"
+                    placeholder="Search..."
+                    startContent={<FontAwesomeIcon icon={faMagnifyingGlass} size="lg" width={20} />}
+                    value={filterValue}
+                    onClear={() => onClear()}
+                    onValueChange={onSearchChange}
+                />
+                <div className="flex flex-col sm:flex-row justify-between gap-4 items-end">
 
-                    <div className='flex flex-col md:flex-row justify-center '>
+                    <div className="w-full sm:max-w-[44%]">
+                        <div className="my-2">
+                            <label htmlFor="condominium" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Condominium</label>
+
+                            <Select
+                                isRequired
+                                id='condominium'
+                                aria-label='condominium'
+                                placeholder="Select an condominium"
+                                variant='faded'
+                                value={condominium}
+                                className='focus:ring-primary-600 focus:border-primary-600'
+                                onChange={(e) => {
+                                    setCondominium(e.target.value)
+                                    getAllResidents(e.target.value)
+                                    setIsSelectCondom(e.target.value && true)
+                                    setError(null)
+                                }}
+                            >
+                                {getCondominiums &&
+                                    getCondominiums.map((value) => {
+                                        return (
+                                            <SelectItem key={`${value.id} - ${value.name}`} textValue={value.name}>
+                                                {value.name}
+                                            </SelectItem>
+                                        )
+                                    })
+                                }
+                            </Select>
+                        </div>
+
+                        {isSelectCondom ?
+                            <div>
+                                <label htmlFor="resident" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Resident</label>
+
+                                {isLoadResidents ?
+                                    <div className='flex justify-center items-center flex-col'>
+                                        <Spinner color="primary" size="lg" />
+                                    </div>
+                                    :
+                                    <Select
+                                        isRequired
+                                        id='resident'
+                                        aria-label='resident'
+                                        placeholder="Select an Resident"
+                                        variant='faded'
+                                        value={resident}
+                                        className='focus:ring-primary-600 focus:border-primary-600'
+                                        onChange={(e) => {
+                                            setResident(e.target.value)
+                                            setError(null)
+                                        }}
+                                    >
+                                        {getResidents &&
+                                            getResidents.map((value) => {
+                                                return (
+                                                    <SelectItem key={`${value.id} - ${value.first_name} ${value.last_name}`} textValue={`${value.first_name} ${value.last_name}`}>
+                                                        {`${value.first_name} ${value.last_name}`}
+                                                    </SelectItem>
+                                                )
+                                            })
+                                        }
+                                    </Select>
+                                }
+                            </div>
+                            :
+                            <></>
+                        }
+                    </div>
+
+
+                    <div className='w-full sm:w-auto flex flex-col md:flex-row justify-center '>
                         <div className='flex flex-col'>
                             <label className='font-bold text-xs px-2'>Start date</label>
                             <DatePicker
@@ -295,7 +433,15 @@ const TableAuthorized = ({ setError }) => {
         onSearchChange,
         createCSV,
         startDateCalendar,
-        endDateCalendar
+        endDateCalendar,
+        condominium,
+        getCondominiums,
+        getResidents,
+        resident,
+        setError,
+        getAllResidents,
+        isSelectCondom,
+        isLoadResidents
     ])
 
     const bottomContent = React.useMemo(() => {
@@ -344,9 +490,9 @@ const TableAuthorized = ({ setError }) => {
                     </div>
                     :
                     <div>
-                        <div className="text-center text-xl">
+                        {/* <div className="text-center text-xl">
                             <p className="font-bold">AUTHORIZED</p>
-                        </div>
+                        </div> */}
 
                         <Table
                             aria-label="Table Access Control"
