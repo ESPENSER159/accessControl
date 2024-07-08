@@ -12,7 +12,7 @@ import {
     Select,
     SelectItem
 } from "@nextui-org/react"
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import axios from 'axios'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faPhoneFlip, faUser, faPeopleRoof, faPeopleGroup } from '@fortawesome/free-solid-svg-icons'
@@ -37,6 +37,22 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
 
     const [family, setFamily] = useState(data ? data.family : [])
     const [authorized, setAuthorized] = useState(data ? data.authorized : [])
+
+    const [isAdmin, setIsAdmin] = useState(false)
+
+    const getSession = useCallback(async () => {
+        await axios.get('/api/session')
+            .then(function (response) {
+                // console.log(response)
+                let typeUser = response.data.session.user.email === 'super admin' ? true : false
+
+                setIsAdmin(typeUser)
+            })
+            .catch(function (error) {
+                console.log(error)
+                setError(error)
+            })
+    }, [])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -116,6 +132,7 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
     }
 
     useEffect(() => {
+        getSession()
         setIsLoading(true)
         getCondoms()
     }, [])
@@ -182,37 +199,41 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
                                             />
                                         </div>
 
-                                        {/* <div className="mx-2 mb-4">
-                                            <label htmlFor="condominium" className="block text-sm font-medium text-gray-900 dark:text-white">Condominium</label>
+                                        {isAdmin &&
+                                            <div className="mx-2 mb-4">
+                                                <label htmlFor="condominium" className="block text-sm font-medium text-gray-900 dark:text-white">Condominium</label>
 
-                                            <Select
-                                                isRequired
-                                                id='condominium'
-                                                aria-label='condominium'
-                                                placeholder="Select an condominium"
-                                                variant='faded'
-                                                // value={condominium}
-                                                selectedKeys={condominium ? [`${condominium}`] : []}
-                                                // defaultSelectedKeys={[`${condominium}`]}
-                                                className='focus:ring-primary-600 focus:border-primary-600'
-                                                onChange={(e) => {
-                                                    // let dataCondominium = e.target.value.replaceAll(' ', '').split('-')
-                                                    // setCondominium(dataCondominium[0])
-                                                    setCondominium(e.target.value)
-                                                    setError(null)
-                                                }}
-                                            >
-                                                {getCondominiums &&
-                                                    getCondominiums.map((value) => {
-                                                        return (
-                                                            <SelectItem key={value.id} textValue={value.name}>
-                                                                {value.name}
-                                                            </SelectItem>
-                                                        )
-                                                    })
-                                                }
-                                            </Select>
-                                        </div> */}
+                                                <Select
+                                                    isRequired
+                                                    id='condominium'
+                                                    aria-label='condominium'
+                                                    placeholder="Select an condominium"
+                                                    variant='faded'
+                                                    // value={condominium}
+                                                    selectedKeys={condominium ? [`${condominium}`] : []}
+                                                    // defaultSelectedKeys={[`${condominium}`]}
+                                                    className='focus:ring-primary-600 focus:border-primary-600'
+                                                    onChange={(e) => {
+                                                        // let dataCondominium = e.target.value.replaceAll(' ', '').split('-')
+                                                        // setCondominium(dataCondominium[0])
+                                                        setCondominium(e.target.value)
+                                                        setError(null)
+                                                    }}
+                                                >
+                                                    {getCondominiums &&
+                                                        getCondominiums.map((value) => {
+                                                            return (
+                                                                <SelectItem key={value.id} textValue={value.name}>
+                                                                    {value.name}
+                                                                </SelectItem>
+                                                            )
+                                                        })
+                                                    }
+                                                </Select>
+                                            </div>
+                                        }
+
+
                                         <div className="mx-2 mb-4">
                                             <label htmlFor="firstName" className="block text-sm font-medium text-gray-900 dark:text-white">First Name</label>
 
