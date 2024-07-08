@@ -140,7 +140,7 @@ export default function NavBar({ type, session }) {
 
       <NavbarMenu>
 
-        {getType === 'admin' ?
+        {getType.toLowerCase().includes('admin') ?
           <>
             <NavbarMenuItem className="border-solid border-2 border-default-200 rounded-lg pl-4 py-2">
               <Link

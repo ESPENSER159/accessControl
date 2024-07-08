@@ -32,16 +32,13 @@ export async function POST(request: Request) {
         const searchUser: any = await conn.query('SELECT id, user, condominium FROM users WHERE user = ? AND condominium = ?', [user, condominium])
         const getUser = searchUser[0]
 
-        let typeUser = type
-        type ? typeUser = 'admin' : typeUser = 'user'
-
         const encryptPassword = bcrypt.hashSync(pass, saltRounds)
 
         const currentDate = formatedTimestamp()
 
         const editUser = async () => {
             // Edit user
-            const edit: any = await conn.query(`UPDATE users SET user=?, password=?, condominium=?, type=?, edit_date=? WHERE id=? AND user='${userToEdit}' AND condominium='${condominiumToEdit}'`, [user, encryptPassword, condominium, typeUser, currentDate, id])
+            const edit: any = await conn.query(`UPDATE users SET user=?, password=?, condominium=?, type=?, edit_date=? WHERE id=? AND user='${userToEdit}' AND condominium='${condominiumToEdit}'`, [user, encryptPassword, condominium, type, currentDate, id])
             const res = edit[0]
 
             await conn.end()
@@ -67,7 +64,7 @@ export async function POST(request: Request) {
             if (getUser) return NextResponse.json({ status: 400, message: 'User already exists' })
 
             // Create user
-            const create: any = await conn.query('INSERT INTO users (user, password, condominium, type, creation_date) VALUES (?, ?, ?, ?, ?)', [user, encryptPassword, condominium, typeUser, currentDate])
+            const create: any = await conn.query('INSERT INTO users (user, password, condominium, type, creation_date) VALUES (?, ?, ?, ?, ?)', [user, encryptPassword, condominium, type, currentDate])
             const ifCreate = create[0]
 
             await conn.end()
