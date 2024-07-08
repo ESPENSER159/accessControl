@@ -61,20 +61,11 @@ const TableAuthorized = ({ setError }) => {
     const [isSelectCondom, setIsSelectCondom] = React.useState(false)
     const [isLoadResidents, setIsLoadResidents] = React.useState(false)
 
-    const getCondoms = React.useCallback(async () => {
-        await axios.get('/api/condominiums')
-            .then(function (response) {
-                setCondominiums(response.data.info)
-            })
-            .catch(function (error) {
-                console.log(error)
-                setError(error)
-            })
+    const [isAdmin, setIsAdmin] = React.useState(false)
 
-        setIsLoading(false)
-    }, [setError])
 
     const getAllResidents = React.useCallback(async (condom) => {
+        // console.log(condom)
         setIsLoadResidents(true)
         setResident('')
 
@@ -88,6 +79,38 @@ const TableAuthorized = ({ setError }) => {
         })
 
         setIsLoadResidents(false)
+    }, [setError])
+
+    const getSession = React.useCallback(async () => {
+        setIsSelectCondom(false)
+
+        await axios.get('/api/session')
+            .then(function (response) {
+                // console.log(response)
+                let typeUser = response.data.session.user.email === 'admin' ? true : false
+
+                setIsAdmin(typeUser)
+
+                if (!typeUser) {
+                    getAllResidents(response.data.session.user.image[0])
+                    setIsSelectCondom(true)
+                }
+            })
+            .catch(function (error) {
+                console.log(error)
+                setError(error)
+            })
+    }, [setError, getAllResidents])
+
+    const getCondoms = React.useCallback(async () => {
+        await axios.get('/api/condominiums')
+            .then(function (response) {
+                setCondominiums(response.data.info)
+            })
+            .catch(function (error) {
+                console.log(error)
+                setError(error)
+            })
     }, [setError])
 
     const getInfoForTableGuest = React.useCallback(async (data) => {
@@ -105,6 +128,8 @@ const TableAuthorized = ({ setError }) => {
             console.log(error)
             setError(error)
         })
+
+        setIsLoading(false)
     }, [setError])
 
     const getInfoForTable = React.useCallback(async () => {
@@ -126,10 +151,12 @@ const TableAuthorized = ({ setError }) => {
     }, [setError, getInfoForTableGuest])
 
     React.useEffect(() => {
+        getSession()
+
         setIsLoading(true)
         getCondoms()
         getInfoForTable()
-    }, [getInfoForTable, getCondoms])
+    }, [getInfoForTable, getCondoms, getSession])
 
 
     const [page, setPage] = React.useState(1);
@@ -304,35 +331,40 @@ const TableAuthorized = ({ setError }) => {
                 <div className="flex flex-col sm:flex-row justify-between gap-4 items-end">
 
                     <div className="w-full sm:max-w-[44%]">
-                        <div className="my-2">
-                            <label htmlFor="condominium" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Condominium</label>
 
-                            <Select
-                                isRequired
-                                id='condominium'
-                                aria-label='condominium'
-                                placeholder="Select an condominium"
-                                variant='faded'
-                                value={condominium}
-                                className='focus:ring-primary-600 focus:border-primary-600'
-                                onChange={(e) => {
-                                    setCondominium(e.target.value)
-                                    getAllResidents(e.target.value)
-                                    setIsSelectCondom(e.target.value && true)
-                                    setError(null)
-                                }}
-                            >
-                                {getCondominiums &&
-                                    getCondominiums.map((value) => {
-                                        return (
-                                            <SelectItem key={`${value.id} - ${value.name}`} textValue={value.name}>
-                                                {value.name}
-                                            </SelectItem>
-                                        )
-                                    })
-                                }
-                            </Select>
-                        </div>
+                        {isAdmin ?
+                            <div className="my-2">
+                                <label htmlFor="condominium" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Condominium</label>
+
+                                <Select
+                                    isRequired
+                                    id='condominium'
+                                    aria-label='condominium'
+                                    placeholder="Select an condominium"
+                                    variant='faded'
+                                    value={condominium}
+                                    className='focus:ring-primary-600 focus:border-primary-600'
+                                    onChange={(e) => {
+                                        setCondominium(e.target.value)
+                                        getAllResidents(e.target.value)
+                                        setIsSelectCondom(e.target.value && true)
+                                        setError(null)
+                                    }}
+                                >
+                                    {getCondominiums &&
+                                        getCondominiums.map((value) => {
+                                            return (
+                                                <SelectItem key={`${value.id} - ${value.name}`} textValue={value.name}>
+                                                    {value.name}
+                                                </SelectItem>
+                                            )
+                                        })
+                                    }
+                                </Select>
+                            </div>
+                            :
+                            <></>
+                        }
 
                         {isSelectCondom ?
                             <div>
@@ -441,7 +473,8 @@ const TableAuthorized = ({ setError }) => {
         setError,
         getAllResidents,
         isSelectCondom,
-        isLoadResidents
+        isLoadResidents,
+        isAdmin
     ])
 
     const bottomContent = React.useMemo(() => {
