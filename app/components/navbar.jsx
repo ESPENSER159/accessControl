@@ -91,16 +91,16 @@ export default function NavBar({ type, session }) {
                 Residents
               </Link>
             </NavbarItem>
-            <NavbarItem>
-              <Link color="foreground" href="/incomeRecord">
-                Record Log
-              </Link>
-            </NavbarItem>
           </>
           :
           <></>
         }
 
+        <NavbarItem>
+          <Link color="foreground" href="/incomeRecord">
+            Record Log
+          </Link>
+        </NavbarItem>
         <NavbarItem>
           <Link color="foreground" href="/accessControl">
             Access Control
