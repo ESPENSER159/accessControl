@@ -87,7 +87,7 @@ const TableAuthorized = ({ setError }) => {
         await axios.get('/api/session')
             .then(function (response) {
                 // console.log(response)
-                let typeUser = response.data.session.user.email === 'admin' ? true : false
+                let typeUser = response.data.session.user.email === 'super admin' ? true : false
 
                 setIsAdmin(typeUser)
 
