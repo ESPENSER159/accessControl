@@ -135,7 +135,7 @@ export default function ModalEdit({ edit, data, onClose, setReload }) {
         getSession()
         setIsLoading(true)
         getCondoms()
-    }, [])
+    }, [getSession])
 
     return (
         <>
