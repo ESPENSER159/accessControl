@@ -14,7 +14,10 @@ import {
     Chip,
     Avatar,
     Select,
-    SelectItem
+    SelectItem,
+    Card,
+    CardHeader,
+    CardBody
 } from "@nextui-org/react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPeopleRoof, faPeopleGroup, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
@@ -61,20 +64,37 @@ const TableAuthorized = ({ setError }) => {
     const [isSelectCondom, setIsSelectCondom] = React.useState(false)
     const [isLoadResidents, setIsLoadResidents] = React.useState(false)
 
-    const getCondoms = React.useCallback(async () => {
-        await axios.get('/api/condominiums')
-            .then(function (response) {
-                setCondominiums(response.data.info)
-            })
-            .catch(function (error) {
+    const [isAdmin, setIsAdmin] = React.useState(false)
+    const [isLoadingBtn, setIsLoadingBtn] = React.useState(false)
+    const [reading, setReading] = React.useState('')
+    const [idGuest, setIdGuest] = React.useState('')
+    const [isLoadLicense, setIsLoadLicense] = React.useState(false)
+    const [showUpdateLicense, setShowUpdateLicense] = React.useState(false)
+
+    const getInfoGuest = React.useCallback(async (idKey) => {
+        // console.log(idKey)
+        setShowUpdateLicense(true)
+        setIsLoadLicense(true)
+
+        if (idKey) {
+            await axios.post('/api/infoGuest', {
+                idGuest: idKey
+            }).then(function (response) {
+                setReading(response.data.info.license_num)
+            }).catch(function (error) {
                 console.log(error)
                 setError(error)
             })
+        } else {
+            setReading('')
+        }
 
-        setIsLoading(false)
+        setIsLoadLicense(false)
+
     }, [setError])
 
     const getAllResidents = React.useCallback(async (condom) => {
+        // console.log(condom)
         setIsLoadResidents(true)
         setResident('')
 
@@ -88,6 +108,38 @@ const TableAuthorized = ({ setError }) => {
         })
 
         setIsLoadResidents(false)
+    }, [setError])
+
+    const getSession = React.useCallback(async () => {
+        setIsSelectCondom(false)
+
+        await axios.get('/api/session')
+            .then(function (response) {
+                // console.log(response)
+                let typeUser = response.data.session.user.email === 'super admin' ? true : false
+
+                setIsAdmin(typeUser)
+
+                if (!typeUser) {
+                    getAllResidents(response.data.session.user.image[0])
+                    setIsSelectCondom(true)
+                }
+            })
+            .catch(function (error) {
+                console.log(error)
+                setError(error)
+            })
+    }, [setError, getAllResidents])
+
+    const getCondoms = React.useCallback(async () => {
+        await axios.get('/api/condominiums')
+            .then(function (response) {
+                setCondominiums(response.data.info)
+            })
+            .catch(function (error) {
+                console.log(error)
+                setError(error)
+            })
     }, [setError])
 
     const getInfoForTableGuest = React.useCallback(async (data) => {
@@ -105,9 +157,14 @@ const TableAuthorized = ({ setError }) => {
             console.log(error)
             setError(error)
         })
+
+        setIsLoading(false)
     }, [setError])
 
     const getInfoForTable = React.useCallback(async () => {
+        setShowUpdateLicense(false)
+        setIsLoading(true)
+
         await axios.post('/api/incomeRecord/authorized').then(function (response) {
             const res = response.data
 
@@ -126,10 +183,34 @@ const TableAuthorized = ({ setError }) => {
     }, [setError, getInfoForTableGuest])
 
     React.useEffect(() => {
+        getSession()
+
         setIsLoading(true)
         getCondoms()
         getInfoForTable()
-    }, [getInfoForTable, getCondoms])
+    }, [getInfoForTable, getCondoms, getSession])
+
+
+    const updateLicense = async (e) => {
+        e.preventDefault()
+        setIsLoadingBtn(true)
+
+        await axios.post('/api/infoGuest/update', {
+            idGuest: idGuest,
+            license: reading
+        }).then(function (response) {
+            // console.log(response)
+        }).catch(function (error) {
+            console.log(error)
+            setError(error)
+        })
+
+        setReading('')
+        // setGuestInfo({ delivery: false, guestName: '', licenseNum: '' })
+        setIsLoadingBtn(false)
+        
+        getInfoForTable()
+    }
 
 
     const [page, setPage] = React.useState(1);
@@ -304,35 +385,40 @@ const TableAuthorized = ({ setError }) => {
                 <div className="flex flex-col sm:flex-row justify-between gap-4 items-end">
 
                     <div className="w-full sm:max-w-[44%]">
-                        <div className="my-2">
-                            <label htmlFor="condominium" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Condominium</label>
 
-                            <Select
-                                isRequired
-                                id='condominium'
-                                aria-label='condominium'
-                                placeholder="Select an condominium"
-                                variant='faded'
-                                value={condominium}
-                                className='focus:ring-primary-600 focus:border-primary-600'
-                                onChange={(e) => {
-                                    setCondominium(e.target.value)
-                                    getAllResidents(e.target.value)
-                                    setIsSelectCondom(e.target.value && true)
-                                    setError(null)
-                                }}
-                            >
-                                {getCondominiums &&
-                                    getCondominiums.map((value) => {
-                                        return (
-                                            <SelectItem key={`${value.id} - ${value.name}`} textValue={value.name}>
-                                                {value.name}
-                                            </SelectItem>
-                                        )
-                                    })
-                                }
-                            </Select>
-                        </div>
+                        {isAdmin ?
+                            <div className="my-2">
+                                <label htmlFor="condominium" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Condominium</label>
+
+                                <Select
+                                    isRequired
+                                    id='condominium'
+                                    aria-label='condominium'
+                                    placeholder="Select an condominium"
+                                    variant='faded'
+                                    value={condominium}
+                                    className='focus:ring-primary-600 focus:border-primary-600'
+                                    onChange={(e) => {
+                                        setCondominium(e.target.value)
+                                        getAllResidents(e.target.value)
+                                        setIsSelectCondom(e.target.value && true)
+                                        setError(null)
+                                    }}
+                                >
+                                    {getCondominiums &&
+                                        getCondominiums.map((value) => {
+                                            return (
+                                                <SelectItem key={`${value.id} - ${value.name}`} textValue={value.name}>
+                                                    {value.name}
+                                                </SelectItem>
+                                            )
+                                        })
+                                    }
+                                </Select>
+                            </div>
+                            :
+                            <></>
+                        }
 
                         {isSelectCondom ?
                             <div>
@@ -441,7 +527,8 @@ const TableAuthorized = ({ setError }) => {
         setError,
         getAllResidents,
         isSelectCondom,
-        isLoadResidents
+        isLoadResidents,
+        isAdmin
     ])
 
     const bottomContent = React.useMemo(() => {
@@ -503,11 +590,24 @@ const TableAuthorized = ({ setError }) => {
                                 wrapper: "max-h-[382px]",
                             }}
                             color="primary"
-                            selectionMode="none"
                             sortDescriptor={sortDescriptor}
                             onSortChange={setSortDescriptor}
                             topContentPlacement="outside"
                             topContent={topContent}
+                            selectionMode="single"
+                            onSelectionChange={(key) => {
+                                const setIter = key.keys()
+                                const getKey = setIter.next().value
+
+                                let getType = getKey && getKey.split(' - ')[1]
+
+                                if (getType === 'guest' || getType === 'delivery') {
+                                    setIdGuest(getKey.split(' - ')[0])
+                                    getInfoGuest(getKey)
+                                } else {
+                                    setShowUpdateLicense(false)
+                                }
+                            }}
                         >
                             <TableHeader columns={columns}>
                                 {(column) => (
@@ -522,13 +622,71 @@ const TableAuthorized = ({ setError }) => {
                             </TableHeader>
                             <TableBody emptyContent={"No info found"} items={sortedItems}>
                                 {(item) => (
-                                    <TableRow key={item.id}>
+                                    <TableRow key={`${item.id} - ${item.type}`}>
                                         {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
                                     </TableRow>
                                 )}
                             </TableBody>
                         </Table>
                     </div>
+            }
+
+            {showUpdateLicense ?
+                <form className="w-full space-y-4 md:space-y-6"
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') e.preventDefault()
+                    }}
+                    onSubmit={updateLicense} autoComplete="off" >
+                    <Card className='border-solid p-4 my-8'>
+                        <CardHeader className="flex gap-3">
+                            <div className="flex flex-col">
+                                <p className="text-md font-bold">Update Information</p>
+                            </div>
+                        </CardHeader>
+                        <CardBody>
+                            {isLoadLicense ?
+                                <div className='flex justify-center items-center flex-col'>
+                                    <Spinner color="primary" size="lg" />
+                                </div>
+                                :
+                                <>
+                                    <div className="mx-2 mb-4">
+                                        <label htmlFor="phone" className="block text-sm font-medium text-gray-900 dark:text-white">SCAN DRIVER LICENSE</label>
+
+                                        <Input
+                                            type="text"
+                                            placeholder='SCAN DRIVER LICENSE'
+                                            value={reading}
+                                            onValueChange={(e) => {
+
+                                                setReading(e)
+
+                                                if (e.includes('DLDAQ')) {
+                                                    let numLicen = e.split('DLDAQ')[1].split('DCS')[0]
+                                                    let firstName = e.split('DDE')[1].split('DDF')[0].slice(4)
+                                                    let lastName = e.split('DCS')[1].split('DDE')[0]
+
+                                                    setGuestInfo({ ...guestInfo, licenseNum: numLicen, guestName: `${firstName} ${lastName}` })
+                                                }
+                                            }}
+                                            onClear={() => console.log("input cleared")}
+                                        />
+                                    </div>
+                                    <div className="flex justify-center">
+                                        <div className="gap-3 w-full flex justify-center ">
+                                            <Button type="submit" color='primary' isLoading={isLoadingBtn}>
+                                                Update License
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </>
+                            }
+                        </CardBody>
+                    </Card>
+
+                </form>
+                :
+                <></>
             }
         </main>
     )

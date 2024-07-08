@@ -74,7 +74,7 @@ export default function NavBar({ type, session }) {
           {/* <p className="font-bold text-inherit">ACCESS CONTROL</p> */}
         </NavbarBrand>
 
-        {getType === 'admin' ?
+        {getType.toLowerCase().includes('admin') ?
           <>
             <NavbarItem>
               <Link color="foreground" href="/users">
