@@ -58,6 +58,9 @@ const TableAuthorized = ({ setError }) => {
     const [condominium, setCondominium] = React.useState('')
     const [getCondominiums, setCondominiums] = React.useState([])
 
+    const [isSelectCondom, setIsSelectCondom] = React.useState(false)
+    const [isLoadResidents, setIsLoadResidents] = React.useState(false)
+
     const getCondoms = React.useCallback(async () => {
         await axios.get('/api/condominiums')
             .then(function (response) {
@@ -67,37 +70,24 @@ const TableAuthorized = ({ setError }) => {
                 console.log(error)
                 setError(error)
             })
+
+        setIsLoading(false)
     }, [setError])
 
-    const getAllResidents = React.useCallback(async () => {
-        await axios.get('/api/residents')
-            .then(function (response) {
-                setGetResidents(response.data.info)
-            })
-            .catch(function (error) {
-                console.log(error)
-                setError(error)
-            })
+    const getAllResidents = React.useCallback(async (condom) => {
+        setIsLoadResidents(true)
+        setResident('')
 
-            setIsLoading(false)
-    }, [setError])
-
-    const getInfoForTable = React.useCallback(async () => {
-        await axios.post('/api/incomeRecord/authorized').then(function (response) {
-            const res = response.data
-
-            if (res.status === 200) {
-                // console.log(res.info)
-                setUsers(res.info)
-                getInfoForTableGuest(res.info)
-            } else {
-                console.log(res.message)
-                setError(res.message)
-            }
+        await axios.post('/api/residents/all', {
+            idCondominium: condom.split(' - ')[0]
+        }).then(function (response) {
+            setGetResidents(response.data.info)
         }).catch(function (error) {
             console.log(error)
             setError(error)
         })
+
+        setIsLoadResidents(false)
     }, [setError])
 
     const getInfoForTableGuest = React.useCallback(async (data) => {
@@ -117,12 +107,29 @@ const TableAuthorized = ({ setError }) => {
         })
     }, [setError])
 
+    const getInfoForTable = React.useCallback(async () => {
+        await axios.post('/api/incomeRecord/authorized').then(function (response) {
+            const res = response.data
+
+            if (res.status === 200) {
+                // console.log(res.info)
+                setUsers(res.info)
+                getInfoForTableGuest(res.info)
+            } else {
+                console.log(res.message)
+                setError(res.message)
+            }
+        }).catch(function (error) {
+            console.log(error)
+            setError(error)
+        })
+    }, [setError, getInfoForTableGuest])
+
     React.useEffect(() => {
         setIsLoading(true)
         getCondoms()
-        getAllResidents()
         getInfoForTable()
-    }, [getInfoForTable])
+    }, [getInfoForTable, getCondoms])
 
 
     const [page, setPage] = React.useState(1);
@@ -310,6 +317,8 @@ const TableAuthorized = ({ setError }) => {
                                 className='focus:ring-primary-600 focus:border-primary-600'
                                 onChange={(e) => {
                                     setCondominium(e.target.value)
+                                    getAllResidents(e.target.value)
+                                    setIsSelectCondom(e.target.value && true)
                                     setError(null)
                                 }}
                             >
@@ -324,33 +333,44 @@ const TableAuthorized = ({ setError }) => {
                                 }
                             </Select>
                         </div>
-                        <div>
-                            <label htmlFor="condominium" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Resident</label>
 
-                            <Select
-                                isRequired
-                                id='condominium'
-                                aria-label='condominium'
-                                placeholder="Select an Resident"
-                                variant='faded'
-                                value={resident}
-                                className='focus:ring-primary-600 focus:border-primary-600'
-                                onChange={(e) => {
-                                    setResident(e.target.value)
-                                    setError(null)
-                                }}
-                            >
-                                {getResidents &&
-                                    getResidents.map((value) => {
-                                        return (
-                                            <SelectItem key={`${value.id} - ${value.first_name} ${value.last_name}`} textValue={`${value.first_name} ${value.last_name}`}>
-                                                {`${value.first_name} ${value.last_name}`}
-                                            </SelectItem>
-                                        )
-                                    })
+                        {isSelectCondom ?
+                            <div>
+                                <label htmlFor="resident" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Resident</label>
+
+                                {isLoadResidents ?
+                                    <div className='flex justify-center items-center flex-col'>
+                                        <Spinner color="primary" size="lg" />
+                                    </div>
+                                    :
+                                    <Select
+                                        isRequired
+                                        id='resident'
+                                        aria-label='resident'
+                                        placeholder="Select an Resident"
+                                        variant='faded'
+                                        value={resident}
+                                        className='focus:ring-primary-600 focus:border-primary-600'
+                                        onChange={(e) => {
+                                            setResident(e.target.value)
+                                            setError(null)
+                                        }}
+                                    >
+                                        {getResidents &&
+                                            getResidents.map((value) => {
+                                                return (
+                                                    <SelectItem key={`${value.id} - ${value.first_name} ${value.last_name}`} textValue={`${value.first_name} ${value.last_name}`}>
+                                                        {`${value.first_name} ${value.last_name}`}
+                                                    </SelectItem>
+                                                )
+                                            })
+                                        }
+                                    </Select>
                                 }
-                            </Select>
-                        </div>
+                            </div>
+                            :
+                            <></>
+                        }
                     </div>
 
 
@@ -413,7 +433,15 @@ const TableAuthorized = ({ setError }) => {
         onSearchChange,
         createCSV,
         startDateCalendar,
-        endDateCalendar
+        endDateCalendar,
+        condominium,
+        getCondominiums,
+        getResidents,
+        resident,
+        setError,
+        getAllResidents,
+        isSelectCondom,
+        isLoadResidents
     ])
 
     const bottomContent = React.useMemo(() => {
