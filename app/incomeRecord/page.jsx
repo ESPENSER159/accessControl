@@ -2,7 +2,7 @@
 import { useState } from "react"
 import { Chip } from "@nextui-org/react"
 import TableAuthorized from './tableAuthorized'
-import TableGuest from './tableGuest'
+// import TableGuest from './tableGuest'
 
 const AccessControl = () => {
 
@@ -17,7 +17,7 @@ const AccessControl = () => {
 
       <TableAuthorized setError={setError} />
 
-      <TableGuest className="mt-4" setError={setError} />
+      {/* <TableGuest className="mt-4" setError={setError} /> */}
 
       {error &&
         <Chip className='min-w-full h-auto mt-4 py-2 rounded-md text-wrap' color="danger" variant="bordered">

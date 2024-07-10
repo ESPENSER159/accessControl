@@ -6,7 +6,9 @@ import {
     ModalBody,
     ModalFooter,
     Select, SelectItem, Input,
-    Spinner
+    Spinner,
+    RadioGroup,
+    Radio
 } from "@nextui-org/react";
 
 import { useState, useEffect } from 'react'
@@ -22,7 +24,7 @@ export default function ModalEditUser({ edit, dataUser, onClose, setReload }) {
     const [error, setError] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const [isVisible, setIsVisible] = useState(false)
-    const [isAdmin, setIsAdmin] = useState(dataUser && dataUser.type === 'admin' ? true : false)
+    const [isAdmin, setIsAdmin] = useState(dataUser && dataUser.type)
 
     const [getCondominiums, setCondominiums] = useState([])
 
@@ -156,10 +158,18 @@ export default function ModalEditUser({ edit, dataUser, onClose, setReload }) {
                             </div>
 
                             <div className='text-center'>
-                                <Switch color='primary' isSelected={isAdmin} onValueChange={setIsAdmin}>
-                                    Admin
-                                </Switch>
+                                <RadioGroup
+                                    label="User Type"
+                                    defaultValue="user"
+                                    value={isAdmin}
+                                    onValueChange={setIsAdmin}
+                                >
+                                    <Radio value="user">User</Radio>
+                                    <Radio value="admin">Admin</Radio>
+                                    <Radio value="super admin">Super Admin</Radio>
+                                </RadioGroup>
                             </div>
+
                         </>
                     }
 

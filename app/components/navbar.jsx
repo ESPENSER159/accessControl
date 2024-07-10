@@ -74,7 +74,7 @@ export default function NavBar({ type, session }) {
           {/* <p className="font-bold text-inherit">ACCESS CONTROL</p> */}
         </NavbarBrand>
 
-        {getType === 'admin' ?
+        {getType.toLowerCase().includes('admin') ?
           <>
             <NavbarItem>
               <Link color="foreground" href="/users">
@@ -91,16 +91,16 @@ export default function NavBar({ type, session }) {
                 Residents
               </Link>
             </NavbarItem>
-            <NavbarItem>
-              <Link color="foreground" href="/incomeRecord">
-                Record Log
-              </Link>
-            </NavbarItem>
           </>
           :
           <></>
         }
 
+        <NavbarItem>
+          <Link color="foreground" href="/incomeRecord">
+            Record Log
+          </Link>
+        </NavbarItem>
         <NavbarItem>
           <Link color="foreground" href="/accessControl">
             Access Control
@@ -140,7 +140,7 @@ export default function NavBar({ type, session }) {
 
       <NavbarMenu>
 
-        {getType === 'admin' ?
+        {getType.toLowerCase().includes('admin') ?
           <>
             <NavbarMenuItem className="border-solid border-2 border-default-200 rounded-lg pl-4 py-2">
               <Link

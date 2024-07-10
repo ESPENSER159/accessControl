@@ -12,7 +12,12 @@ import {
     Pagination,
     Spinner,
     Chip,
-    Avatar
+    Avatar,
+    Select,
+    SelectItem,
+    Card,
+    CardHeader,
+    CardBody
 } from "@nextui-org/react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPeopleRoof, faPeopleGroup, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
@@ -31,6 +36,7 @@ const columns = [
     { name: "RESIDENT PHONE", uid: "phone", sortable: true },
     { name: "CONDOMINIUM", uid: "condominium_name", sortable: true },
     { name: "ADDRESS", uid: "address", sortable: true },
+    { name: "LICENSE", uid: "license_num", sortable: true },
     { name: "ACCESS BY", uid: "access_by", sortable: true },
     { name: "DATE", uid: "date", sortable: true }
 ]
@@ -50,15 +56,99 @@ const TableAuthorized = ({ setError }) => {
     const [startDateCalendar, setStartDateCalendar] = React.useState()
     const [endDateCalendar, setEndDateCalendar] = React.useState()
 
+    const [resident, setResident] = React.useState('')
+    const [getResidents, setGetResidents] = React.useState([])
+    const [condominium, setCondominium] = React.useState('')
+    const [getCondominiums, setCondominiums] = React.useState([])
 
-    const getInfoForTable = React.useCallback(async () => {
-        await axios.post('/api/incomeRecord/authorized').then(function (response) {
+    const [isSelectCondom, setIsSelectCondom] = React.useState(false)
+    const [isLoadResidents, setIsLoadResidents] = React.useState(false)
+
+    const [isAdmin, setIsAdmin] = React.useState(false)
+    const [isLoadingBtn, setIsLoadingBtn] = React.useState(false)
+    const [reading, setReading] = React.useState('')
+    const [idGuest, setIdGuest] = React.useState('')
+    const [isLoadLicense, setIsLoadLicense] = React.useState(false)
+    const [showUpdateLicense, setShowUpdateLicense] = React.useState(false)
+
+    const getInfoGuest = React.useCallback(async (idKey) => {
+        // console.log(idKey)
+        setShowUpdateLicense(true)
+        setIsLoadLicense(true)
+
+        if (idKey) {
+            await axios.post('/api/infoGuest', {
+                idGuest: idKey
+            }).then(function (response) {
+                setReading(response.data.info.license_num)
+            }).catch(function (error) {
+                console.log(error)
+                setError(error)
+            })
+        } else {
+            setReading('')
+        }
+
+        setIsLoadLicense(false)
+
+    }, [setError])
+
+    const getAllResidents = React.useCallback(async (condom) => {
+        // console.log(condom)
+        setIsLoadResidents(true)
+        setResident('')
+
+        await axios.post('/api/residents/all', {
+            idCondominium: condom.split(' - ')[0]
+        }).then(function (response) {
+            setGetResidents(response.data.info)
+        }).catch(function (error) {
+            console.log(error)
+            setError(error)
+        })
+
+        setIsLoadResidents(false)
+    }, [setError])
+
+    const getSession = React.useCallback(async () => {
+        setIsSelectCondom(false)
+
+        await axios.get('/api/session')
+            .then(function (response) {
+                // console.log(response)
+                let typeUser = response.data.session.user.email === 'super admin' ? true : false
+
+                setIsAdmin(typeUser)
+
+                if (!typeUser) {
+                    getAllResidents(response.data.session.user.image[0])
+                    setIsSelectCondom(true)
+                }
+            })
+            .catch(function (error) {
+                console.log(error)
+                setError(error)
+            })
+    }, [setError, getAllResidents])
+
+    const getCondoms = React.useCallback(async () => {
+        await axios.get('/api/condominiums')
+            .then(function (response) {
+                setCondominiums(response.data.info)
+            })
+            .catch(function (error) {
+                console.log(error)
+                setError(error)
+            })
+    }, [setError])
+
+    const getInfoForTableGuest = React.useCallback(async (data) => {
+        await axios.post('/api/incomeRecord/guest').then(function (response) {
             const res = response.data
 
             if (res.status === 200) {
                 // console.log(res.info)
-                setUsers(res.info)
-
+                setUsers([...data, ...res.info])
             } else {
                 console.log(res.message)
                 setError(res.message)
@@ -71,10 +161,56 @@ const TableAuthorized = ({ setError }) => {
         setIsLoading(false)
     }, [setError])
 
-    React.useEffect(() => {
+    const getInfoForTable = React.useCallback(async () => {
+        setShowUpdateLicense(false)
         setIsLoading(true)
+
+        await axios.post('/api/incomeRecord/authorized').then(function (response) {
+            const res = response.data
+
+            if (res.status === 200) {
+                // console.log(res.info)
+                setUsers(res.info)
+                getInfoForTableGuest(res.info)
+            } else {
+                console.log(res.message)
+                setError(res.message)
+            }
+        }).catch(function (error) {
+            console.log(error)
+            setError(error)
+        })
+    }, [setError, getInfoForTableGuest])
+
+    React.useEffect(() => {
+        getSession()
+
+        setIsLoading(true)
+        getCondoms()
         getInfoForTable()
-    }, [getInfoForTable])
+    }, [getInfoForTable, getCondoms, getSession])
+
+
+    const updateLicense = async (e) => {
+        e.preventDefault()
+        setIsLoadingBtn(true)
+
+        await axios.post('/api/infoGuest/update', {
+            idGuest: idGuest,
+            license: reading
+        }).then(function (response) {
+            // console.log(response)
+        }).catch(function (error) {
+            console.log(error)
+            setError(error)
+        })
+
+        setReading('')
+        // setGuestInfo({ delivery: false, guestName: '', licenseNum: '' })
+        setIsLoadingBtn(false)
+        
+        getInfoForTable()
+    }
 
 
     const [page, setPage] = React.useState(1);
@@ -90,14 +226,14 @@ const TableAuthorized = ({ setError }) => {
                 || user.lastName && user.lastName.toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
                 || user.resident_name && user.resident_name.toLowerCase().includes(filterValue.toLowerCase())
                 || user.resident_last_name && user.resident_last_name.toLowerCase().includes(filterValue.toLowerCase())
-                || user.condominium_name && user.condominium_name.toLowerCase().includes(filterValue.toLowerCase())
-
-                || `${user.condominium_name}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
-                || `${user.condominium_name}/${user.resident_name}${user.resident_last_name}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
-                || `${user.resident_name}${user.resident_last_name}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
 
                 || user.address && user.address.toLowerCase().includes(filterValue.toLowerCase())
                 || user.access_by && user.access_by.toLowerCase().includes(filterValue.toLowerCase())
+
+                // || user.condominium_name && user.condominium_name.toLowerCase().includes(filterValue.toLowerCase())
+                // || `${user.condominium_name}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
+                // || `${user.condominium_name}/${user.resident_name}${user.resident_last_name}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
+                // || `${user.resident_name}${user.resident_last_name}`.replaceAll(' ', '').toLowerCase().includes(filterValue.toLowerCase().replaceAll(' ', ''))
 
                 // || user.date.toLowerCase().includes(filterValue.toLowerCase())
             )
@@ -109,8 +245,20 @@ const TableAuthorized = ({ setError }) => {
             )
         }
 
+        if (condominium) {
+            filteredUsers = filteredUsers.filter((user) =>
+                user.condominium_name && user.condominium_name.toLowerCase().includes(condominium.split(' - ')[1].toLowerCase())
+            )
+        }
+
+        if (resident) {
+            filteredUsers = filteredUsers.filter((user) =>
+                user.resident_name && `${user.resident_name.toLowerCase().replaceAll(' ', '')}${user.resident_last_name.toLowerCase().replaceAll(' ', '')}` === resident.split(' - ')[1].toLowerCase().replaceAll(' ', '')
+            )
+        }
+
         return filteredUsers;
-    }, [users, filterValue, hasSearchFilter, startDateCalendar, endDateCalendar]);
+    }, [users, filterValue, hasSearchFilter, startDateCalendar, endDateCalendar, condominium, resident]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -224,19 +372,95 @@ const TableAuthorized = ({ setError }) => {
 
     const topContent = React.useMemo(() => {
         return (
-            <div className="flex flex-col gap-4 mt-2">
-                <div className="flex justify-between gap-3 items-end">
-                    <Input
-                        isClearable
-                        className="w-full sm:max-w-[44%]"
-                        placeholder="Search..."
-                        startContent={<FontAwesomeIcon icon={faMagnifyingGlass} size="lg" width={20} />}
-                        value={filterValue}
-                        onClear={() => onClear()}
-                        onValueChange={onSearchChange}
-                    />
+            <div className="flex flex-col gap-4 mt-2 mx-2 sm:mx-none">
+                <Input
+                    isClearable
+                    className="w-full sm:max-w-[70%] md:max-w-[44%]"
+                    placeholder="Search..."
+                    startContent={<FontAwesomeIcon icon={faMagnifyingGlass} size="lg" width={20} />}
+                    value={filterValue}
+                    onClear={() => onClear()}
+                    onValueChange={onSearchChange}
+                />
+                <div className="flex flex-col sm:flex-row justify-between gap-4 items-end">
 
-                    <div className='flex flex-col md:flex-row justify-center '>
+                    <div className="w-full sm:max-w-[44%]">
+
+                        {isAdmin ?
+                            <div className="my-2">
+                                <label htmlFor="condominium" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Condominium</label>
+
+                                <Select
+                                    isRequired
+                                    id='condominium'
+                                    aria-label='condominium'
+                                    placeholder="Select an condominium"
+                                    variant='faded'
+                                    value={condominium}
+                                    className='focus:ring-primary-600 focus:border-primary-600'
+                                    onChange={(e) => {
+                                        setCondominium(e.target.value)
+                                        getAllResidents(e.target.value)
+                                        setIsSelectCondom(e.target.value && true)
+                                        setError(null)
+                                    }}
+                                >
+                                    {getCondominiums &&
+                                        getCondominiums.map((value) => {
+                                            return (
+                                                <SelectItem key={`${value.id} - ${value.name}`} textValue={value.name}>
+                                                    {value.name}
+                                                </SelectItem>
+                                            )
+                                        })
+                                    }
+                                </Select>
+                            </div>
+                            :
+                            <></>
+                        }
+
+                        {isSelectCondom ?
+                            <div>
+                                <label htmlFor="resident" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Resident</label>
+
+                                {isLoadResidents ?
+                                    <div className='flex justify-center items-center flex-col'>
+                                        <Spinner color="primary" size="lg" />
+                                    </div>
+                                    :
+                                    <Select
+                                        isRequired
+                                        id='resident'
+                                        aria-label='resident'
+                                        placeholder="Select an Resident"
+                                        variant='faded'
+                                        value={resident}
+                                        className='focus:ring-primary-600 focus:border-primary-600'
+                                        onChange={(e) => {
+                                            setResident(e.target.value)
+                                            setError(null)
+                                        }}
+                                    >
+                                        {getResidents &&
+                                            getResidents.map((value) => {
+                                                return (
+                                                    <SelectItem key={`${value.id} - ${value.first_name} ${value.last_name}`} textValue={`${value.first_name} ${value.last_name}`}>
+                                                        {`${value.first_name} ${value.last_name}`}
+                                                    </SelectItem>
+                                                )
+                                            })
+                                        }
+                                    </Select>
+                                }
+                            </div>
+                            :
+                            <></>
+                        }
+                    </div>
+
+
+                    <div className='w-full sm:w-auto flex flex-col md:flex-row justify-center '>
                         <div className='flex flex-col'>
                             <label className='font-bold text-xs px-2'>Start date</label>
                             <DatePicker
@@ -295,7 +519,16 @@ const TableAuthorized = ({ setError }) => {
         onSearchChange,
         createCSV,
         startDateCalendar,
-        endDateCalendar
+        endDateCalendar,
+        condominium,
+        getCondominiums,
+        getResidents,
+        resident,
+        setError,
+        getAllResidents,
+        isSelectCondom,
+        isLoadResidents,
+        isAdmin
     ])
 
     const bottomContent = React.useMemo(() => {
@@ -344,9 +577,9 @@ const TableAuthorized = ({ setError }) => {
                     </div>
                     :
                     <div>
-                        <div className="text-center text-xl">
+                        {/* <div className="text-center text-xl">
                             <p className="font-bold">AUTHORIZED</p>
-                        </div>
+                        </div> */}
 
                         <Table
                             aria-label="Table Access Control"
@@ -357,11 +590,24 @@ const TableAuthorized = ({ setError }) => {
                                 wrapper: "max-h-[382px]",
                             }}
                             color="primary"
-                            selectionMode="none"
                             sortDescriptor={sortDescriptor}
                             onSortChange={setSortDescriptor}
                             topContentPlacement="outside"
                             topContent={topContent}
+                            selectionMode="single"
+                            onSelectionChange={(key) => {
+                                const setIter = key.keys()
+                                const getKey = setIter.next().value
+
+                                let getType = getKey && getKey.split(' - ')[1]
+
+                                if (getType === 'guest' || getType === 'delivery') {
+                                    setIdGuest(getKey.split(' - ')[0])
+                                    getInfoGuest(getKey)
+                                } else {
+                                    setShowUpdateLicense(false)
+                                }
+                            }}
                         >
                             <TableHeader columns={columns}>
                                 {(column) => (
@@ -376,13 +622,71 @@ const TableAuthorized = ({ setError }) => {
                             </TableHeader>
                             <TableBody emptyContent={"No info found"} items={sortedItems}>
                                 {(item) => (
-                                    <TableRow key={item.id}>
+                                    <TableRow key={`${item.id} - ${item.type}`}>
                                         {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
                                     </TableRow>
                                 )}
                             </TableBody>
                         </Table>
                     </div>
+            }
+
+            {showUpdateLicense ?
+                <form className="w-full space-y-4 md:space-y-6"
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') e.preventDefault()
+                    }}
+                    onSubmit={updateLicense} autoComplete="off" >
+                    <Card className='border-solid p-4 my-8'>
+                        <CardHeader className="flex gap-3">
+                            <div className="flex flex-col">
+                                <p className="text-md font-bold">Update Information</p>
+                            </div>
+                        </CardHeader>
+                        <CardBody>
+                            {isLoadLicense ?
+                                <div className='flex justify-center items-center flex-col'>
+                                    <Spinner color="primary" size="lg" />
+                                </div>
+                                :
+                                <>
+                                    <div className="mx-2 mb-4">
+                                        <label htmlFor="phone" className="block text-sm font-medium text-gray-900 dark:text-white">SCAN DRIVER LICENSE</label>
+
+                                        <Input
+                                            type="text"
+                                            placeholder='SCAN DRIVER LICENSE'
+                                            value={reading}
+                                            onValueChange={(e) => {
+
+                                                setReading(e)
+
+                                                if (e.includes('DLDAQ')) {
+                                                    let numLicen = e.split('DLDAQ')[1].split('DCS')[0]
+                                                    let firstName = e.split('DDE')[1].split('DDF')[0].slice(4)
+                                                    let lastName = e.split('DCS')[1].split('DDE')[0]
+
+                                                    setGuestInfo({ ...guestInfo, licenseNum: numLicen, guestName: `${firstName} ${lastName}` })
+                                                }
+                                            }}
+                                            onClear={() => console.log("input cleared")}
+                                        />
+                                    </div>
+                                    <div className="flex justify-center">
+                                        <div className="gap-3 w-full flex justify-center ">
+                                            <Button type="submit" color='primary' isLoading={isLoadingBtn}>
+                                                Update License
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </>
+                            }
+                        </CardBody>
+                    </Card>
+
+                </form>
+                :
+                <></>
             }
         </main>
     )

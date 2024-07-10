@@ -141,7 +141,7 @@ const CreateTable = () => {
         );
       case "type":
         return (
-          <Chip className="capitalize" color={cellValue === 'admin' ? "warning" : "primary"} size="sm" variant="flat">
+          <Chip className="capitalize" color={cellValue.toLowerCase().includes('admin') ? cellValue === 'admin' ? "warning" : 'success' : "primary"} size="sm" variant="flat">
             {cellValue}
           </Chip>
         )

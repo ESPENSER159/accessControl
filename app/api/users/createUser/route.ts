@@ -18,15 +18,12 @@ export async function POST(request: Request) {
 
         if (getUser) return NextResponse.json({ status: 400, message: 'User already exists' })
 
-        let typeUser = type
-        type ? typeUser = 'admin' : typeUser = 'user'
-
         const encryptPassword = bcrypt.hashSync(pass, saltRounds)
 
         const creationDate = formatedTimestamp()
 
         // Create user
-        const create: any = await conn.query('INSERT INTO users (user, password, condominium, type, creation_date) VALUES (?, ?, ?, ?, ?)', [user, encryptPassword, condominium, typeUser, creationDate])
+        const create: any = await conn.query('INSERT INTO users (user, password, condominium, type, creation_date) VALUES (?, ?, ?, ?, ?)', [user, encryptPassword, condominium, type, creationDate])
         const ifCreate = create[0]
 
         await conn.end()

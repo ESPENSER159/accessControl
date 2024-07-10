@@ -195,7 +195,7 @@ const Residents = () => {
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Search by resident..."
+            placeholder="Search..."
             startContent={<FontAwesomeIcon icon={faMagnifyingGlass} size="lg" width={20} />}
             value={filterValue}
             onClear={() => onClear()}
@@ -203,7 +203,7 @@ const Residents = () => {
           />
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">Total {users.length} users</span>
+          <span className="text-default-400 text-small">Total {users.length}</span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
             <select
