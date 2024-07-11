@@ -24,7 +24,7 @@ export default function ModalEditUser({ edit, dataUser, onClose, setReload }) {
     const [error, setError] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const [isVisible, setIsVisible] = useState(false)
-    const [isAdmin, setIsAdmin] = useState(dataUser && dataUser.type)
+    const [isAdmin, setIsAdmin] = useState(dataUser ? dataUser.type : 'user')
 
     const [getCondominiums, setCondominiums] = useState([])
 
