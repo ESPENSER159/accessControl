@@ -143,7 +143,9 @@ const TableAuthorized = ({ setError }) => {
     }, [setError])
 
     const getInfoForTableGuest = React.useCallback(async (data) => {
-        await axios.post('/api/incomeRecord/guest').then(function (response) {
+        await axios.post('/api/incomeRecord/guest', {
+            idCondominium: !isAdmin && localStorage.getItem('idLocation')
+        }).then(function (response) {
             const res = response.data
 
             if (res.status === 200) {
@@ -159,13 +161,15 @@ const TableAuthorized = ({ setError }) => {
         })
 
         setIsLoading(false)
-    }, [setError])
+    }, [setError, isAdmin])
 
     const getInfoForTable = React.useCallback(async () => {
         setShowUpdateLicense(false)
         setIsLoading(true)
 
-        await axios.post('/api/incomeRecord/authorized').then(function (response) {
+        await axios.post('/api/incomeRecord/authorized', {
+            idCondominium: !isAdmin && localStorage.getItem('idLocation')
+        }).then(function (response) {
             const res = response.data
 
             if (res.status === 200) {
@@ -180,7 +184,7 @@ const TableAuthorized = ({ setError }) => {
             console.log(error)
             setError(error)
         })
-    }, [setError, getInfoForTableGuest])
+    }, [setError, getInfoForTableGuest, isAdmin])
 
     React.useEffect(() => {
         getSession()
@@ -208,7 +212,7 @@ const TableAuthorized = ({ setError }) => {
         setReading('')
         // setGuestInfo({ delivery: false, guestName: '', licenseNum: '' })
         setIsLoadingBtn(false)
-        
+
         getInfoForTable()
     }
 
