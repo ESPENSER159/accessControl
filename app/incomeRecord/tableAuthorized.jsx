@@ -37,6 +37,7 @@ const columns = [
     { name: "CONDOMINIUM", uid: "condominium_name", sortable: true },
     { name: "ADDRESS", uid: "address", sortable: true },
     { name: "LICENSE", uid: "license_num", sortable: true },
+    { name: "CARDTAG", uid: "card_num", sortable: true },
     { name: "ACCESS BY", uid: "access_by", sortable: true },
     { name: "DATE", uid: "date", sortable: true }
 ]
@@ -80,7 +81,7 @@ const TableAuthorized = ({ setError }) => {
             await axios.post('/api/infoGuest', {
                 idGuest: idKey
             }).then(function (response) {
-                setReading(response.data.info.license_num)
+                setReading(response.data.info.card_num)
             }).catch(function (error) {
                 console.log(error)
                 setError(error)
@@ -143,7 +144,9 @@ const TableAuthorized = ({ setError }) => {
     }, [setError])
 
     const getInfoForTableGuest = React.useCallback(async (data) => {
-        await axios.post('/api/incomeRecord/guest').then(function (response) {
+        await axios.post('/api/incomeRecord/guest', {
+            idCondominium: !isAdmin && localStorage.getItem('idLocation')
+        }).then(function (response) {
             const res = response.data
 
             if (res.status === 200) {
@@ -159,13 +162,15 @@ const TableAuthorized = ({ setError }) => {
         })
 
         setIsLoading(false)
-    }, [setError])
+    }, [setError, isAdmin])
 
     const getInfoForTable = React.useCallback(async () => {
         setShowUpdateLicense(false)
         setIsLoading(true)
 
-        await axios.post('/api/incomeRecord/authorized').then(function (response) {
+        await axios.post('/api/incomeRecord/authorized', {
+            idCondominium: !isAdmin && localStorage.getItem('idLocation')
+        }).then(function (response) {
             const res = response.data
 
             if (res.status === 200) {
@@ -180,7 +185,7 @@ const TableAuthorized = ({ setError }) => {
             console.log(error)
             setError(error)
         })
-    }, [setError, getInfoForTableGuest])
+    }, [setError, getInfoForTableGuest, isAdmin])
 
     React.useEffect(() => {
         getSession()
@@ -191,13 +196,13 @@ const TableAuthorized = ({ setError }) => {
     }, [getInfoForTable, getCondoms, getSession])
 
 
-    const updateLicense = async (e) => {
+    const updateGuest = async (e) => {
         e.preventDefault()
         setIsLoadingBtn(true)
 
         await axios.post('/api/infoGuest/update', {
             idGuest: idGuest,
-            license: reading
+            cardtag: reading
         }).then(function (response) {
             // console.log(response)
         }).catch(function (error) {
@@ -206,9 +211,7 @@ const TableAuthorized = ({ setError }) => {
         })
 
         setReading('')
-        // setGuestInfo({ delivery: false, guestName: '', licenseNum: '' })
         setIsLoadingBtn(false)
-        
         getInfoForTable()
     }
 
@@ -636,7 +639,7 @@ const TableAuthorized = ({ setError }) => {
                     onKeyDown={(e) => {
                         if (e.key === 'Enter') e.preventDefault()
                     }}
-                    onSubmit={updateLicense} autoComplete="off" >
+                    onSubmit={updateGuest} autoComplete="off" >
                     <Card className='border-solid p-4 my-8'>
                         <CardHeader className="flex gap-3">
                             <div className="flex flex-col">
@@ -651,23 +654,14 @@ const TableAuthorized = ({ setError }) => {
                                 :
                                 <>
                                     <div className="mx-2 mb-4">
-                                        <label htmlFor="phone" className="block text-sm font-medium text-gray-900 dark:text-white">SCAN DRIVER LICENSE</label>
+                                        <label htmlFor="phone" className="block text-sm font-medium text-gray-900 dark:text-white">CARDTAG</label>
 
                                         <Input
                                             type="text"
-                                            placeholder='SCAN DRIVER LICENSE'
+                                            placeholder='CARDTAG'
                                             value={reading}
                                             onValueChange={(e) => {
-
                                                 setReading(e)
-
-                                                if (e.includes('DLDAQ')) {
-                                                    let numLicen = e.split('DLDAQ')[1].split('DCS')[0]
-                                                    let firstName = e.split('DDE')[1].split('DDF')[0].slice(4)
-                                                    let lastName = e.split('DCS')[1].split('DDE')[0]
-
-                                                    setGuestInfo({ ...guestInfo, licenseNum: numLicen, guestName: `${firstName} ${lastName}` })
-                                                }
                                             }}
                                             onClear={() => console.log("input cleared")}
                                         />
